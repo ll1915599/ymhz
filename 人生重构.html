@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生时间窗口 | 终极完整版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 核心样式 离线也能正常显示 */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            background: #333333;
+            border-radius: 3px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #10b981;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .card {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.1);
+        }
+        /* 状态标签样式 */
+        .status-open { background-color: #10b981; color: #ffffff; }
+        .status-countdown { background-color: #fbbf24; color: #ffffff; }
+        .status-highcost { background-color: #f59e0b; color: #ffffff; }
+        .status-closed { background-color: #ef4444; color: #ffffff; }
+        /* 代价颜色规则 */
+        .cost-low { color: #059669; font-weight: 600; }
+        .cost-medium { color: #d97706; font-weight: 600; }
+        .cost-high { color: #dc2626; font-weight: 600; }
+        .cost-extreme { color: #991b1b; font-weight: 700; }
+        .cost-na { color: #6b7280; font-weight: 500; }
+        /* 标记按钮样式 */
+        .tag-btn { padding: 2px 8px; border-radius: 4px; font-size: 12px; border: 1px solid #e5e7eb; cursor: pointer; }
+        .tag-todo { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+        .tag-done { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+        .tag-ignore { background: #f3f4f6; color: #4b5563; border-color: #d1d5db; }
+        /* 项目标签 */
+        .item-tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin: 2px; }
+        .tag-must { background: #fee2e2; color: #991b1b; }
+        .tag-opt { background: #f3f4f6; color: #4b5563; }
+        /* 展开内容 */
+        details { font-size: 12px; color: #4b5563; margin-top: 8px; }
+        summary { cursor: pointer; user-select: none; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-20">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <!-- 顶部标题与基础筛选 -->
+        <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-1">重要人生时间窗口</h1>
+                <p class="text-gray-600 text-sm">不可逆的单向衰减：随年龄增长，系统级机会的窗口并非缓慢缩小，而是断崖式坍塌</p>
+            </div>
+            <!-- 性别切换 -->
+            <div class="flex gap-2">
+                <button class="gender-btn px-3 py-1 rounded border bg-green-500 text-white" data-gender="all">不限</button>
+                <button class="gender-btn px-3 py-1 rounded border bg-white" data-gender="male">男性</button>
+                <button class="gender-btn px-3 py-1 rounded border bg-white" data-gender="female">女性</button>
+            </div>
+        </div>
+
+        <!-- 人群筛选 -->
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button class="crowd-btn px-3 py-1 rounded bg-white border text-sm active" data-crowd="all">全部人群</button>
+            <button class="crowd-btn px-3 py-1 rounded bg-white border text-sm" data-crowd="student">大学生</button>
+            <button class="crowd-btn px-3 py-1 rounded bg-white border text-sm" data-crowd="newbie">职场新人</button>
+            <button class="crowd-btn px-3 py-1 rounded bg-white border text-sm" data-crowd="pregnancy">备孕人群</button>
+            <button class="crowd-btn px-3 py-1 rounded bg-white border text-sm" data-crowd="middle">中年家庭</button>
+        </div>
+
+        <!-- 年龄滑块与快捷跳转 -->
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                <div class="flex items-center gap-3 flex-1">
+                    <span class="text-gray-700 font-medium">调节观测年龄锚点：</span>
+                    <input type="range" id="age-slider" min="3" max="70" value="25" class="w-full max-w-md">
+                    <span id="age-display" class="text-2xl font-bold text-green-600 min-w-[60px] text-center">25 岁</span>
+                </div>
+                <div class="flex gap-2">
+                    <button id="export-btn" class="px-4 py-2 bg-green-500 text-white rounded text-sm">导出当前清单</button>
+                </div>
+            </div>
+            <!-- 快捷年龄按钮 -->
+            <div class="flex flex-wrap gap-2">
+                <button class="age-jump px-3 py-1 rounded bg-gray-100 text-sm">18</button>
+                <button class="age-jump px-3 py-1 rounded bg-gray-100 text-sm">25</button>
+                <button class="age-jump px-3 py-1 rounded bg-gray-100 text-sm">30</button>
+                <button class="age-jump px-3 py-1 rounded bg-gray-100 text-sm">35</button>
+                <button class="age-jump px-3 py-1 rounded bg-gray-100 text-sm">40</button>
+                <button class="age-jump px-3 py-1 rounded bg-gray-100 text-sm">50</button>
+                <button class="age-jump px-3 py-1 rounded bg-gray-100 text-sm">60</button>
+            </div>
+        </div>
+
+        <!-- 年龄风险总结 -->
+        <div id="age-summary" class="bg-white rounded-xl shadow-sm p-4 mb-6 border-l-4 border-green-500">
+            <div class="flex flex-wrap justify-between items-center gap-2">
+                <div>
+                    <span class="font-bold text-lg">当前25岁</span>
+                    <span class="ml-2 text-gray-600">：开放窗口 <span id="open-count" class="text-green-600 font-bold">0</span> 个 | 倒计时 <span id="countdown-count" class="text-yellow-600 font-bold">0</span> 个 | 已关闭 <span id="closed-count" class="text-red-600 font-bold">0</span> 个</span>
+                </div>
+                <div class="text-sm">
+                    <span class="font-medium">核心待办TOP3：</span>
+                    <span id="top-todo" class="text-gray-700"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索与状态筛选 -->
+        <div class="flex flex-col md:flex-row gap-3 mb-6">
+            <input id="search-input" placeholder="搜索关键词（如：体检、考研、生育、胃肠镜）" class="flex-1 px-4 py-2 rounded border bg-white">
+            <div class="flex flex-wrap gap-2">
+                <button class="status-btn px-3 py-1 rounded border bg-white text-sm active" data-status="all">全部状态</button>
+                <button class="status-btn px-3 py-1 rounded border bg-white text-sm" data-status="open">仅看开放</button>
+                <button class="status-btn px-3 py-1 rounded border bg-white text-sm" data-status="countdown">仅看倒计时</button>
+                <button class="status-btn px-3 py-1 rounded border bg-white text-sm" data-status="highcost">仅看高代价</button>
+            </div>
+        </div>
+
+        <!-- 全分类导航（含所有扩充分类） -->
+        <div class="flex flex-wrap gap-2 mb-6">
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border active" data-cat="all">全部分类</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="职业学业">职业学业</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="财富认知">财富认知</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="生理健康">生理健康</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="认知心理">认知心理</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="关系家庭">关系家庭</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="健康体检">健康体检</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="亲子教育">亲子教育</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="养老规划">养老规划</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="法律风险">法律风险</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="心理健康">心理健康</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="学习能力">学习能力</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="社交人脉">社交人脉</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="形象气质">形象气质</button>
+            <button class="cat-btn px-3 py-1 rounded-full text-sm bg-white border" data-cat="生活方式">生活方式</button>
+        </div>
+
+        <!-- 卡片网格容器 -->
+        <div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <!-- 卡片由JS动态生成 -->
+        </div>
+
+        <!-- 导出弹窗 -->
+        <div id="export-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">当前年龄行动清单</h3>
+                    <button id="close-export" class="text-gray-500 hover:text-gray-700 text-xl">×</button>
+                </div>
+                <textarea id="export-content" class="flex-1 w-full p-4 border rounded font-mono text-sm" readonly></textarea>
+                <div class="flex gap-2 mt-4 justify-end">
+                    <button id="copy-btn" class="px-4 py-2 bg-green-500 text-white rounded">复制全文</button>
+                    <button id="download-btn" class="px-4 py-2 bg-gray-700 text-white rounded">下载TXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部免责声明与依据 -->
+        <div class="mt-12 text-xs text-gray-500 border-t pt-4">
+            <p class="mb-2">【免责声明】本工具仅为个人成长科普与通用规律参考，不构成任何医疗诊断、投资建议、职业指导或法律意见。健康与诊疗相关决策请咨询正规医院执业医师，投资与职业决策请结合自身情况理性判断，相关风险自行承担。</p>
+            <p>【权威依据】健康体检内容参考《中国居民健康体检指南（2024版）》《中国肿瘤早筛指南》《中国心血管病风险评估和管理指南》；成长类内容参考发展心理学、脑科学与职业发展相关主流研究。</p>
+        </div>
+    </div>
+
+    <script>
+        // ===================== 全局状态与配置 =====================
+        let currentState = {
+            age: 25,
+            gender: 'all',
+            crowd: 'all',
+            cat: 'all',
+            status: 'all',
+            keyword: '',
+            userMarks: JSON.parse(localStorage.getItem('lifeWindowMarks') || '{}') // 本地存储用户标记
+        };
+
+        // 统一规则：锁死强制力与代价等级绑定
+        const costRule = {
+            Extreme: { min: 80, color: 'cost-extreme' },
+            High: { min: 60, max: 79, color: 'cost-high' },
+            Medium: { min: 30, max: 59, color: 'cost-medium' },
+            Low: { min: 0, max: 29, color: 'cost-low' }
+        };
+
+        // ===================== 完整窗口数据（原有+全扩充） =====================
+        const windowData = [
+            // ========== 原有核心分类数据 ==========
+            // 职业学业
+            {
+                id: 'career-001',
+                name: '第一学历跃迁',
+                bestPeriod: '18-25',
+                latestPeriod: '30',
+                lock: 70,
+                cost: 'High',
+                cat: '职业学业',
+                crowd: ['student', 'newbie'],
+                gender: 'all',
+                desc: '第一学历机会受阶段限制极大，错过后职业入口折扣极高，大厂、体制内门槛显著上升。',
+                todo: ['保住统招全日制第一学历', '不随意退学/转非全', '考研/留学尽量在窗口期完成'],
+                case: '毕业时放弃全日制本科去读专科，3年后想考公考编，岗位门槛几乎全部要求全日制本科，连报名资格都没有',
+                lateDesc: '可通过非全/自考/在职研究生补救，但社会认可度与门槛显著上升，核心岗位基本无缘'
+            },
+            {
+                id: 'career-002',
+                name: '应届生校招窗口',
+                bestPeriod: '21-23',
+                latestPeriod: '25',
+                lock: 85,
+                cost: 'Extreme',
+                cat: '职业学业',
+                crowd: ['student', 'newbie'],
+                gender: 'all',
+                desc: '大厂管培生、国企、体制内专属窗口，错过应届生身份不再成立，无经验社招难度翻3倍。',
+                todo: ['提前1年锁定目标行业校招时间线', '保留应届生身份不随意签三方', '优先头部平台积累履历'],
+                case: '毕业时随便找了家小公司，1年后想跳槽大厂，社招要求3年以上相关经验，连简历筛选都过不了',
+                lateDesc: '只能走社招通道，竞争与经验要求指数级上升，几乎无法再拿到大厂管培生级别的起点机会'
+            },
+            {
+                id: 'career-003',
+                name: '高强度专业训练窗口',
+                bestPeriod: '15-28',
+                latestPeriod: '35',
+                lock: 55,
+                cost: 'Medium',
+                cat: '职业学业',
+                crowd: ['student', 'newbie'],
+                gender: 'all',
+                desc: '1万小时定律黄金期，大脑神经可塑性强，精力无家庭牵绊，可建立核心技能壁垒。',
+                todo: ['每日固定2-3小时深度学习时段', '减少碎片化干扰', '建立可量化的技能里程碑'],
+                case: '20多岁天天刷短视频混日子，30岁想转行学新技能，根本坐不住，专注力完全无法集中，学了半年毫无进展',
+                lateDesc: '仍可训练，但大脑可塑性、精力上限、可投入时间显著下降，技能成型难度翻倍'
+            },
+            {
+                id: 'career-004',
+                name: '高强度试错创业窗口',
+                bestPeriod: '22-32',
+                latestPeriod: '40',
+                lock: 60,
+                cost: 'High',
+                cat: '职业学业',
+                crowd: ['newbie'],
+                gender: 'all',
+                desc: '无房贷、无子女、无赡养压力，精力巅峰期，试错成本最低，失败可快速重来。',
+                todo: ['控制试错成本不超过个人积蓄50%', '保留主业退路', '3个月内快速验证商业模式'],
+                case: '35岁有房贷孩子后辞职创业，失败后背上债务，家庭经济崩溃，连房贷都还不上',
+                lateDesc: '家庭责任加重，风险承受力大幅萎缩，试错失败的代价极高，几乎无法承受'
+            },
+            // 财富认知
+            {
+                id: 'wealth-001',
+                name: '财务复利启动窗口',
+                bestPeriod: '20-30',
+                latestPeriod: '40',
+                lock: 30,
+                cost: 'Medium',
+                cat: '财富认知',
+                crowd: ['newbie', 'student'],
+                gender: 'all',
+                desc: '复利效应的核心黄金期，越早启动，晚年财务自由的难度越低，晚10年需要多花30年追赶。',
+                todo: ['强制储蓄月收入10%-20%', '建立3-6个月应急金', '学习基础资产配置逻辑'],
+                case: '20多岁月光族，35岁才开始存钱，同龄人靠复利已经攒下第一桶金，自己连首付都凑不齐',
+                lateDesc: '仍可开始，但复利时间大幅缩短，达成同等目标需要的本金与时间翻倍'
+            },
+            {
+                id: 'wealth-002',
+                name: '风险兜底安全垫构建',
+                bestPeriod: '25-35',
+                latestPeriod: '45',
+                lock: 80,
+                cost: 'Extreme',
+                cat: '财富认知',
+                crowd: ['newbie', 'middle', 'pregnancy'],
+                gender: 'all',
+                desc: '家庭负担最轻时配置保障，年龄增长后保费翻倍，甚至被保险公司拒保，一场病掏空全家积蓄。',
+                todo: ['优先配置百万医疗+重疾险+意外险', '建立固定资产底线', '控制负债杠杆不超过收入50%'],
+                case: '30岁觉得自己年轻不买保险，35岁查出结节，所有重疾险都被拒保，后来生病花了20多万，全部自费',
+                lateDesc: '年龄超限后保费大幅上涨，有基础病会被加费/拒保/除外责任，保障效果大打折扣'
+            },
+            {
+                id: 'wealth-003',
+                name: '大宗资产加码窗口',
+                bestPeriod: '30-45',
+                latestPeriod: '55',
+                lock: 60,
+                cost: 'High',
+                cat: '财富认知',
+                crowd: ['middle'],
+                gender: 'all',
+                desc: '收入与预期稳定期，配置核心资产的最佳时机，错过后泡沫风险与入场门槛永久抬高。',
+                todo: ['评估现金流与负债能力', '选择核心城市核心品类资产', '避免高位接盘加杠杆'],
+                case: '30多岁有能力买房时觉得房价会跌，40岁想买房时，房价翻了3倍，首付都凑不齐了',
+                lateDesc: '入场门槛与泡沫风险显著上升，容错空间大幅缩小，踩坑代价极高'
+            },
+            // 生理健康
+            {
+                id: 'health-001',
+                name: '身体透支可逆窗口',
+                bestPeriod: '18-40',
+                latestPeriod: '50',
+                lock: 75,
+                cost: 'High',
+                cat: '生理健康',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '早期生活方式伤害完全可逆，超过窗口期后会固化为高血压、糖尿病等不可逆慢性病。',
+                todo: ['规律作息不熬夜', '控制烟酒摄入', '每周150分钟中等强度运动', '年度体检监测指标'],
+                case: '20-35岁天天熬夜喝酒吃外卖，40岁查出高血压糖尿病，需要终身吃药，再也无法逆转',
+                lateDesc: '损伤转为慢性疾病，只能控制无法根治，需要终身服药与监测，生活质量大幅下降'
+            },
+            {
+                id: 'health-002',
+                name: '深睡眠与通宵恢复阀门',
+                bestPeriod: '15-25',
+                latestPeriod: '30',
+                lock: 90,
+                cost: 'Extreme',
+                cat: '生理健康',
+                crowd: ['student', 'newbie'],
+                gender: 'all',
+                desc: '熬夜一天补觉一天就能满血复活的生理特权，28岁左右永久关闭，熬夜后几天都恢复不过来。',
+                todo: ['固定作息早睡早起', '睡前1小时远离电子设备', '保证每日7-9小时睡眠'],
+                case: '20岁通宵玩游戏第二天照常上班，30岁熬夜一次，头晕乏力一周都缓不过来，还引发了心律失常',
+                lateDesc: '睡眠恢复能力永久下降，熬夜易引发代谢炎症、内脏损伤、心脑血管风险，完全无法逆转'
+            },
+            {
+                id: 'health-003',
+                name: '牙齿正畸黄金期',
+                bestPeriod: '12-18',
+                latestPeriod: '25',
+                lock: 60,
+                cost: 'High',
+                cat: '生理健康',
+                crowd: ['student'],
+                gender: 'all',
+                desc: '利用颌骨生长发育高峰期矫正，事半功倍，成年后强行矫正易导致牙套脸、牙龈萎缩、高复发风险。',
+                todo: ['每6个月口腔检查', '早期干预牙列不齐', '遵医嘱佩戴矫治器与保持器'],
+                case: '15岁有机会矫正觉得没必要，30岁矫正，戴了2年牙套，出现牙套脸、牙龈萎缩，牙齿还反弹了',
+                lateDesc: '仍可矫正，但疗程延长、复发风险升高，易出现牙龈退缩、牙根吸收、面部形态改变等问题'
+            },
+            // 认知心理
+            {
+                id: 'mind-001',
+                name: '底层深度阅读与心流构建',
+                bestPeriod: '12-25',
+                latestPeriod: '35',
+                lock: 80,
+                cost: 'Extreme',
+                cat: '认知心理',
+                crowd: ['student', 'newbie'],
+                gender: 'all',
+                desc: '在多巴胺基线被短视频破坏前，建立持续几小时的深度阅读与心流能力，是终身学习的核心基础。',
+                todo: ['每日深度阅读1小时以上', '远离短视频碎片化过载', '练习长时专注的冥想训练'],
+                case: '上学时天天刷短视频，30岁想看书学习，根本坐不住，看5分钟就走神，专注力完全被摧毁了',
+                lateDesc: '专注力重建难度极大，需要付出数倍的时间与精力，易导致终身执行力不足、拖延成瘾'
+            },
+            {
+                id: 'mind-002',
+                name: '多巴胺成瘾阈值降级',
+                bestPeriod: '18-30',
+                latestPeriod: '40',
+                lock: 85,
+                cost: 'Extreme',
+                cat: '认知心理',
+                crowd: ['student', 'newbie'],
+                gender: 'all',
+                desc: '戒断短视频、游戏等高强度瞬时刺激，恢复对长线枯燥任务的多巴胺响应能力，是执行力的核心。',
+                todo: ['限制短视频时长每日不超过30分钟', '增加低刺激的线下活动', '重建长期目标的奖励机制'],
+                case: '20多岁天天刷短视频打游戏，30岁想做事业，根本无法坚持做长期的事，只能靠短期刺激活着，一事无成',
+                lateDesc: '多巴胺阈值一旦固化，极易导致长期注意力涣散、拖延症、执行力瘫痪，重建难度极高'
+            },
+            // 关系家庭
+            {
+                id: 'family-001',
+                name: '女性生育黄金窗口',
+                bestPeriod: '24-30',
+                latestPeriod: '35',
+                lock: 95,
+                cost: 'Extreme',
+                cat: '关系家庭',
+                crowd: ['pregnancy', 'middle'],
+                gender: 'female',
+                desc: '女性卵子质量与数量的巅峰期，35岁后生育力断崖式下降，流产、畸形、妊娠并发症风险翻倍。',
+                todo: ['规划生育时间', '孕前全面体检', '提前3个月补充叶酸', '评估健康与经济条件'],
+                case: '30岁前觉得生孩子太早，38岁想生，备孕2年都没怀上，做了3次试管都失败了，最终只能放弃',
+                lateDesc: '需借助辅助生殖技术，成功率大幅下降，妊娠风险与成本极高，对母体伤害极大'
+            },
+            {
+                id: 'family-002',
+                name: '男性生育力维护窗口',
+                bestPeriod: '25-35',
+                latestPeriod: '45',
+                lock: 70,
+                cost: 'High',
+                cat: '关系家庭',
+                crowd: ['pregnancy', 'middle'],
+                gender: 'male',
+                desc: '男性精子质量、活力的黄金期，45岁后精子DNA碎片率升高，流产、胎儿畸形风险显著上升。',
+                todo: ['戒烟戒酒不熬夜', '孕前精液常规检查', '避免高温环境与久坐', '补充锌与维生素'],
+                case: '45岁才要孩子，妻子多次胎停，检查发现精子碎片率极高，医生说高龄导致的，几乎无法逆转',
+                lateDesc: '仍可生育，但精子质量显著下降，不良妊娠风险升高，备孕周期大幅延长'
+            },
+            {
+                id: 'family-003',
+                name: '婚恋高匹配窗口',
+                bestPeriod: '20-35',
+                latestPeriod: '45',
+                lock: 40,
+                cost: 'Medium',
+                cat: '关系家庭',
+                crowd: ['newbie', 'middle', 'pregnancy'],
+                gender: 'all',
+                desc: '择偶池最大、个人能量状态最兼容的阶段，错过后筛选成本、匹配难度指数级上升。',
+                todo: ['拓展健康的社交圈', '明确择偶底线而非完美标准', '学习长期关系经营能力'],
+                case: '20多岁觉得自己条件好挑挑拣拣，35岁想找合适的，发现择偶池里的人要么不合适，要么需求完全不匹配',
+                lateDesc: '仍可匹配，但择偶池大幅缩小，筛选成本与沟通难度上升，需要付出更多的时间与精力'
+            },
+            // 健康体检
+            {
+                id: 'check-001',
+                name: '儿童青少年生长发育体检',
+                bestPeriod: '3-18',
+                latestPeriod: '18',
+                lock: 85,
+                cost: 'Extreme',
+                cat: '健康体检',
+                crowd: ['student'],
+                gender: 'all',
+                desc: '生长发育、视力、脊柱、口腔、基础疾病的关键筛查期，错过干预黄金期，异常将不可逆。',
+                mustDo: ['身高体重骨龄评估', '视力屈光+眼轴长度', '脊柱侧弯筛查', '口腔龋齿+牙周检查', '血常规+肝肾功能'],
+                optDo: ['过敏原检测', '心理健康评估', '性激素发育评估（青春期）'],
+                freq: '每年1次；口腔/视力每6个月1次',
+                todo: ['固定年度体检', '每6个月查口腔和视力', '异常指标及时干预'],
+                case: '小时候没查脊柱，18岁发现脊柱侧弯40度，已经错过了保守矫正期，只能做手术',
+                lateDesc: '发育异常、近视、脊柱侧弯等问题错过干预期，将终身不可逆，只能手术或终身矫正'
+            },
+            {
+                id: 'check-002',
+                name: '青年基础体检',
+                bestPeriod: '18-30',
+                latestPeriod: '35',
+                lock: 40,
+                cost: 'Medium',
+                cat: '健康体检',
+                crowd: ['student', 'newbie'],
+                gender: 'all',
+                desc: '建立健康基线，筛查先天/遗传性疾病、早期代谢异常的核心时期。',
+                mustDo: ['血常规+尿常规', '肝肾功能+电解质', '血脂血糖+尿酸', '腹部超声（肝/胆/胰/脾/肾）', '甲状腺超声+功能', '胸片/低剂量胸部CT', '心电图'],
+                optDo: ['幽门螺杆菌检测', '传染病筛查', '胃功能三项'],
+                freq: '每年1次',
+                todo: ['每年固定体检', '建立个人健康档案', '异常指标及时复查干预'],
+                case: '25岁没体检，30岁体检查出甲状腺癌，已经出现淋巴结转移，错过了早期根治的机会',
+                lateDesc: '仍可筛查，但早期问题可能延误，小问题拖成大病，治疗成本与风险大幅上升'
+            },
+            {
+                id: 'check-003',
+                name: '口腔健康年度维护',
+                bestPeriod: '全年龄段',
+                latestPeriod: '全年龄段',
+                lock: 65,
+                cost: 'High',
+                cat: '健康体检',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '牙周病、龋齿是不可逆的，早期干预成本极低，错过后根管治疗、种植牙成本翻几十倍。',
+                mustDo: ['全口洁治（洗牙）', '牙周探诊', '龋齿检查', '口腔全景片（1-2年1次）'],
+                optDo: ['牙齿脱敏', '窝沟封闭（儿童）', '正畸评估'],
+                freq: '每6-12个月1次',
+                todo: ['每半年洗牙1次', '龋齿及时充填', '牙周问题早期治疗'],
+                case: '牙疼才去看牙，本来几百块能补的牙，拖到要做根管治疗+牙冠，花了几千块，还差点拔牙',
+                lateDesc: '发展为牙髓炎、牙周病、牙齿脱落，只能做根管、种植、拔牙，成本与痛苦剧增，无法恢复原生牙齿'
+            },
+            {
+                id: 'check-004',
+                name: '中青年肿瘤早筛初筛',
+                bestPeriod: '30-40',
+                latestPeriod: '45',
+                lock: 75,
+                cost: 'High',
+                cat: '健康体检',
+                crowd: ['newbie', 'middle', 'pregnancy'],
+                gender: 'all',
+                desc: '早期癌症治愈率超90%，中晚期5年生存率不足30%，此阶段是早筛黄金窗口期。',
+                mustDo: ['低剂量胸部CT（肺癌）', '甲状腺超声（甲状腺癌）', '肿瘤标志物全套', '幽门螺杆菌检测'],
+                optDo: ['首次胃肠镜基线检查', '肝脏超声+AFP（乙肝人群）'],
+                femaleMustDo: ['乳腺超声/钼靶（乳腺癌）', '宫颈TCT+HPV（宫颈癌）'],
+                maleMustDo: ['前列腺超声+PSA（前列腺癌）'],
+                freq: '1-2年1次',
+                todo: ['每年1次胸部CT', '女性每年乳腺+宫颈筛查', '35岁完成首次胃肠镜检查'],
+                case: '35岁没做早筛，40岁查出胃癌晚期，医生说如果35岁做胃镜，早期发现完全可以根治',
+                lateDesc: '肿瘤发现时多为中晚期，治疗代价极高，生存率大幅下降，几乎无法根治'
+            },
+            {
+                id: 'check-005',
+                name: '心脑血管风险筛查',
+                bestPeriod: '40-50',
+                latestPeriod: '60',
+                lock: 85,
+                cost: 'Extreme',
+                cat: '健康体检',
+                crowd: ['middle'],
+                gender: 'all',
+                desc: '动脉粥样硬化干预的黄金期，错过后心梗、中风、猝死风险不可逆升高，是我国居民第一死因。',
+                mustDo: ['血脂全套（含低密度脂蛋白）', '糖化血红蛋白', '同型半胱氨酸', '颈动脉超声', '心电图', '心脏超声', '24小时动态血压'],
+                optDo: ['冠脉CTA（高血压/吸烟/家族史人群）', '头颅MRA（高危人群）'],
+                freq: '每年1次',
+                todo: ['每年监测血压血脂血糖', '控制体重与烟酒', '低盐低脂饮食', '规律运动'],
+                case: '45岁没查血脂，50岁突发心梗，放了2个支架，医生说早就有动脉硬化，早期干预完全可以避免',
+                lateDesc: '动脉斑块一旦形成，只能控制无法逆转，心梗、中风风险终身升高，需要终身服药'
+            },
+            {
+                id: 'check-006',
+                name: '中老年全面肿瘤早筛',
+                bestPeriod: '50-65',
+                latestPeriod: '75',
+                lock: 95,
+                cost: 'Extreme',
+                cat: '健康体检',
+                crowd: ['middle'],
+                gender: 'all',
+                desc: '肿瘤高发年龄段，全面早筛是唯一能大幅提升生存率的方式，此阶段发病率占所有癌症的80%以上。',
+                mustDo: ['胃镜+肠镜（每年1次）', '低剂量胸部CT', '肝胆胰脾超声', '全身浅表淋巴结超声', '肿瘤标志物全套'],
+                femaleMustDo: ['乳腺超声/钼靶', '妇科超声+宫颈筛查'],
+                maleMustDo: ['前列腺特异性抗原PSA', '泌尿超声'],
+                freq: '每年1次',
+                todo: ['每年胃肠镜检查', '每年胸部CT', '针对性肿瘤筛查'],
+                case: '55岁不愿做胃肠镜，60岁查出肠癌晚期，已经转移到肝脏，错过了最佳治疗时机',
+                lateDesc: '肿瘤发现时多为终末期，治疗手段有限，5年生存率极低，几乎无法治愈'
+            },
+            {
+                id: 'check-007',
+                name: '糖尿病与代谢综合征筛查',
+                bestPeriod: '30-60',
+                latestPeriod: '70',
+                lock: 80,
+                cost: 'Extreme',
+                cat: '健康体检',
+                crowd: ['middle', 'newbie'],
+                gender: 'all',
+                desc: '糖耐量异常阶段完全可逆，转为糖尿病后需要终身服药，伴随全身多器官并发症，是失明、截肢、肾衰的首要原因。',
+                mustDo: ['空腹血糖', '糖化血红蛋白', '胰岛素释放试验', '血脂全套', '尿酸', '腰围与体脂率评估'],
+                optDo: ['口服葡萄糖耐量试验（OGTT）', '尿微量白蛋白（糖尿病肾病筛查）'],
+                freq: '1-2年1次',
+                todo: ['控制碳水摄入', '规律运动', '控制体重', '定期监测血糖'],
+                case: '35岁体检查出糖耐量异常，没当回事，40岁确诊2型糖尿病，需要终身打胰岛素，还出现了肾病并发症',
+                lateDesc: '转为终身糖尿病，无法根治，只能控制血糖，伴随视网膜病变、肾病、神经病变等不可逆并发症'
+            },
+
+            // ========== 新增扩充分类数据 ==========
+            // 亲子教育
+            {
+                id: 'parent-001',
+                name: '语言敏感期启蒙',
+                bestPeriod: '0-6',
+                latestPeriod: '8',
+                lock: 90,
+                cost: 'Extreme',
+                cat: '亲子教育',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '0-6岁是母语与外语语音感知、词汇爆发、语法结构建立的黄金期，错过后口音与流利度难以追赶。',
+                todo: ['多对话少屏幕','亲子共读','外语儿歌/动画启蒙','口腔肌肉与发音训练'],
+                case: '3岁前几乎不说话，6岁才开始补语言，表达弱、发音不准，社交与学习全面落后',
+                lateDesc: '仍可提升，但语音定型、词汇量差距、表达自信难以追平同龄峰值'
+            },
+            {
+                id: 'parent-002',
+                name: '专注力与规则感建立',
+                bestPeriod: '3-8',
+                latestPeriod: '12',
+                lock: 85,
+                cost: 'Extreme',
+                cat: '亲子教育',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '早期规则感、延迟满足、任务坚持性决定一生学习效率，错过后易多动、拖延、情绪冲动。',
+                todo: ['固定作息','限时屏幕','任务拆解','情绪引导替代打骂'],
+                case: '小时候放任不管，10岁后坐不住、写作业拖拉、情绪暴躁，干预难度极大',
+                lateDesc: '专注力与自控力重建需要长期训练，易形成学习障碍与行为问题'
+            },
+            {
+                id: 'parent-003',
+                name: '阅读习惯奠基',
+                bestPeriod: '4-12',
+                latestPeriod: '15',
+                lock: 80,
+                cost: 'Extreme',
+                cat: '亲子教育',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '小学阶段是深度阅读、文字理解、信息提取能力的关键期，错过后阅读理解终身偏弱。',
+                todo: ['每日固定阅读','亲子共读','逐步过渡到自主阅读','远离短视频过载'],
+                case: '小学只刷题不阅读，初中后语文、历史、政治全面拉胯，理解速度跟不上',
+                lateDesc: '理解速度、信息密度、抽象思维难以追平，影响所有文科与跨学科学习'
+            },
+            // 养老规划
+            {
+                id: 'elder-001',
+                name: '养老金储备启动',
+                bestPeriod: '30-50',
+                latestPeriod: '60',
+                lock: 85,
+                cost: 'Extreme',
+                cat: '养老规划',
+                crowd: ['middle'],
+                gender: 'all',
+                desc: '复利+时间决定养老质量，晚10年启动，缺口可能翻倍。',
+                todo: ['强制养老储蓄','商业养老险','指数基金长期配置','控制负债'],
+                case: '40岁才开始存养老金，60岁退休时储备不足，生活质量大幅下降',
+                lateDesc: '时间窗口关闭，只能压缩生活质量或延迟退休'
+            },
+            {
+                id: 'elder-002',
+                name: '慢病预防与体能储备',
+                bestPeriod: '40-65',
+                latestPeriod: '75',
+                lock: 80,
+                cost: 'Extreme',
+                cat: '养老规划',
+                crowd: ['middle'],
+                gender: 'all',
+                desc: '肌肉量、骨密度、心肺功能、平衡能力决定晚年失能风险。',
+                todo: ['力量训练','补钙维D','平衡训练','定期体检监测'],
+                case: '50岁后不运动，70岁跌倒骨折，长期卧床失能，生活无法自理',
+                lateDesc: '失能风险不可逆，照护成本与痛苦指数级上升'
+            },
+            // 法律风险
+            {
+                id: 'law-001',
+                name: '劳动合同与社保合规',
+                bestPeriod: '入职-试用期',
+                latestPeriod: '入职1个月',
+                lock: 90,
+                cost: 'Extreme',
+                cat: '法律风险',
+                crowd: ['newbie'],
+                gender: 'all',
+                desc: '试用期、社保、加班费、竞业限制、合同条款窗口期极短。',
+                todo: ['合同逐条审阅','社保缴纳确认','保留工资流水','不签空白合同'],
+                case: '入职没看合同，被坑试用期不缴社保，离职维权举证困难',
+                lateDesc: '维权成本高、周期长、证据易灭失，often 只能认亏'
+            },
+            {
+                id: 'law-002',
+                name: '借贷与担保风险窗口期',
+                bestPeriod: '签字前',
+                latestPeriod: '签字瞬间',
+                lock: 95,
+                cost: 'Extreme',
+                cat: '法律风险',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '签字即生效，担保/借贷/欠条不可逆，事后几乎无法翻盘。',
+                todo: ['不替人担保','不签空白文件','明确利率与期限','保留全部凭证'],
+                case: '帮朋友担保，朋友跑路，自己被执行、限高、冻结资产',
+                lateDesc: '法律责任终身，征信与生活长期受影响'
+            },
+            // 心理健康
+            {
+                id: 'mental-001',
+                name: '抑郁焦虑早期干预',
+                bestPeriod: '首次出现-3个月',
+                latestPeriod: '6个月',
+                lock: 85,
+                cost: 'Extreme',
+                cat: '心理健康',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '早期干预治愈率高、病程短、复发低，拖延易慢性化、难治化。',
+                todo: ['及时就医','规范用药/心理治疗','睡眠饮食运动','社会支持'],
+                case: '拖延半年才就诊，转为慢性抑郁，反复发作，影响工作婚姻',
+                lateDesc: '病程慢性化，治疗周期长、复发率高、社会功能受损'
+            },
+            {
+                id: 'mental-002',
+                name: '创伤修复窗口期',
+                bestPeriod: '创伤后-1年',
+                latestPeriod: '3年',
+                lock: 75,
+                cost: 'High',
+                cat: '心理健康',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '重大丧失、事故、暴力、情感伤害的早期修复效果最好。',
+                todo: ['专业心理咨询','情绪表达','安全关系重建','避免压抑'],
+                case: '创伤后长期压抑，多年后出现闪回、失眠、惊恐、人际回避',
+                lateDesc: '易形成PTSD、人格僵化、亲密关系障碍，修复更漫长'
+            },
+            // 学习能力
+            {
+                id: 'study-001',
+                name: '逻辑思维定型期',
+                bestPeriod: '7-16',
+                latestPeriod: '22',
+                lock: 80,
+                cost: 'Extreme',
+                cat: '学习能力',
+                crowd: ['student'],
+                gender: 'all',
+                desc: '抽象推理、数学逻辑、因果分析、系统思维关键期。',
+                todo: ['数学基础扎实','逻辑题训练','科学探究','问题拆解'],
+                case: '小学逻辑没打好，初高中数理全面吃力，难以补救',
+                lateDesc: '逻辑天花板基本定型，后续提升空间有限'
+            },
+            {
+                id: 'study-002',
+                name: '记忆策略与效率窗口',
+                bestPeriod: '10-25',
+                latestPeriod: '35',
+                lock: 70,
+                cost: 'High',
+                cat: '学习能力',
+                crowd: ['student','newbie'],
+                gender: 'all',
+                desc: '机械记忆→理解记忆→结构化记忆的转型期。',
+                todo: ['理解优先','思维导图','间隔重复','主动回忆'],
+                case: '一直死记硬背，成年后学习效率低、记不住、易忘',
+                lateDesc: '学习效率难以大幅提升，考证/转行成本更高'
+            },
+            // 社交人脉
+            {
+                id: 'social-001',
+                name: '高质量人脉建立',
+                bestPeriod: '18-35',
+                latestPeriod: '45',
+                lock: 60,
+                cost: 'Medium',
+                cat: '社交人脉',
+                crowd: ['newbie','middle'],
+                gender: 'all',
+                desc: '同学、同事、同行、导师关系最纯粹、成本最低、长期价值最高。',
+                todo: ['真诚利他','持续价值输出','定期维护','筛选圈层'],
+                case: '年轻时封闭社交，中年后想拓展资源，难度与成本极高',
+                lateDesc: '人脉质量与密度下降，机会获取更难'
+            },
+            {
+                id: 'social-002',
+                name: '沟通表达与公众演讲',
+                bestPeriod: '12-30',
+                latestPeriod: '40',
+                lock: 65,
+                cost: 'Medium',
+                cat: '社交人脉',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '表达、说服、谈判、呈现能力决定职业上限。',
+                todo: ['刻意练习','结构化表达','复盘反馈','模拟场景'],
+                case: '一直回避表达，中年后晋升、管理、合作全面受限',
+                lateDesc: '仍可提升，但自信与熟练度难以达到峰值水平'
+            },
+            // 形象气质
+            {
+                id: 'image-001',
+                name: '体态与形体矫正',
+                bestPeriod: '10-25',
+                latestPeriod: '35',
+                lock: 75,
+                cost: 'High',
+                cat: '形象气质',
+                crowd: ['student','newbie'],
+                gender: 'all',
+                desc: '驼背、圆肩、头前伸、骨盆问题在骨骼定型前干预效果最好。',
+                todo: ['核心力量','拉伸放松','姿势提醒','力量训练'],
+                case: '长期驼背，成年后肩颈腰痛、气质差、自信受影响',
+                lateDesc: '骨骼与肌肉模式固化，矫正周期长、效果有限'
+            },
+            {
+                id: 'image-002',
+                name: '皮肤与抗光老化',
+                bestPeriod: '18-30',
+                latestPeriod: '40',
+                lock: 80,
+                cost: 'High',
+                cat: '形象气质',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '光老化占皮肤衰老80%，早期防晒决定长期状态。',
+                todo: ['每日防晒','保湿修复','规律作息','减少刺激'],
+                case: '年轻时不防晒，35岁后色斑、松弛、皱纹明显，难以逆转',
+                lateDesc: '光损伤累积不可逆，只能延缓无法回到早期状态'
+            },
+            // 生活方式
+            {
+                id: 'life-001',
+                name: '饮食结构定型',
+                bestPeriod: '12-30',
+                latestPeriod: '40',
+                lock: 70,
+                cost: 'High',
+                cat: '生活方式',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '高糖高油高盐→均衡饮食的窗口期，后期改口味极难。',
+                todo: ['控糖控油控盐','足量蛋白蔬菜','规律三餐','减少加工食品'],
+                case: '长期外卖重口，中年后三高、脂肪肝、痛风找上门',
+                lateDesc: '代谢与口味固化，调整难度大、反弹率高'
+            },
+            {
+                id: 'life-002',
+                name: '睡眠节律建立',
+                bestPeriod: '15-30',
+                latestPeriod: '40',
+                lock: 85,
+                cost: 'Extreme',
+                cat: '生活方式',
+                crowd: ['all'],
+                gender: 'all',
+                desc: '生物钟、褪黑素、深睡眠结构一旦破坏，修复极难。',
+                todo: ['固定作息','睡前远离屏幕','黑暗安静环境','不熬夜补觉'],
+                case: '长期熬夜，中年后失眠、焦虑、记忆力下降、内分泌紊乱',
+                lateDesc: '睡眠结构损伤慢性化，易发展为顽固性失眠'
+            }
+        ];
+
+        // ===================== 核心工具函数 =====================
+        // 获取窗口状态
+        function getWindowStatus(item) {
+            const { bestPeriod, latestPeriod } = item;
+            if (bestPeriod === '全年龄段') {
+                return {
+                    key: 'open',
+                    text: '🔓 窗口开放',
+                    class: 'status-open',
+                    isActive: true
+                };
+            }
+            const [bestStart, bestEnd] = bestPeriod.split('-').map(Number);
+            const latestEnd = Number(latestPeriod);
+
+            if (currentState.age < bestStart) {
+                return {
+                    key: 'open',
+                    text: '🔓 即将开放',
+                    class: 'status-open',
+                    isActive: true
+                };
+            } else if (currentState.age >= bestStart && currentState.age <= bestEnd) {
+                if (bestEnd - currentState.age <= 3) {
+                    return {
+                        key: 'countdown',
+                        text: '⏳ 倒计时',
+                        class: 'status-countdown',
+                        isActive: true
+                    };
+                }
+                return {
+                    key: 'open',
+                    text: '🔓 窗口开放',
+                    class: 'status-open',
+                    isActive: true
+                };
+            } else if (currentState.age > bestEnd && currentState.age <= latestEnd) {
+                return {
+                    key: 'highcost',
+                    text: '🔁 高代价补救',
+                    class: 'status-highcost',
+                    isActive: true
+                };
+            } else {
+                return {
+                    key: 'closed',
+                    text: '❌ 窗口已关闭',
+                    class: 'status-closed',
+                    isActive: false
+                };
+            }
+        }
+
+        // 筛选窗口数据
+        function filterWindows() {
+            const { gender, crowd, cat, status, keyword } = currentState;
+            return windowData.filter(item => {
+                if (gender !== 'all' && item.gender !== 'all' && item.gender !== gender) return false;
+                if (crowd !== 'all' && !item.crowd.includes(crowd)) return false;
+                if (cat !== 'all' && item.cat !== cat) return false;
+                const itemStatus = getWindowStatus(item);
+                if (status !== 'all' && itemStatus.key !== status) return false;
+                if (keyword && !item.name.includes(keyword) && !item.desc.includes(keyword) && !item.todo.join('').includes(keyword)) return false;
+                return true;
+            });
+        }
+
+        // 计算年龄统计
+        function calcAgeStats() {
+            const stats = { open: 0, countdown: 0, highcost: 0, closed: 0, activeList: [] };
+            windowData.forEach(item => {
+                const status = getWindowStatus(item);
+                stats[status.key]++;
+                if (status.isActive) stats.activeList.push(item);
+            });
+            stats.topTodo = stats.activeList.sort((a,b) => b.lock - a.lock).slice(0,3).map(i => i.name).join('、');
+            return stats;
+        }
+
+        // 保存用户标记到本地
+        function saveUserMarks() {
+            localStorage.setItem('lifeWindowMarks', JSON.stringify(currentState.userMarks));
+        }
+
+        // 生成导出内容
+        function generateExportContent() {
+            const stats = calcAgeStats();
+            const activeWindows = filterWindows().filter(item => getWindowStatus(item).isActive);
+            let content = `===== ${currentState.age}岁 人生时间窗口行动清单 =====\n`;
+            content += `生成时间：${new Date().toLocaleString()}\n`;
+            content += `开放窗口：${stats.open}个 | 倒计时：${stats.countdown}个 | 高代价补救：${stats.highcost}个 | 已关闭：${stats.closed}个\n`;
+            content += `核心待办TOP3：${stats.topTodo}\n\n`;
+            content += `===== 可执行窗口清单 =====\n\n`;
+            activeWindows.sort((a,b) => b.lock - a.lock).forEach(item => {
+                const status = getWindowStatus(item);
+                content += `【${status.text}】${item.name}\n`;
+                content += `最佳执行期：${item.bestPeriod}岁 | 最晚补救期：${item.latestPeriod}岁\n`;
+                content += `核心行动：${item.todo.join('、')}\n`;
+                content += `-------------------------\n`;
+            });
+            content += `\n【说明】本清单仅为参考，健康相关请遵医嘱，决策请理性评估`;
+            return content;
+        }
+
+        // ===================== 渲染函数 =====================
+        // 渲染年龄总结
+        function renderSummary() {
+            const stats = calcAgeStats();
+            document.getElementById('open-count').textContent = stats.open;
+            document.getElementById('countdown-count').textContent = stats.countdown;
+            document.getElementById('closed-count').textContent = stats.closed;
+            document.getElementById('top-todo').textContent = stats.topTodo;
+        }
+
+        // 渲染卡片
+        function renderCards() {
+            const container = document.getElementById('cards-container');
+            const filteredData = filterWindows();
+            container.innerHTML = '';
+
+            filteredData.forEach(item => {
+                const status = getWindowStatus(item);
+                const userMark = currentState.userMarks[item.id] || 'none';
+                const costColor = costRule[item.cost].color;
+
+                let cardHTML = `
+                    <div class="card rounded-lg bg-white overflow-hidden">
+                        <div class="p-5">
+                            <div class="mb-3">
+                                <span class="${status.class} text-xs px-2 py-1 rounded-full inline-block">${status.text}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-1">${item.name}</h3>
+                            <p class="text-xs text-gray-500 mb-2">
+                                最佳：${item.bestPeriod}岁 | 最晚补救：${item.latestPeriod}岁
+                            </p>
+                            <p class="text-sm text-gray-600 mb-3">${item.desc}</p>
+                `;
+
+                if (item.mustDo) {
+                    cardHTML += `<div class="text-xs bg-gray-50 p-2 rounded mb-2">`;
+                    item.mustDo.forEach(i => { cardHTML += `<span class="item-tag tag-must">必做：${i}</span>`; });
+                    if (currentState.gender === 'female' && item.femaleMustDo) {
+                        item.femaleMustDo.forEach(i => { cardHTML += `<span class="item-tag tag-must">女性必做：${i}</span>`; });
+                    }
+                    if (currentState.gender === 'male' && item.maleMustDo) {
+                        item.maleMustDo.forEach(i => { cardHTML += `<span class="item-tag tag-must">男性必做：${i}</span>`; });
+                    }
+                    if (item.optDo) {
+                        item.optDo.forEach(i => { cardHTML += `<span class="item-tag tag-opt">选做：${i}</span>`; });
+                    }
+                    cardHTML += `</div>`;
+                    if (item.freq) cardHTML += `<p class="text-xs text-gray-500 mb-2">推荐频次：${item.freq}</p>`;
+                }
+
+                cardHTML += `
+                    <div class="text-xs mb-2"><span class="font-bold">核心行动：</span>${item.todo.join(' | ')}</div>
+                `;
+
+                if (item.case) {
+                    cardHTML += `<details><summary>查看踩坑案例</summary><p class="mt-1">${item.case}</p></details>`;
+                }
+
+                if (item.lateDesc) {
+                    cardHTML += `<p class="text-xs text-gray-500 mt-2">错过后果：${item.lateDesc}</p>`;
+                }
+
+                cardHTML += `
+                    <div class="mt-3 pt-3 border-t flex justify-between items-center text-xs">
+                        <div><span class="text-gray-500">锁死强制力：</span><span class="font-bold text-gray-800">${item.lock}%</span></div>
+                        <div><span class="text-gray-500">补救代价：</span><span class="${costColor}">${item.cost}</span></div>
+                    </div>
+                    <div class="mt-3 flex gap-2 justify-end">
+                        <button class="tag-btn ${userMark === 'todo' ? 'tag-todo' : ''}" data-id="${item.id}" data-mark="todo">待办</button>
+                        <button class="tag-btn ${userMark === 'done' ? 'tag-done' : ''}" data-id="${item.id}" data-mark="done">已完成</button>
+                        <button class="tag-btn ${userMark === 'ignore' ? 'tag-ignore' : ''}" data-id="${item.id}" data-mark="ignore">忽略</button>
+                    </div>
+                </div></div>`;
+
+                const cardElement = document.createElement('div');
+                cardElement.innerHTML = cardHTML;
+                container.appendChild(cardElement);
+            });
+
+            document.querySelectorAll('.tag-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.target.dataset.id;
+                    const mark = e.target.dataset.mark;
+                    currentState.userMarks[id] = currentState.userMarks[id] === mark ? 'none' : mark;
+                    saveUserMarks();
+                    renderCards();
+                });
+            });
+        }
+
+        // 全量渲染
+        function renderAll() {
+            renderSummary();
+            renderCards();
+        }
+
+        // ===================== 事件绑定 =====================
+        function bindAllEvents() {
+            const ageSlider = document.getElementById('age-slider');
+            const ageDisplay = document.getElementById('age-display');
+            ageSlider.addEventListener('input', (e) => {
+                currentState.age = parseInt(e.target.value);
+                ageDisplay.textContent = `${currentState.age} 岁`;
+                renderAll();
+            });
+
+            document.querySelectorAll('.age-jump').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    currentState.age = parseInt(e.target.textContent);
+                    ageSlider.value = currentState.age;
+                    ageDisplay.textContent = `${currentState.age} 岁`;
+                    renderAll();
+                });
+            });
+
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.gender-btn').forEach(b => {
+                        b.classList.remove('bg-green-500', 'text-white');
+                        b.classList.add('bg-white', 'text-gray-800');
+                    });
+                    e.target.classList.add('bg-green-500', 'text-white');
+                    currentState.gender = e.target.dataset.gender;
+                    renderAll();
+                });
+            });
+
+            document.querySelectorAll('.crowd-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.crowd-btn').forEach(b => b.classList.remove('active', 'bg-gray-200'));
+                    e.target.classList.add('active', 'bg-gray-200');
+                    currentState.crowd = e.target.dataset.crowd;
+                    renderAll();
+                });
+            });
+
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active', 'bg-green-500', 'text-white'));
+                    e.target.classList.add('active', 'bg-green-500', 'text-white');
+                    currentState.cat = e.target.dataset.cat;
+                    renderAll();
+                });
+            });
+
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active', 'bg-gray-200'));
+                    e.target.classList.add('active', 'bg-gray-200');
+                    currentState.status = e.target.dataset.status;
+                    renderAll();
+                });
+            });
+
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                currentState.keyword = e.target.value.trim();
+                renderCards();
+            });
+
+            const exportModal = document.getElementById('export-modal');
+            const exportContent = document.getElementById('export-content');
+            document.getElementById('export-btn').addEventListener('click', () => {
+                exportContent.value = generateExportContent();
+                exportModal.classList.remove('hidden');
+            });
+            document.getElementById('close-export').addEventListener('click', () => {
+                exportModal.classList.add('hidden');
+            });
+            document.getElementById('copy-btn').addEventListener('click', () => {
+                exportContent.select();
+                document.execCommand('copy');
+                alert('清单已复制到剪贴板');
+            });
+            document.getElementById('download-btn').addEventListener('click', () => {
+                const blob = new Blob([exportContent.value], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${currentState.age}岁人生时间窗口清单.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+            exportModal.addEventListener('click', (e) => {
+                if (e.target === exportModal) exportModal.classList.add('hidden');
+            });
+        }
+
+        // ===================== 初始化启动 =====================
+        window.onload = () => {
+            bindAllEvents();
+            renderAll();
+        };
+    </script>
+</body>
+</html>
