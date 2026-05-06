@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孙子兵法 · 思维导图</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --bg: #0d0b09;
+  --bg2: #141210;
+  --gold: #c9a96e;
+  --gold-bright: #e8c98a;
+  --gold-dim: #7a6240;
+  --parchment: #f0e4cc;
+  --parchment-dim: #b8a888;
+  --red: #b83a3a;
+  --red-dim: #6b2222;
+  --text: #d4c4a8;
+  --text-dim: #8a7a62;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans SC', sans-serif;
+  overflow: hidden;
+  width: 100vw; height: 100vh;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+body.dragging { cursor: grabbing; }
+
+/* 背景层 */
+.bg-layer {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 45%, rgba(201,169,110,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(30,25,18,1) 0%, var(--bg) 100%);
+}
+.bg-vignette {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+}
+#bg-canvas {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+}
+
+/* 视口 */
+#viewport {
+  position: absolute; inset: 0; z-index: 10;
+  overflow: hidden;
+}
+#world {
+  position: absolute; left: 0; top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* 连线SVG */
+#connections {
+  position: absolute; left: 0; top: 0;
+  width: 1px; height: 1px;
+  overflow: visible; z-index: 1;
+}
+#connections path {
+  fill: none;
+  stroke-linecap: round;
+  transition: opacity 0.4s;
+}
+.conn-main { stroke: var(--gold-dim); stroke-width: 2.5; opacity: 0.5; }
+.conn-sub { stroke-width: 1.5; opacity: 0.3; }
+.conn-main.highlighted { opacity: 0.9; stroke-width: 3; }
+.conn-sub.highlighted { opacity: 0.7; stroke-width: 2; }
+.conn-main.dimmed, .conn-sub.dimmed { opacity: 0.08; }
+
+/* 节点 */
+.node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: filter 0.35s, opacity 0.35s;
+  z-index: 5;
+}
+.node.dimmed { opacity: 0.15; filter: grayscale(0.8); }
+
+.node-center {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 32px;
+  color: var(--gold-bright);
+  text-shadow: 0 0 40px rgba(201,169,110,0.4), 0 0 80px rgba(201,169,110,0.15);
+  letter-spacing: 8px;
+  padding: 16px 32px;
+  z-index: 10;
+}
+.node-center::before {
+  content: '';
+  position: absolute; inset: -20px;
+  border: 1.5px solid rgba(201,169,110,0.2);
+  border-radius: 8px;
+  animation: centerPulse 4s ease-in-out infinite;
+}
+.node-center::after {
+  content: '';
+  position: absolute; inset: -6px;
+  border: 1px solid rgba(201,169,110,0.12);
+  border-radius: 4px;
+}
+@keyframes centerPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.04); }
+}
+
+.node-chapter {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--parchment);
+  padding: 10px 22px;
+  border-radius: 6px;
+  background: rgba(20,18,14,0.85);
+  border: 1.5px solid;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.3s cubic-bezier(.2,.8,.3,1.2),
+              box-shadow 0.3s, border-color 0.3s, background 0.3s;
+  z-index: 8;
+}
+.node-chapter:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 25px rgba(201,169,110,0.15);
+  background: rgba(30,27,20,0.95);
+}
+.node-chapter .chapter-num {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 300;
+  font-size: 11px;
+  opacity: 0.5;
+  margin-right: 6px;
+}
+
+.node-sub {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--parchment-dim);
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: rgba(15,13,10,0.7);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform 0.3s cubic-bezier(.2,.8,.3,1.2),
+              color 0.3s, border-color 0.3s, background 0.3s;
+  z-index: 6;
+}
+.node-sub:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  color: var(--parchment);
+  border-color: rgba(201,169,110,0.3);
+  background: rgba(25,22,16,0.9);
+}
+
+/* 详情面板 */
+#detail-panel {
+  position: fixed; right: -420px; top: 50%;
+  transform: translateY(-50%);
+  width: 380px; max-height: 80vh;
+  background: rgba(18,16,12,0.95);
+  border: 1px solid rgba(201,169,110,0.15);
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  padding: 32px 28px;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: right 0.45s cubic-bezier(.22,.68,.36,1);
+  overflow-y: auto;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+}
+#detail-panel.open { right: 0; }
+#detail-panel::-webkit-scrollbar { width: 4px; }
+#detail-panel::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+#detail-panel .panel-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(201,169,110,0.2);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+#detail-panel .panel-close:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(201,169,110,0.08);
+}
+
+#detail-panel .panel-num {
+  font-size: 12px; font-weight: 300;
+  color: var(--gold-dim);
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+#detail-panel .panel-title {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--gold-bright);
+  margin-bottom: 4px;
+  letter-spacing: 4px;
+}
+#detail-panel .panel-alias {
+  font-size: 13px; color: var(--text-dim);
+  margin-bottom: 20px;
+}
+#detail-panel .panel-divider {
+  width: 40px; height: 1.5px;
+  background: var(--gold-dim);
+  margin-bottom: 20px;
+  border-radius: 1px;
+}
+#detail-panel .panel-quote {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14.5px;
+  color: var(--parchment-dim);
+  line-height: 1.9;
+  padding: 16px 20px;
+  border-left: 2px solid var(--gold-dim);
+  background: rgba(201,169,110,0.03);
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 24px;
+}
+#detail-panel .panel-subtitle {
+  font-size: 13px; font-weight: 500;
+  color: var(--gold);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+#detail-panel .panel-points {
+  list-style: none; padding: 0;
+}
+#detail-panel .panel-points li {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.7;
+  padding: 6px 0 6px 16px;
+  position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+#detail-panel .panel-points li::before {
+  content: '';
+  position: absolute; left: 0; top: 14px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+}
+
+/* 顶部标题 */
+#top-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 20px 30px;
+  z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  pointer-events: none;
+}
+#top-bar > * { pointer-events: auto; }
+.top-title {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 6px;
+}
+.top-subtitle {
+  font-size: 11px;
+  color: rgba(138,122,98,0.5);
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+
+/* 底部控制栏 */
+#controls {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 10px;
+  background: rgba(18,16,12,0.85);
+  border: 1px solid rgba(201,169,110,0.12);
+  border-radius: 40px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 50;
+}
+#controls button {
+  width: 36px; height: 36px;
+  border: none; border-radius: 50%;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+#controls button:hover {
+  background: rgba(201,169,110,0.1);
+  color: var(--gold);
+}
+#controls .zoom-text {
+  font-size: 12px;
+  color: var(--text-dim);
+  min-width: 48px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+#controls .sep {
+  width: 1px; height: 20px;
+  background: rgba(201,169,110,0.12);
+  margin: 0 4px;
+}
+
+/* 提示 */
+#hint {
+  position: fixed; bottom: 80px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  opacity: 0.6;
+  z-index: 40;
+  animation: hintFade 6s ease forwards;
+  pointer-events: none;
+}
+@keyframes hintFade {
+  0%, 60% { opacity: 0.6; }
+  100% { opacity: 0; display: none; }
+}
+
+/* 入场动画 */
+.node-center { animation: nodeIn 0.8s ease both; animation-delay: 0.2s; }
+@keyframes nodeIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-vignette"></div>
+<canvas id="bg-canvas"></canvas>
+
+<div id="viewport">
+  <div id="world">
+    <svg id="connections"></svg>
+  </div>
+</div>
+
+<div id="top-bar">
+  <div>
+    <div class="top-title">孙子兵法</div>
+    <div class="top-subtitle">SUN TZU'S ART OF WAR · MIND MAP</div>
+  </div>
+</div>
+
+<div id="controls">
+  <button onclick="zoomIn()" title="放大" aria-label="放大"><i class="fas fa-plus"></i></button>
+  <span class="zoom-text" id="zoomText">100%</span>
+  <button onclick="zoomOut()" title="缩小" aria-label="缩小"><i class="fas fa-minus"></i></button>
+  <div class="sep"></div>
+  <button onclick="resetView()" title="重置视图" aria-label="重置视图"><i class="fas fa-crosshairs"></i></button>
+  <button onclick="fitAll()" title="适应全部" aria-label="适应全部"><i class="fas fa-expand"></i></button>
+</div>
+
+<div id="hint">拖拽平移 · 滚轮缩放 · 点击篇章查看详情</div>
+
+<div id="detail-panel">
+  <button class="panel-close" onclick="closePanel()" aria-label="关闭"><i class="fas fa-times"></i></button>
+  <div class="panel-num" id="panelNum"></div>
+  <div class="panel-title" id="panelTitle"></div>
+  <div class="panel-alias" id="panelAlias"></div>
+  <div class="panel-divider"></div>
+  <div class="panel-quote" id="panelQuote"></div>
+  <div class="panel-subtitle">核心要义</div>
+  <ul class="panel-points" id="panelPoints"></ul>
+</div>
+
+<script>
+/* ========== 数据 ========== */
+const DATA = {
+  title: '孙子兵法',
+  chapters: [
+    {
+      num: 1, name: '始计篇', alias: '论战略筹划',
+      color: '#c9a96e',
+      subs: ['五事七计', '诡道十二法', '庙算胜败'],
+      quote: '兵者，国之大事，死生之地，存亡之道，不可不察也。',
+      points: ['战争是国家大事，必须慎重决策','以"道天地将法"五事衡量敌我','通过"七计"比较双方优劣','诡道是战略欺骗的核心手段','"庙算"决定战争胜负的基本走向']
+    },
+    {
+      num: 2, name: '作战篇', alias: '论战争经济',
+      color: '#d4a574',
+      subs: ['兵贵胜不贵久', '因粮于敌', '杀敌者怒也'],
+      quote: '其用战也贵胜，久则钝兵挫锐，攻城则力屈。',
+      points: ['战争消耗巨大，久战必亡国','速战速决是基本经济原则','"因粮于敌"减轻本国负担','重赏激励士气','精通军事者应善用敌方资源']
+    },
+    {
+      num: 3, name: '谋攻篇', alias: '论战略进攻',
+      color: '#e8c98a',
+      subs: ['不战而屈人', '上兵伐谋', '知彼知己'],
+      quote: '不战而屈人之兵，善之善者也。',
+      points: ['最高境界是不战而胜','进攻四策：伐谋、伐交、伐兵、攻城','"知己知彼，百战不殆"是军事名言','将帅的五种致命弱点','君主任将的三大禁忌']
+    },
+    {
+      num: 4, name: '军形篇', alias: '论军事实力',
+      color: '#a8b86e',
+      subs: ['先胜后战', '善守善攻', '不可胜在己'],
+      quote: '昔之善战者，先为不可胜，以待敌之可胜。',
+      points: ['先创造不败条件，再寻求胜利','防守要如藏于九地之下','进攻要如动于九天之上','实力是胜利的基础','"胜兵先胜而后求战"']
+    },
+    {
+      num: 5, name: '兵势篇', alias: '论战术运用',
+      color: '#7ab87a',
+      subs: ['奇正相生', '势如彍弩', '以利动之'],
+      quote: '凡战者，以正合，以奇胜。',
+      points: ['"正"是常规战法，"奇"是变通战法','奇正变化无穷，如环之无端','善于造势，借势取胜','择人而任势，不责于个人','节奏如张弛，动静如水火']
+    },
+    {
+      num: 6, name: '虚实篇', alias: '论兵力部署',
+      color: '#6eb8a0',
+      subs: ['避实击虚', '致人而不致于人', '形人而我无形'],
+      quote: '兵之形，避实而击虚。',
+      points: ['掌握主动权是核心原则','"致人而不致于人"——牵着敌人走','让敌人暴露而自己隐蔽','集中兵力，各个击破','虚实变幻使敌人无法预判']
+    },
+    {
+      num: 7, name: '军争篇', alias: '论战场机动',
+      color: '#6eb8c8',
+      subs: ['以迂为直', '兵以诈立', '风林火山'],
+      quote: '其疾如风，其徐如林，侵掠如火，不动如山。',
+      points: ['"风林火山"是行动准则的经典表述','以迂回间接方式达到直捷目的','军争有利的八项原则','用兵八法与变通','"治气、治心、治力、治变"四治']
+    },
+    {
+      num: 8, name: '九变篇', alias: '论灵活应变',
+      color: '#6e98c8',
+      subs: ['智者之虑杂于利害', '将受命于君', '五危之戒'],
+      quote: '智者之虑，必杂于利害。杂于利而务可信，杂于害而患可解。',
+      points: ['将帅须通晓变通之理','从利与害两方面思考问题','"君命有所不受"的权变思想','将帅五种性格缺陷导致的危险','通晓"九地"之变才能用兵']
+    },
+    {
+      num: 9, name: '行军篇', alias: '论行军驻扎',
+      color: '#7a7ac8',
+      subs: ['处军相敌', '相敌三十二法', '令之以文齐之以武'],
+      quote: '令素行以教其民，则民服；令不素行，则民不服。',
+      points: ['山地、河川、沼泽、平地四种处军法','三十二种观察判断敌情的方法','"相敌"是战场侦察的核心','文武兼施治军原则','兵非益多，在于精练统一']
+    },
+    {
+      num: 10, name: '地形篇', alias: '论地形利用',
+      color: '#a06ec8',
+      subs: ['六种地形', '六败之因', '进不求名退不避罪'],
+      quote: '知彼知己，胜乃不殆；知天知地，胜乃可全。',
+      points: ['通、挂、支、隘、险、远六种地形','六种导致失败的原因','将帅的道德担当：进不求名退不避罪','"视卒如婴儿故可与之赴深溪"','地形是辅助胜利的重要条件']
+    },
+    {
+      num: 11, name: '九地篇', alias: '论战略态势',
+      color: '#c86e9a',
+      subs: ['九地之变', '投之亡地然后存', '兵之情主速'],
+      quote: '投之亡地然后存，陷之死地然后生。',
+      points: ['散地、轻地、争地等九种战略态势','"围地则谋，死地则战"的原则','心理操控与士气激励','兵之情主速，乘人之不及','"始如处女，后如脱兔"']
+    },
+    {
+      num: 12, name: '火攻篇', alias: '论火攻战术',
+      color: '#c86e6e',
+      subs: ['火攻五目标', '发火有时起火有日', '主不可以怒而兴师'],
+      quote: '主不可以怒而兴师，将不可以愠而致战。',
+      points: ['火人、火积、火辎、火库、火队五种目标','火攻与水攻的比较','天时条件对火攻的决定性影响','"怒可以复喜，愠可以复悦"的理性','"明主虑之，良将修之"的慎重态度']
+    },
+    {
+      num: 13, name: '用间篇', alias: '论情报谍报',
+      color: '#c89a6e',
+      subs: ['五间俱起', '先知者不可取于鬼神', '上智为间'],
+      quote: '故明君贤将，所以动而胜人，成功出于众者，先知也。',
+      points: ['情报是决策的首要前提','因间、内间、反间、死间、生间五类','"三军之事，莫亲于间"','"上智为间"——用最聪明的人做间谍','间谍费用虽大，回报无穷']
+    }
+  ]
+};
+
+/* ========== 布局参数 ========== */
+const CX = 0, CY = 0;
+const LAYER1_DIST = 300;
+const LAYER2_DIST = 170;
+const LAYER2_ANGLE = 0.35;
+
+/* ========== 布局计算 ========== */
+function computeLayout() {
+  const n = DATA.chapters.length;
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  const nodes = [];
+  const conns = [];
+
+  // 中心节点
+  nodes.push({ id:'center', x:CX, y:CY, type:'center', text:DATA.title, color:'#c9a96e' });
+
+  DATA.chapters.forEach((ch, i) => {
+    const angle = i * goldenAngle - Math.PI / 2;
+    const cx = CX + LAYER1_DIST * Math.cos(angle);
+    const cy = CY + LAYER1_DIST * Math.sin(angle);
+    const nodeId = `ch${i}`;
+
+    nodes.push({ id:nodeId, x:cx, y:cy, type:'chapter', text:ch.name, color:ch.color, num:ch.num, data:ch });
+    conns.push({ from:'center', to:nodeId, color:ch.color, type:'main', chIdx:i });
+
+    ch.subs.forEach((sub, j) => {
+      const subAngle = angle + (j - (ch.subs.length - 1) / 2) * LAYER2_ANGLE;
+      const sx = cx + LAYER2_DIST * Math.cos(subAngle);
+      const sy = cy + LAYER2_DIST * Math.sin(subAngle);
+      const subId = `sub${i}_${j}`;
+
+      nodes.push({ id:subId, x:sx, y:sy, type:'sub', text:sub, color:ch.color, chIdx:i });
+      conns.push({ from:nodeId, to:subId, color:ch.color, type:'sub', chIdx:i });
+    });
+  });
+
+  return { nodes, conns };
+}
+
+const layout = computeLayout();
+
+/* ========== 渲染 ========== */
+const world = document.getElementById('world');
+const svgEl = document.getElementById('connections');
+
+// 创建连线
+layout.conns.forEach(c => {
+  const fromNode = layout.nodes.find(n => n.id === c.from);
+  const toNode = layout.nodes.find(n => n.id === c.to);
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  const dx = toNode.x - fromNode.x;
+  const dy = toNode.y - fromNode.y;
+  const cpOff = c.type === 'main' ? 0.4 : 0.45;
+  const cpx = fromNode.x + dx * cpOff;
+  const cpy = fromNode.y + dy * cpOff;
+  path.setAttribute('d', `M${fromNode.x},${fromNode.y} Q${cpx},${cpy} ${toNode.x},${toNode.y}`);
+  path.setAttribute('class', `conn-${c.type}`);
+  path.setAttribute('stroke', c.color);
+  path.setAttribute('data-ch', c.chIdx);
+  path.id = `conn-${c.from}-${c.to}`;
+  svgEl.appendChild(path);
+});
+
+// 创建节点
+layout.nodes.forEach((n, idx) => {
+  const el = document.createElement('div');
+  el.className = `node node-${n.type}`;
+  el.style.left = n.x + 'px';
+  el.style.top = n.y + 'px';
+  el.dataset.id = n.id;
+  if (n.chIdx !== undefined) el.dataset.ch = n.chIdx;
+
+  if (n.type === 'center') {
+    el.textContent = n.text;
+  } else if (n.type === 'chapter') {
+    el.innerHTML = `<span class="chapter-num">第${n.num}篇</span>${n.text}`;
+    el.style.borderColor = n.color + '55';
+    if (n.data) {
+      el.addEventListener('click', () => openPanel(n.data, n.color));
+      el.addEventListener('mouseenter', () => highlightChapter(n.chIdx));
+      el.addEventListener('mouseleave', () => clearHighlight());
+    }
+  } else if (n.type === 'sub') {
+    el.textContent = n.text;
+    el.addEventListener('mouseenter', () => highlightChapter(n.chIdx));
+    el.addEventListener('mouseleave', () => clearHighlight());
+  }
+
+  // 入场动画延迟
+  if (n.type === 'chapter') {
+    el.style.opacity = '0';
+    el.style.transform = 'translate(-50%,-50%) scale(0.6)';
+    setTimeout(() => {
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s cubic-bezier(.2,.8,.3,1.2), filter 0.35s, border-color 0.3s, box-shadow 0.3s, background 0.3s';
+      el.style.opacity = '1';
+      el.style.transform = 'translate(-50%,-50%) scale(1)';
+    }, 300 + idx * 60);
+  } else if (n.type === 'sub') {
+    el.style.opacity = '0';
+    el.style.transform = 'translate(-50%,-50%) scale(0.5)';
+    setTimeout(() => {
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(.2,.8,.3,1.2), filter 0.35s, color 0.3s, border-color 0.3s, background 0.3s';
+      el.style.opacity = '1';
+      el.style.transform = 'translate(-50%,-50%) scale(1)';
+    }, 600 + idx * 25);
+  }
+
+  world.appendChild(el);
+});
+
+/* ========== 高亮交互 ========== */
+let highlightedIdx = -1;
+function highlightChapter(idx) {
+  if (highlightedIdx === idx) return;
+  highlightedIdx = idx;
+  document.querySelectorAll('.node').forEach(el => {
+    const ch = el.dataset.ch;
+    if (ch === undefined) return;
+    if (parseInt(ch) !== idx) el.classList.add('dimmed');
+    else el.classList.remove('dimmed');
+  });
+  document.querySelectorAll('#connections path').forEach(p => {
+    const ch = parseInt(p.dataset.ch);
+    if (ch !== idx) p.classList.add('dimmed');
+    else { p.classList.remove('dimmed'); p.classList.add('highlighted'); }
+  });
+}
+function clearHighlight() {
+  highlightedIdx = -1;
+  document.querySelectorAll('.node').forEach(el => el.classList.remove('dimmed'));
+  document.querySelectorAll('#connections path').forEach(p => {
+    p.classList.remove('dimmed', 'highlighted');
+  });
+}
+
+/* ========== 详情面板 ========== */
+const panel = document.getElementById('detail-panel');
+function openPanel(data, color) {
+  document.getElementById('panelNum').textContent = `第${data.num}篇`;
+  document.getElementById('panelTitle').textContent = data.name;
+  document.getElementById('panelTitle').style.color = color;
+  document.getElementById('panelAlias').textContent = data.alias;
+  document.getElementById('panelQuote').textContent = `"${data.quote}"`;
+  document.getElementById('panelQuote').style.borderLeftColor = color + '88';
+  const pointsEl = document.getElementById('panelPoints');
+  pointsEl.innerHTML = '';
+  data.points.forEach(pt => {
+    const li = document.createElement('li');
+    li.textContent = pt;
+    li.querySelector
+    pointsEl.appendChild(li);
+  });
+  pointsEl.querySelectorAll('li::before')
+  // 设置圆点颜色
+  const style = document.createElement('style');
+  style.textContent = `#detail-panel .panel-points li::before { background: ${color}88; }`;
+  // 移除旧style
+  const old = panel.querySelector('style');
+  if (old) old.remove();
+  panel.appendChild(style);
+
+  panel.classList.add('open');
+  highlightChapter(data.num - 1);
+}
+function closePanel() {
+  panel.classList.remove('open');
+  clearHighlight();
+}
+// 点击空白关闭面板
+document.getElementById('viewport').addEventListener('click', (e) => {
+  if (!e.target.closest('.node-chapter') && panel.classList.contains('open')) {
+    closePanel();
+  }
+});
+
+/* ========== 视口控制 ========== */
+let scale = 1, panX = 0, panY = 0;
+let isDragging = false, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+const MIN_SCALE = 0.15, MAX_SCALE = 3;
+
+function updateTransform() {
+  world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  document.getElementById('zoomText').textContent = Math.round(scale * 100) + '%';
+}
+
+const viewport = document.getElementById('viewport');
+
+viewport.addEventListener('mousedown', (e) => {
+  if (e.target.closest('.node-chapter')) return;
+  isDragging = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  panStartX = panX;
+  panStartY = panY;
+  document.body.classList.add('dragging');
+});
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  panX = panStartX + (e.clientX - dragStartX);
+  panY = panStartY + (e.clientY - dragStartY);
+  updateTransform();
+});
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+  document.body.classList.remove('dragging');
+});
+
+viewport.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const rect = viewport.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const delta = e.deltaY > 0 ? 0.9 : 1.1;
+  const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale * delta));
+  // 以鼠标位置为缩放中心
+  panX = mx - (mx - panX) * (newScale / scale);
+  panY = my - (my - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+}, { passive: false });
+
+// 触摸支持
+let lastTouchDist = 0, lastTouchMid = { x:0, y:0 };
+viewport.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 1) {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    panStartX = panX;
+    panStartY = panY;
+  } else if (e.touches.length === 2) {
+    isDragging = false;
+    const dx = e.touches[1].clientX - e.touches[0].clientX;
+    const dy = e.touches[1].clientY - e.touches[0].clientY;
+    lastTouchDist = Math.hypot(dx, dy);
+    lastTouchMid = {
+      x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+      y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+    };
+  }
+}, { passive: true });
+viewport.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  if (e.touches.length === 1 && isDragging) {
+    panX = panStartX + (e.touches[0].clientX - dragStartX);
+    panY = panStartY + (e.touches[0].clientY - dragStartY);
+    updateTransform();
+  } else if (e.touches.length === 2) {
+    const dx = e.touches[1].clientX - e.touches[0].clientX;
+    const dy = e.touches[1].clientY - e.touches[0].clientY;
+    const dist = Math.hypot(dx, dy);
+    const mid = {
+      x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+      y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+    };
+    const rect = viewport.getBoundingClientRect();
+    const mx = mid.x - rect.left;
+    const my = mid.y - rect.top;
+    const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale * (dist / lastTouchDist)));
+    panX = mx - (mx - panX) * (newScale / scale);
+    panY = my - (my - panY) * (newScale / scale);
+    panX += mid.x - lastTouchMid.x;
+    panY += mid.y - lastTouchMid.y;
+    scale = newScale;
+    lastTouchDist = dist;
+    lastTouchMid = mid;
+    updateTransform();
+  }
+}, { passive: false });
+viewport.addEventListener('touchend', () => { isDragging = false; });
+
+/* ========== 控制按钮 ========== */
+function zoomIn() {
+  const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+  const newScale = Math.min(MAX_SCALE, scale * 1.25);
+  panX = cx - (cx - panX) * (newScale / scale);
+  panY = cy - (cy - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+}
+function zoomOut() {
+  const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+  const newScale = Math.max(MIN_SCALE, scale * 0.8);
+  panX = cx - (cx - panX) * (newScale / scale);
+  panY = cy - (cy - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+}
+function resetView() {
+  scale = 1; panX = 0; panY = 0;
+  updateTransform();
+}
+function fitAll() {
+  // 计算所有节点的包围盒
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  layout.nodes.forEach(n => {
+    minX = Math.min(minX, n.x); maxX = Math.max(maxX, n.x);
+    minY = Math.min(minY, n.y); maxY = Math.max(maxY, n.y);
+  });
+  const pad = 120;
+  const bw = maxX - minX + pad * 2;
+  const bh = maxY - minY + pad * 2;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  scale = Math.min(vw / bw, vh / bh, 1.5);
+  panX = vw / 2 - (minX + maxX) / 2 * scale;
+  panY = vh / 2 - (minY + maxY) / 2 * scale;
+  updateTransform();
+}
+
+/* ========== 背景粒子 ========== */
+const bgCanvas = document.getElementById('bg-canvas');
+const ctx = bgCanvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function initParticles() {
+  particles = [];
+  const count = Math.min(80, Math.floor(window.innerWidth * window.innerHeight / 15000));
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * bgCanvas.width,
+      y: Math.random() * bgCanvas.height,
+      r: Math.random() * 1.2 + 0.3,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      alpha: Math.random() * 0.3 + 0.05,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+initParticles();
+
+let animTime = 0;
+function animateBg() {
+  animTime += 0.005;
+  ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < -10) p.x = bgCanvas.width + 10;
+    if (p.x > bgCanvas.width + 10) p.x = -10;
+    if (p.y < -10) p.y = bgCanvas.height + 10;
+    if (p.y > bgCanvas.height + 10) p.y = -10;
+
+    const flicker = Math.sin(animTime * 2 + p.phase) * 0.15 + 0.85;
+    const a = p.alpha * flicker;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(201,169,110,${a})`;
+    ctx.fill();
+
+    // 光晕
+    if (p.r > 0.8) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,169,110,${a * 0.1})`;
+      ctx.fill();
+    }
+  });
+
+  requestAnimationFrame(animateBg);
+}
+animateBg();
+
+/* ========== 初始化视图 ========== */
+// 初始居中并稍微缩小以展示全貌
+setTimeout(() => {
+  fitAll();
+}, 100);
+
+/* ========== 键盘支持 ========== */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePanel();
+  if (e.key === '+' || e.key === '=') zoomIn();
+  if (e.key === '-') zoomOut();
+  if (e.key === '0') resetView();
+});
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孙子兵法 · 思维导图</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --bg: #0d0b09;
+  --bg2: #141210;
+  --gold: #c9a96e;
+  --gold-bright: #e8c98a;
+  --gold-dim: #7a6240;
+  --parchment: #f0e4cc;
+  --parchment-dim: #b8a888;
+  --red: #b83a3a;
+  --red-dim: #6b2222;
+  --text: #d4c4a8;
+  --text-dim: #8a7a62;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans SC', sans-serif;
+  overflow: hidden;
+  width: 100vw; height: 100vh;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+body.dragging { cursor: grabbing; }
+
+/* 背景层 */
+.bg-layer {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 45%, rgba(201,169,110,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(30,25,18,1) 0%, var(--bg) 100%);
+}
+.bg-vignette {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+}
+#bg-canvas {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+}
+
+/* 视口 */
+#viewport {
+  position: absolute; inset: 0; z-index: 10;
+  overflow: hidden;
+}
+#world {
+  position: absolute; left: 0; top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* 连线SVG */
+#connections {
+  position: absolute; left: 0; top: 0;
+  width: 1px; height: 1px;
+  overflow: visible; z-index: 1;
+}
+#connections path {
+  fill: none;
+  stroke-linecap: round;
+  transition: opacity 0.4s;
+}
+.conn-main { stroke: var(--gold-dim); stroke-width: 2.5; opacity: 0.5; }
+.conn-sub { stroke-width: 1.5; opacity: 0.3; }
+.conn-main.highlighted { opacity: 0.9; stroke-width: 3; }
+.conn-sub.highlighted { opacity: 0.7; stroke-width: 2; }
+.conn-main.dimmed, .conn-sub.dimmed { opacity: 0.08; }
+
+/* 节点 */
+.node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: filter 0.35s, opacity 0.35s;
+  z-index: 5;
+}
+.node.dimmed { opacity: 0.15; filter: grayscale(0.8); }
+
+.node-center {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 32px;
+  color: var(--gold-bright);
+  text-shadow: 0 0 40px rgba(201,169,110,0.4), 0 0 80px rgba(201,169,110,0.15);
+  letter-spacing: 8px;
+  padding: 16px 32px;
+  z-index: 10;
+}
+.node-center::before {
+  content: '';
+  position: absolute; inset: -20px;
+  border: 1.5px solid rgba(201,169,110,0.2);
+  border-radius: 8px;
+  animation: centerPulse 4s ease-in-out infinite;
+}
+.node-center::after {
+  content: '';
+  position: absolute; inset: -6px;
+  border: 1px solid rgba(201,169,110,0.12);
+  border-radius: 4px;
+}
+@keyframes centerPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.04); }
+}
+
+.node-chapter {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--parchment);
+  padding: 10px 22px;
+  border-radius: 6px;
+  background: rgba(20,18,14,0.85);
+  border: 1.5px solid;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.3s cubic-bezier(.2,.8,.3,1.2),
+              box-shadow 0.3s, border-color 0.3s, background 0.3s;
+  z-index: 8;
+}
+.node-chapter:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 25px rgba(201,169,110,0.15);
+  background: rgba(30,27,20,0.95);
+}
+.node-chapter .chapter-num {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 300;
+  font-size: 11px;
+  opacity: 0.5;
+  margin-right: 6px;
+}
+
+.node-sub {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--parchment-dim);
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: rgba(15,13,10,0.7);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform 0.3s cubic-bezier(.2,.8,.3,1.2),
+              color 0.3s, border-color 0.3s, background 0.3s;
+  z-index: 6;
+}
+.node-sub:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  color: var(--parchment);
+  border-color: rgba(201,169,110,0.3);
+  background: rgba(25,22,16,0.9);
+}
+
+/* 详情面板 */
+#detail-panel {
+  position: fixed; right: -420px; top: 50%;
+  transform: translateY(-50%);
+  width: 380px; max-height: 80vh;
+  background: rgba(18,16,12,0.95);
+  border: 1px solid rgba(201,169,110,0.15);
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  padding: 32px 28px;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: right 0.45s cubic-bezier(.22,.68,.36,1);
+  overflow-y: auto;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+}
+#detail-panel.open { right: 0; }
+#detail-panel::-webkit-scrollbar { width: 4px; }
+#detail-panel::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+#detail-panel .panel-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(201,169,110,0.2);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+#detail-panel .panel-close:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(201,169,110,0.08);
+}
+
+#detail-panel .panel-num {
+  font-size: 12px; font-weight: 300;
+  color: var(--gold-dim);
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+#detail-panel .panel-title {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--gold-bright);
+  margin-bottom: 4px;
+  letter-spacing: 4px;
+}
+#detail-panel .panel-alias {
+  font-size: 13px; color: var(--text-dim);
+  margin-bottom: 20px;
+}
+#detail-panel .panel-divider {
+  width: 40px; height: 1.5px;
+  background: var(--gold-dim);
+  margin-bottom: 20px;
+  border-radius: 1px;
+}
+#detail-panel .panel-quote {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14.5px;
+  color: var(--parchment-dim);
+  line-height: 1.9;
+  padding: 16px 20px;
+  border-left: 2px solid var(--gold-dim);
+  background: rgba(201,169,110,0.03);
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 24px;
+}
+#detail-panel .panel-subtitle {
+  font-size: 13px; font-weight: 500;
+  color: var(--gold);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+#detail-panel .panel-points {
+  list-style: none; padding: 0;
+}
+#detail-panel .panel-points li {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.7;
+  padding: 6px 0 6px 16px;
+  position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+#detail-panel .panel-points li::before {
+  content: '';
+  position: absolute; left: 0; top: 14px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+}
+
+/* 顶部标题 */
+#top-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 20px 30px;
+  z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  pointer-events: none;
+}
+#top-bar > * { pointer-events: auto; }
+.top-title {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 6px;
+}
+.top-subtitle {
+  font-size: 11px;
+  color: rgba(138,122,98,0.5);
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+
+/* 底部控制栏 */
+#controls {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 10px;
+  background: rgba(18,16,12,0.85);
+  border: 1px solid rgba(201,169,110,0.12);
+  border-radius: 40px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 50;
+}
+#controls button {
+  width: 36px; height: 36px;
+  border: none; border-radius: 50%;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+#controls button:hover {
+  background: rgba(201,169,110,0.1);
+  color: var(--gold);
+}
+#controls .zoom-text {
+  font-size: 12px;
+  color: var(--text-dim);
+  min-width: 48px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+#controls .sep {
+  width: 1px; height: 20px;
+  background: rgba(201,169,110,0.12);
+  margin: 0 4px;
+}
+
+/* 提示 */
+#hint {
+  position: fixed; bottom: 80px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  opacity: 0.6;
+  z-index: 40;
+  animation: hintFade 6s ease forwards;
+  pointer-events: none;
+}
+@keyframes hintFade {
+  0%, 60% { opacity: 0.6; }
+  100% { opacity: 0; display: none; }
+}
+
+/* 入场动画 */
+.node-center { animation: nodeIn 0.8s ease both; animation-delay: 0.2s; }
+@keyframes nodeIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-vignette"></div>
+<canvas id="bg-canvas"></canvas>
+
+<div id="viewport">
+  <div id="world">
+    <svg id="connections"></svg>
+  </div>
+</div>
+
+<div id="top-bar">
+  <div>
+    <div class="top-title">孙子兵法</div>
+    <div class="top-subtitle">SUN TZU'S ART OF WAR · MIND MAP</div>
+  </div>
+</div>
+
+<div id="controls">
+  <button onclick="zoomIn()" title="放大" aria-label="放大"><i class="fas fa-plus"></i></button>
+  <span class="zoom-text" id="zoomText">100%</span>
+  <button onclick="zoomOut()" title="缩小" aria-label="缩小"><i class="fas fa-minus"></i></button>
+  <div class="sep"></div>
+  <button onclick="resetView()" title="重置视图" aria-label="重置视图"><i class="fas fa-crosshairs"></i></button>
+  <button onclick="fitAll()" title="适应全部" aria-label="适应全部"><i class="fas fa-expand"></i></button>
+</div>
+
+<div id="hint">拖拽平移 · 滚轮缩放 · 点击篇章查看详情</div>
+
+<div id="detail-panel">
+  <button class="panel-close" onclick="closePanel()" aria-label="关闭"><i class="fas fa-times"></i></button>
+  <div class="panel-num" id="panelNum"></div>
+  <div class="panel-title" id="panelTitle"></div>
+  <div class="panel-alias" id="panelAlias"></div>
+  <div class="panel-divider"></div>
+  <div class="panel-quote" id="panelQuote"></div>
+  <div class="panel-subtitle">核心要义</div>
+  <ul class="panel-points" id="panelPoints"></ul>
+</div>
+
+<script>
+/* ========== 数据 ========== */
+const DATA = {
+  title: '孙子兵法',
+  chapters: [
+    {
+      num: 1, name: '始计篇', alias: '论战略筹划',
+      color: '#c9a96e',
+      subs: ['五事七计', '诡道十二法', '庙算胜败'],
+      quote: '兵者，国之大事，死生之地，存亡之道，不可不察也。',
+      points: ['战争是国家大事，必须慎重决策','以"道天地将法"五事衡量敌我','通过"七计"比较双方优劣','诡道是战略欺骗的核心手段','"庙算"决定战争胜负的基本走向']
+    },
+    {
+      num: 2, name: '作战篇', alias: '论战争经济',
+      color: '#d4a574',
+      subs: ['兵贵胜不贵久', '因粮于敌', '杀敌者怒也'],
+      quote: '其用战也贵胜，久则钝兵挫锐，攻城则力屈。',
+      points: ['战争消耗巨大，久战必亡国','速战速决是基本经济原则','"因粮于敌"减轻本国负担','重赏激励士气','精通军事者应善用敌方资源']
+    },
+    {
+      num: 3, name: '谋攻篇', alias: '论战略进攻',
+      color: '#e8c98a',
+      subs: ['不战而屈人', '上兵伐谋', '知彼知己'],
+      quote: '不战而屈人之兵，善之善者也。',
+      points: ['最高境界是不战而胜','进攻四策：伐谋、伐交、伐兵、攻城','"知己知彼，百战不殆"是军事名言','将帅的五种致命弱点','君主任将的三大禁忌']
+    },
+    {
+      num: 4, name: '军形篇', alias: '论军事实力',
+      color: '#a8b86e',
+      subs: ['先胜后战', '善守善攻', '不可胜在己'],
+      quote: '昔之善战者，先为不可胜，以待敌之可胜。',
+      points: ['先创造不败条件，再寻求胜利','防守要如藏于九地之下','进攻要如动于九天之上','实力是胜利的基础','"胜兵先胜而后求战"']
+    },
+    {
+      num: 5, name: '兵势篇', alias: '论战术运用',
+      color: '#7ab87a',
+      subs: ['奇正相生', '势如彍弩', '以利动之'],
+      quote: '凡战者，以正合，以奇胜。',
+      points: ['"正"是常规战法，"奇"是变通战法','奇正变化无穷，如环之无端','善于造势，借势取胜','择人而任势，不责于个人','节奏如张弛，动静如水火']
+    },
+    {
+      num: 6, name: '虚实篇', alias: '论兵力部署',
+      color: '#6eb8a0',
+      subs: ['避实击虚', '致人而不致于人', '形人而我无形'],
+      quote: '兵之形，避实而击虚。',
+      points: ['掌握主动权是核心原则','"致人而不致于人"——牵着敌人走','让敌人暴露而自己隐蔽','集中兵力，各个击破','虚实变幻使敌人无法预判']
+    },
+    {
+      num: 7, name: '军争篇', alias: '论战场机动',
+      color: '#6eb8c8',
+      subs: ['以迂为直', '兵以诈立', '风林火山'],
+      quote: '其疾如风，其徐如林，侵掠如火，不动如山。',
+      points: ['"风林火山"是行动准则的经典表述','以迂回间接方式达到直捷目的','军争有利的八项原则','用兵八法与变通','"治气、治心、治力、治变"四治']
+    },
+    {
+      num: 8, name: '九变篇', alias: '论灵活应变',
+      color: '#6e98c8',
+      subs: ['智者之虑杂于利害', '将受命于君', '五危之戒'],
+      quote: '智者之虑，必杂于利害。杂于利而务可信，杂于害而患可解。',
+      points: ['将帅须通晓变通之理','从利与害两方面思考问题','"君命有所不受"的权变思想','将帅五种性格缺陷导致的危险','通晓"九地"之变才能用兵']
+    },
+    {
+      num: 9, name: '行军篇', alias: '论行军驻扎',
+      color: '#7a7ac8',
+      subs: ['处军相敌', '相敌三十二法', '令之以文齐之以武'],
+      quote: '令素行以教其民，则民服；令不素行，则民不服。',
+      points: ['山地、河川、沼泽、平地四种处军法','三十二种观察判断敌情的方法','"相敌"是战场侦察的核心','文武兼施治军原则','兵非益多，在于精练统一']
+    },
+    {
+      num: 10, name: '地形篇', alias: '论地形利用',
+      color: '#a06ec8',
+      subs: ['六种地形', '六败之因', '进不求名退不避罪'],
+      quote: '知彼知己，胜乃不殆；知天知地，胜乃可全。',
+      points: ['通、挂、支、隘、险、远六种地形','六种导致失败的原因','将帅的道德担当：进不求名退不避罪','"视卒如婴儿故可与之赴深溪"','地形是辅助胜利的重要条件']
+    },
+    {
+      num: 11, name: '九地篇', alias: '论战略态势',
+      color: '#c86e9a',
+      subs: ['九地之变', '投之亡地然后存', '兵之情主速'],
+      quote: '投之亡地然后存，陷之死地然后生。',
+      points: ['散地、轻地、争地等九种战略态势','"围地则谋，死地则战"的原则','心理操控与士气激励','兵之情主速，乘人之不及','"始如处女，后如脱兔"']
+    },
+    {
+      num: 12, name: '火攻篇', alias: '论火攻战术',
+      color: '#c86e6e',
+      subs: ['火攻五目标', '发火有时起火有日', '主不可以怒而兴师'],
+      quote: '主不可以怒而兴师，将不可以愠而致战。',
+      points: ['火人、火积、火辎、火库、火队五种目标','火攻与水攻的比较','天时条件对火攻的决定性影响','"怒可以复喜，愠可以复悦"的理性','"明主虑之，良将修之"的慎重态度']
+    },
+    {
+      num: 13, name: '用间篇', alias: '论情报谍报',
+      color: '#c89a6e',
+      subs: ['五间俱起', '先知者不可取于鬼神', '上智为间'],
+      quote: '故明君贤将，所以动而胜人，成功出于众者，先知也。',
+      points: ['情报是决策的首要前提','因间、内间、反间、死间、生间五类','"三军之事，莫亲于间"','"上智为间"——用最聪明的人做间谍','间谍费用虽大，回报无穷']
+    }
+  ]
+};
+
+/* ========== 布局参数 ========== */
+const CX = 0, CY = 0;
+const LAYER1_DIST = 300;
+const LAYER2_DIST = 170;
+const LAYER2_ANGLE = 0.35;
+
+/* ========== 布局计算 ========== */
+function computeLayout() {
+  const n = DATA.chapters.length;
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  const nodes = [];
+  const conns = [];
+
+  // 中心节点
+  nodes.push({ id:'center', x:CX, y:CY, type:'center', text:DATA.title, color:'#c9a96e' });
+
+  DATA.chapters.forEach((ch, i) => {
+    const angle = i * goldenAngle - Math.PI / 2;
+    const cx = CX + LAYER1_DIST * Math.cos(angle);
+    const cy = CY + LAYER1_DIST * Math.sin(angle);
+    const nodeId = `ch${i}`;
+
+    nodes.push({ id:nodeId, x:cx, y:cy, type:'chapter', text:ch.name, color:ch.color, num:ch.num, data:ch });
+    conns.push({ from:'center', to:nodeId, color:ch.color, type:'main', chIdx:i });
+
+    ch.subs.forEach((sub, j) => {
+      const subAngle = angle + (j - (ch.subs.length - 1) / 2) * LAYER2_ANGLE;
+      const sx = cx + LAYER2_DIST * Math.cos(subAngle);
+      const sy = cy + LAYER2_DIST * Math.sin(subAngle);
+      const subId = `sub${i}_${j}`;
+
+      nodes.push({ id:subId, x:sx, y:sy, type:'sub', text:sub, color:ch.color, chIdx:i });
+      conns.push({ from:nodeId, to:subId, color:ch.color, type:'sub', chIdx:i });
+    });
+  });
+
+  return { nodes, conns };
+}
+
+const layout = computeLayout();
+
+/* ========== 渲染 ========== */
+const world = document.getElementById('world');
+const svgEl = document.getElementById('connections');
+
+// 创建连线
+layout.conns.forEach(c => {
+  const fromNode = layout.nodes.find(n => n.id === c.from);
+  const toNode = layout.nodes.find(n => n.id === c.to);
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  const dx = toNode.x - fromNode.x;
+  const dy = toNode.y - fromNode.y;
+  const cpOff = c.type === 'main' ? 0.4 : 0.45;
+  const cpx = fromNode.x + dx * cpOff;
+  const cpy = fromNode.y + dy * cpOff;
+  path.setAttribute('d', `M${fromNode.x},${fromNode.y} Q${cpx},${cpy} ${toNode.x},${toNode.y}`);
+  path.setAttribute('class', `conn-${c.type}`);
+  path.setAttribute('stroke', c.color);
+  path.setAttribute('data-ch', c.chIdx);
+  path.id = `conn-${c.from}-${c.to}`;
+  svgEl.appendChild(path);
+});
+
+// 创建节点
+layout.nodes.forEach((n, idx) => {
+  const el = document.createElement('div');
+  el.className = `node node-${n.type}`;
+  el.style.left = n.x + 'px';
+  el.style.top = n.y + 'px';
+  el.dataset.id = n.id;
+  if (n.chIdx !== undefined) el.dataset.ch = n.chIdx;
+
+  if (n.type === 'center') {
+    el.textContent = n.text;
+  } else if (n.type === 'chapter') {
+    el.innerHTML = `<span class="chapter-num">第${n.num}篇</span>${n.text}`;
+    el.style.borderColor = n.color + '55';
+    if (n.data) {
+      el.addEventListener('click', () => openPanel(n.data, n.color));
+      el.addEventListener('mouseenter', () => highlightChapter(n.chIdx));
+      el.addEventListener('mouseleave', () => clearHighlight());
+    }
+  } else if (n.type === 'sub') {
+    el.textContent = n.text;
+    el.addEventListener('mouseenter', () => highlightChapter(n.chIdx));
+    el.addEventListener('mouseleave', () => clearHighlight());
+  }
+
+  // 入场动画延迟
+  if (n.type === 'chapter') {
+    el.style.opacity = '0';
+    el.style.transform = 'translate(-50%,-50%) scale(0.6)';
+    setTimeout(() => {
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s cubic-bezier(.2,.8,.3,1.2), filter 0.35s, border-color 0.3s, box-shadow 0.3s, background 0.3s';
+      el.style.opacity = '1';
+      el.style.transform = 'translate(-50%,-50%) scale(1)';
+    }, 300 + idx * 60);
+  } else if (n.type === 'sub') {
+    el.style.opacity = '0';
+    el.style.transform = 'translate(-50%,-50%) scale(0.5)';
+    setTimeout(() => {
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(.2,.8,.3,1.2), filter 0.35s, color 0.3s, border-color 0.3s, background 0.3s';
+      el.style.opacity = '1';
+      el.style.transform = 'translate(-50%,-50%) scale(1)';
+    }, 600 + idx * 25);
+  }
+
+  world.appendChild(el);
+});
+
+/* ========== 高亮交互 ========== */
+let highlightedIdx = -1;
+function highlightChapter(idx) {
+  if (highlightedIdx === idx) return;
+  highlightedIdx = idx;
+  document.querySelectorAll('.node').forEach(el => {
+    const ch = el.dataset.ch;
+    if (ch === undefined) return;
+    if (parseInt(ch) !== idx) el.classList.add('dimmed');
+    else el.classList.remove('dimmed');
+  });
+  document.querySelectorAll('#connections path').forEach(p => {
+    const ch = parseInt(p.dataset.ch);
+    if (ch !== idx) p.classList.add('dimmed');
+    else { p.classList.remove('dimmed'); p.classList.add('highlighted'); }
+  });
+}
+function clearHighlight() {
+  highlightedIdx = -1;
+  document.querySelectorAll('.node').forEach(el => el.classList.remove('dimmed'));
+  document.querySelectorAll('#connections path').forEach(p => {
+    p.classList.remove('dimmed', 'highlighted');
+  });
+}
+
+/* ========== 详情面板 ========== */
+const panel = document.getElementById('detail-panel');
+function openPanel(data, color) {
+  document.getElementById('panelNum').textContent = `第${data.num}篇`;
+  document.getElementById('panelTitle').textContent = data.name;
+  document.getElementById('panelTitle').style.color = color;
+  document.getElementById('panelAlias').textContent = data.alias;
+  document.getElementById('panelQuote').textContent = `"${data.quote}"`;
+  document.getElementById('panelQuote').style.borderLeftColor = color + '88';
+  const pointsEl = document.getElementById('panelPoints');
+  pointsEl.innerHTML = '';
+  data.points.forEach(pt => {
+    const li = document.createElement('li');
+    li.textContent = pt;
+    li.querySelector
+    pointsEl.appendChild(li);
+  });
+  pointsEl.querySelectorAll('li::before')
+  // 设置圆点颜色
+  const style = document.createElement('style');
+  style.textContent = `#detail-panel .panel-points li::before { background: ${color}88; }`;
+  // 移除旧style
+  const old = panel.querySelector('style');
+  if (old) old.remove();
+  panel.appendChild(style);
+
+  panel.classList.add('open');
+  highlightChapter(data.num - 1);
+}
+function closePanel() {
+  panel.classList.remove('open');
+  clearHighlight();
+}
+// 点击空白关闭面板
+document.getElementById('viewport').addEventListener('click', (e) => {
+  if (!e.target.closest('.node-chapter') && panel.classList.contains('open')) {
+    closePanel();
+  }
+});
+
+/* ========== 视口控制 ========== */
+let scale = 1, panX = 0, panY = 0;
+let isDragging = false, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+const MIN_SCALE = 0.15, MAX_SCALE = 3;
+
+function updateTransform() {
+  world.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  document.getElementById('zoomText').textContent = Math.round(scale * 100) + '%';
+}
+
+const viewport = document.getElementById('viewport');
+
+viewport.addEventListener('mousedown', (e) => {
+  if (e.target.closest('.node-chapter')) return;
+  isDragging = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  panStartX = panX;
+  panStartY = panY;
+  document.body.classList.add('dragging');
+});
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  panX = panStartX + (e.clientX - dragStartX);
+  panY = panStartY + (e.clientY - dragStartY);
+  updateTransform();
+});
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+  document.body.classList.remove('dragging');
+});
+
+viewport.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const rect = viewport.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const delta = e.deltaY > 0 ? 0.9 : 1.1;
+  const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale * delta));
+  // 以鼠标位置为缩放中心
+  panX = mx - (mx - panX) * (newScale / scale);
+  panY = my - (my - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+}, { passive: false });
+
+// 触摸支持
+let lastTouchDist = 0, lastTouchMid = { x:0, y:0 };
+viewport.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 1) {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    panStartX = panX;
+    panStartY = panY;
+  } else if (e.touches.length === 2) {
+    isDragging = false;
+    const dx = e.touches[1].clientX - e.touches[0].clientX;
+    const dy = e.touches[1].clientY - e.touches[0].clientY;
+    lastTouchDist = Math.hypot(dx, dy);
+    lastTouchMid = {
+      x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+      y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+    };
+  }
+}, { passive: true });
+viewport.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  if (e.touches.length === 1 && isDragging) {
+    panX = panStartX + (e.touches[0].clientX - dragStartX);
+    panY = panStartY + (e.touches[0].clientY - dragStartY);
+    updateTransform();
+  } else if (e.touches.length === 2) {
+    const dx = e.touches[1].clientX - e.touches[0].clientX;
+    const dy = e.touches[1].clientY - e.touches[0].clientY;
+    const dist = Math.hypot(dx, dy);
+    const mid = {
+      x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+      y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+    };
+    const rect = viewport.getBoundingClientRect();
+    const mx = mid.x - rect.left;
+    const my = mid.y - rect.top;
+    const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale * (dist / lastTouchDist)));
+    panX = mx - (mx - panX) * (newScale / scale);
+    panY = my - (my - panY) * (newScale / scale);
+    panX += mid.x - lastTouchMid.x;
+    panY += mid.y - lastTouchMid.y;
+    scale = newScale;
+    lastTouchDist = dist;
+    lastTouchMid = mid;
+    updateTransform();
+  }
+}, { passive: false });
+viewport.addEventListener('touchend', () => { isDragging = false; });
+
+/* ========== 控制按钮 ========== */
+function zoomIn() {
+  const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+  const newScale = Math.min(MAX_SCALE, scale * 1.25);
+  panX = cx - (cx - panX) * (newScale / scale);
+  panY = cy - (cy - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+}
+function zoomOut() {
+  const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+  const newScale = Math.max(MIN_SCALE, scale * 0.8);
+  panX = cx - (cx - panX) * (newScale / scale);
+  panY = cy - (cy - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+}
+function resetView() {
+  scale = 1; panX = 0; panY = 0;
+  updateTransform();
+}
+function fitAll() {
+  // 计算所有节点的包围盒
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  layout.nodes.forEach(n => {
+    minX = Math.min(minX, n.x); maxX = Math.max(maxX, n.x);
+    minY = Math.min(minY, n.y); maxY = Math.max(maxY, n.y);
+  });
+  const pad = 120;
+  const bw = maxX - minX + pad * 2;
+  const bh = maxY - minY + pad * 2;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  scale = Math.min(vw / bw, vh / bh, 1.5);
+  panX = vw / 2 - (minX + maxX) / 2 * scale;
+  panY = vh / 2 - (minY + maxY) / 2 * scale;
+  updateTransform();
+}
+
+/* ========== 背景粒子 ========== */
+const bgCanvas = document.getElementById('bg-canvas');
+const ctx = bgCanvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function initParticles() {
+  particles = [];
+  const count = Math.min(80, Math.floor(window.innerWidth * window.innerHeight / 15000));
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * bgCanvas.width,
+      y: Math.random() * bgCanvas.height,
+      r: Math.random() * 1.2 + 0.3,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      alpha: Math.random() * 0.3 + 0.05,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+initParticles();
+
+let animTime = 0;
+function animateBg() {
+  animTime += 0.005;
+  ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < -10) p.x = bgCanvas.width + 10;
+    if (p.x > bgCanvas.width + 10) p.x = -10;
+    if (p.y < -10) p.y = bgCanvas.height + 10;
+    if (p.y > bgCanvas.height + 10) p.y = -10;
+
+    const flicker = Math.sin(animTime * 2 + p.phase) * 0.15 + 0.85;
+    const a = p.alpha * flicker;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(201,169,110,${a})`;
+    ctx.fill();
+
+    // 光晕
+    if (p.r > 0.8) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,169,110,${a * 0.1})`;
+      ctx.fill();
+    }
+  });
+
+  requestAnimationFrame(animateBg);
+}
+animateBg();
+
+/* ========== 初始化视图 ========== */
+// 初始居中并稍微缩小以展示全貌
+setTimeout(() => {
+  fitAll();
+}, 100);
+
+/* ========== 键盘支持 ========== */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePanel();
+  if (e.key === '+' || e.key === '=') zoomIn();
+  if (e.key === '-') zoomOut();
+  if (e.key === '0') resetView();
+});
+</script>
+</body>
+</html>
