@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的HTML页面索引</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen py-10 px-4">
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">页面导航索引</h1>
+        <p class="text-center text-gray-500 mb-8">自动加载pages文件夹下的所有HTML页面</p>
+        
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div id="pageList" class="grid gap-4">
+                <div class="text-center text-gray-400 py-8">页面加载中...</div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center text-gray-500 text-sm">
+            托管于 GitHub Pages
+        </div>
+    </div>
+
+    <script>
+        // ========== 这里改成你自己的信息 ==========
+        const config = {
+            username: "你的GitHub用户名",
+            repo: "你的仓库名",
+            branch: "main" // 仓库默认分支，老仓库可能是master
+        };
+        // ==========================================
+
+        // 调用GitHub API获取pages文件夹下的文件列表
+        const apiUrl = `https://api.github.com/repos/${config.username}/${config.repo}/contents/pages?ref=${config.branch}`;
+
+        // 自动生成导航列表
+        async function loadPageList() {
+            const pageList = document.getElementById('pageList');
+            try {
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error('获取文件列表失败，请检查配置');
+                const files = await res.json();
+                
+                // 只保留HTML文件
+                const htmlFiles = files.filter(file => file.name.toLowerCase().endsWith('.html'));
+                
+                if (htmlFiles.length === 0) {
+                    pageList.innerHTML = '<div class="text-center text-gray-400 py-8">pages文件夹下暂无HTML文件</div>';
+                    return;
+                }
+
+                // 生成链接
+                let linkHtml = '';
+                htmlFiles.forEach(file => {
+                    // 自动把文件名转为页面名称（去掉.html，下划线换空格）
+                    const pageName = file.name.replace('.html', '').replace(/_/g, ' ');
+                    linkHtml += `
+                        <a href="${file.path}" class="block p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all font-medium text-gray-700">
+                            ${pageName}
+                        </a>
+                    `;
+                });
+                pageList.innerHTML = linkHtml;
+
+            } catch (err) {
+                console.error(err);
+                pageList.innerHTML = `<div class="text-center text-red-500 py-8">加载失败<br>错误信息：${err.message}</div>`;
+            }
+        }
+
+        // 页面加载完成后执行
+        window.onload = loadPageList;
+    </script>
+</body>
+</html>
