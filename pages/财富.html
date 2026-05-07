@@ -2,160 +2,357 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>财务自由联动分析仪</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root { --primary: #2c3e50; --success: #27ae60; --warning: #f39c12; }
-        body { font-family: 'PingFang SC', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
-        /* 布局控制 */
-        .dashboard { display: flex; flex-direction: column; gap: 20px; }
-        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; background: #f8f9fa; padding: 20px; border-radius: 8px; }
-        .input-group { display: flex; flex-direction: column; }
-        .input-group label { font-size: 12px; color: #666; margin-bottom: 5px; font-weight: bold; }
-        .input-group input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-
-        /* 图表容器 */
-        .chart-container { position: relative; height: 350px; width: 100%; margin: 20px 0; }
-
-        /* 表格微调 */
-        .table-scroll { overflow-x: auto; max-height: 400px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background: var(--primary); color: white; position: sticky; top: 0; padding: 10px; }
-        td { padding: 8px; border-bottom: 1px solid #eee; text-align: right; }
-        .free-row { background-color: #e8f5e9 !important; font-weight: bold; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2 style="text-align:center">数据联动：资产收益 vs 生活成本</h2>
-    
-    <div class="input-grid">
-        <div class="input-group"><label>起始年薪 (¥)</label><input type="number" id="startSalary" value="150000"></div>
-        <div class="input-group"><label>薪资增长 (%)</label><input type="number" id="growthRate" value="8"></div>
-        <div class="input-group"><label>月开销 (¥)</label><input type="number" id="monthlySpend" value="6000"></div>
-        <div class="input-group"><label>年化收益 (%)</label><input type="number" id="returnRate" value="10"></div>
-    </div>
-
-    <div class="chart-container">
-        <canvas id="financeChart"></canvas>
-    </div>
-
-    <div class="table-scroll">
-        <table>
-            <thead>
-                <tr>
-                    <th>年</th>
-                    <th>税前年薪</th>
-                    <th>年结余</th>
-                    <th>资产收益 (被动)</th>
-                    <th>年生活成本 (总)</th>
-                    <th>总资产累计</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    let myChart; // 存储图表实例
-
-    function initChart() {
-        const ctx = document.getElementById('financeChart').getContext('2d');
-        myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: [],
-                datasets: [
-                    {
-                        label: '年资产收益 (¥)',
-                        data: [],
-                        backgroundColor: '#27ae60',
-                        order: 2
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资产收益 vs 生活成本 财务计算器</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#10B981', // 主色-收益绿
+                        danger: '#EF4444',  // 辅助色-成本红
+                        neutral: '#1F2937', // 中性深灰
+                        light: '#F9FAFB'    // 浅背景
                     },
-                    {
-                        label: '年生活成本 (¥)',
-                        data: [],
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                        borderWidth: 2,
-                        type: 'line', // 将支出设为折线，方便对比
-                        fill: false,
-                        pointRadius: 0,
-                        order: 1
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, ticks: { callback: v => '¥' + v/10000 + '万' } }
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
                 }
             }
-        });
-    }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-shadow {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none;
+            }
+            .table-scroll {
+                @apply overflow-x-auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen py-8 px-4 md:py-12 md:px-6">
+    <div class="max-w-6xl mx-auto">
+        <!-- 标题区域 -->
+        <div class="text-center mb-8">
+            <h1 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-neutral mb-2">数据联动：资产收益 vs 生活成本</h1>
+            <p class="text-gray-500 text-sm md:text-base">25年财务增长测算 | 自动计算财务自由临界点</p>
+        </div>
 
-    function calculate() {
-        // 获取输入
-        const salary = parseFloat(document.getElementById('startSalary').value) || 0;
-        const growth = (parseFloat(document.getElementById('growthRate').value) || 0) / 100;
-        const spendY = (parseFloat(document.getElementById('monthlySpend').value) || 0) * 12;
-        const returns = (parseFloat(document.getElementById('returnRate').value) || 0) / 100;
+        <!-- 输入参数卡片 -->
+        <div class="bg-white rounded-2xl card-shadow p-6 md:p-8 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
+                <!-- 起始年薪 -->
+                <div class="flex flex-col">
+                    <label for="salary" class="text-sm text-gray-600 mb-2 font-medium">起始年薪 (¥)</label>
+                    <input type="number" id="salary" value="500000" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus" placeholder="请输入年薪">
+                </div>
+                <!-- 薪资年增长率 -->
+                <div class="flex flex-col">
+                    <label for="salaryGrowth" class="text-sm text-gray-600 mb-2 font-medium">薪资年增长 (%)</label>
+                    <input type="number" id="salaryGrowth" value="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus" placeholder="0">
+                </div>
+                <!-- 月开销 -->
+                <div class="flex flex-col">
+                    <label for="monthlyCost" class="text-sm text-gray-600 mb-2 font-medium">月开销 (¥)</label>
+                    <input type="number" id="monthlyCost" value="9000" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus" placeholder="请输入月开销">
+                </div>
+                <!-- 年化收益率 -->
+                <div class="flex flex-col">
+                    <label for="yearlyRate" class="text-sm text-gray-600 mb-2 font-medium">年化收益 (%)</label>
+                    <input type="number" id="yearlyRate" value="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus" placeholder="请输入收益率">
+                </div>
+                <!-- 个税社保扣除比例 -->
+                <div class="flex flex-col">
+                    <label for="taxRate" class="text-sm text-gray-600 mb-2 font-medium">个税社保扣除 (%)</label>
+                    <input type="number" id="taxRate" value="20" class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus" placeholder="扣除比例">
+                </div>
+            </div>
+            <button id="calculateBtn" class="mt-6 w-full md:w-auto px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-all">
+                重新计算
+            </button>
+        </div>
 
-        const labels = [];
-        const gainData = [];
-        const spendData = [];
-        let totalAssets = 0;
-        let currentSalary = salary;
-        let tableHtml = '';
+        <!-- 核心指标卡片 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-xl card-shadow p-5">
+                <p class="text-gray-500 text-sm mb-1">年生活成本</p>
+                <p id="yearlyCost" class="text-2xl font-bold text-danger">¥108,000</p>
+            </div>
+            <div class="bg-white rounded-xl card-shadow p-5">
+                <p class="text-gray-500 text-sm mb-1">年可支配结余</p>
+                <p id="yearlySurplus" class="text-2xl font-bold text-primary">¥292,000</p>
+            </div>
+            <div class="bg-white rounded-xl card-shadow p-5">
+                <p class="text-gray-500 text-sm mb-1">财务自由达成年份</p>
+                <p id="freeYear" class="text-2xl font-bold text-neutral">第12年</p>
+            </div>
+            <div class="bg-white rounded-xl card-shadow p-5">
+                <p class="text-gray-500 text-sm mb-1">25年末总资产</p>
+                <p id="totalAsset" class="text-2xl font-bold text-primary">¥11,000,000+</p>
+            </div>
+        </div>
 
-        for (let i = 1; i <= 25; i++) {
-            if (i > 1) currentSalary *= (1 + growth);
-            
-            const savings = (currentSalary * 0.8) - spendY; // 简单扣除20%税费
-            const currentGain = totalAssets * returns;
-            totalAssets += (savings + currentGain);
+        <!-- 图表区域 -->
+        <div class="bg-white rounded-2xl card-shadow p-6 md:p-8 mb-6">
+            <div class="h-[350px] w-full">
+                <canvas id="financeChart"></canvas>
+            </div>
+        </div>
 
-            // 收集图表数据
-            labels.push(`第${i}年`);
-            gainData.push(Math.round(currentGain));
-            spendData.push(spendY);
+        <!-- 数据表格区域 -->
+        <div class="bg-white rounded-2xl card-shadow p-6 md:p-8">
+            <h2 class="text-lg font-bold text-neutral mb-4">25年财务增长明细</h2>
+            <div class="table-scroll">
+                <table class="w-full min-w-[700px] border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200">
+                            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-600 sticky top-0 bg-gray-50">年份</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-600 sticky top-0 bg-gray-50">税前年薪</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-600 sticky top-0 bg-gray-50">年结余</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-600 sticky top-0 bg-gray-50">年资产收益</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-600 sticky top-0 bg-gray-50">年生活成本</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold text-gray-600 sticky top-0 bg-gray-50">总资产累计</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- 表格内容由JS动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-            // 构建表格
-            const isFree = currentGain >= spendY;
-            tableHtml += `<tr class="${isFree ? 'free-row' : ''}">
-                <td style="text-align:center">${i}</td>
-                <td>¥${Math.round(currentSalary).toLocaleString()}</td>
-                <td>¥${Math.round(savings).toLocaleString()}</td>
-                <td style="color:green">¥${Math.round(currentGain).toLocaleString()}</td>
-                <td style="color:red">¥${Math.round(spendY).toLocaleString()}</td>
-                <td><b>¥${Math.round(totalAssets).toLocaleString()}</b></td>
-            </tr>`;
+        <!-- 备注说明 -->
+        <div class="mt-6 text-sm text-gray-500 text-center">
+            <p>计算说明：年资产收益按上年总资产复利计算，每年结余全额计入资产池；个税社保扣除为可选参数，可根据自身情况调整</p>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let financeChart = null;
+        const totalYears = 25;
+
+        // 初始化页面
+        window.onload = function() {
+            calculateData();
+            // 绑定计算事件
+            document.getElementById('calculateBtn').addEventListener('click', calculateData);
+            // 回车触发计算
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('keydown', (e) => {
+                    if(e.key === 'Enter') calculateData();
+                });
+            });
         }
 
-        // 更新表格内容
-        document.getElementById('tableBody').innerHTML = tableHtml;
+        // 核心计算函数
+        function calculateData() {
+            // 获取输入值
+            const startSalary = parseFloat(document.getElementById('salary').value) || 0;
+            const salaryGrowth = parseFloat(document.getElementById('salaryGrowth').value) || 0;
+            const monthlyCost = parseFloat(document.getElementById('monthlyCost').value) || 0;
+            const yearlyRate = parseFloat(document.getElementById('yearlyRate').value) || 0;
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
 
-        // 更新图表数据
-        myChart.data.labels = labels;
-        myChart.data.datasets[0].data = gainData;
-        myChart.data.datasets[1].data = spendData;
-        myChart.update('none'); // 使用 'none' 模式可以让联动更平滑，不卡顿
-    }
+            // 基础计算
+            const yearlyCost = monthlyCost * 12;
+            const taxRateDecimal = taxRate / 100;
+            const growthRateDecimal = salaryGrowth / 100;
+            const rateDecimal = yearlyRate / 100;
 
-    // 初始化和监听
-    window.onload = () => {
-        initChart();
-        calculate();
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', calculate);
-        });
-    };
-</script>
+            // 初始化数据数组
+            const yearLabels = [];
+            const assetIncomeData = [];
+            const costData = [];
+            const tableData = [];
+            let totalAsset = 0;
+            let freeYear = '-';
 
+            // 循环计算每年数据
+            for(let year = 1; year <= totalYears; year++) {
+                yearLabels.push(`第${year}年`);
+                // 当年年薪
+                const currentSalary = startSalary * Math.pow(1 + growthRateDecimal, year - 1);
+                // 税后收入
+                const afterTaxSalary = currentSalary * (1 - taxRateDecimal);
+                // 当年结余
+                const yearlySurplus = afterTaxSalary - yearlyCost;
+                // 当年资产收益
+                const assetIncome = totalAsset * rateDecimal;
+                // 当年年末总资产
+                const endTotalAsset = totalAsset + yearlySurplus + assetIncome;
+
+                // 记录数据
+                costData.push(yearlyCost);
+                assetIncomeData.push(assetIncome);
+                tableData.push({
+                    year,
+                    salary: currentSalary,
+                    surplus: yearlySurplus,
+                    assetIncome,
+                    yearlyCost,
+                    totalAsset: endTotalAsset
+                });
+
+                // 判断财务自由年份（资产收益>=生活成本）
+                if(assetIncome >= yearlyCost && freeYear === '-') {
+                    freeYear = `第${year}年`;
+                }
+
+                // 更新总资产
+                totalAsset = endTotalAsset;
+            }
+
+            // 更新核心指标
+            document.getElementById('yearlyCost').innerText = `¥${formatNumber(yearlyCost)}`;
+            document.getElementById('yearlySurplus').innerText = `¥${formatNumber(startSalary * (1 - taxRateDecimal) - yearlyCost)}`;
+            document.getElementById('freeYear').innerText = freeYear;
+            document.getElementById('totalAsset').innerText = `¥${formatNumber(totalAsset.toFixed(0))}`;
+
+            // 更新表格
+            renderTable(tableData, yearlyCost);
+            // 更新图表
+            renderChart(yearLabels, assetIncomeData, costData, yearlyCost);
+        }
+
+        // 渲染表格
+        function renderTable(data, yearlyCost) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(item => {
+                const isFree = item.assetIncome >= yearlyCost;
+                const tr = document.createElement('tr');
+                tr.className = `border-b border-gray-100 hover:bg-gray-50 transition-all ${isFree ? 'bg-primary/5' : ''}`;
+                
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-sm font-medium ${isFree ? 'text-primary' : 'text-gray-700'}">第${item.year}年</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">¥${formatNumber(item.salary.toFixed(0))}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">¥${formatNumber(item.surplus.toFixed(0))}</td>
+                    <td class="py-3 px-4 text-sm font-medium ${isFree ? 'text-primary' : 'text-gray-700'}">¥${formatNumber(item.assetIncome.toFixed(0))}</td>
+                    <td class="py-3 px-4 text-sm text-danger">¥${formatNumber(item.yearlyCost.toFixed(0))}</td>
+                    <td class="py-3 px-4 text-sm font-bold text-gray-800">¥${formatNumber(item.totalAsset.toFixed(0))}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 渲染图表
+        function renderChart(labels, assetIncome, costData, yearlyCost) {
+            const ctx = document.getElementById('financeChart').getContext('2d');
+            
+            // 销毁旧图表
+            if(financeChart) {
+                financeChart.destroy();
+            }
+
+            // 创建新图表
+            financeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '年资产收益 (¥)',
+                            data: assetIncome,
+                            backgroundColor: '#10B981',
+                            borderRadius: 4,
+                            order: 2
+                        },
+                        {
+                            label: '年生活成本 (¥)',
+                            data: costData,
+                            borderColor: '#EF4444',
+                            borderWidth: 2,
+                            type: 'line',
+                            fill: false,
+                            pointRadius: 0,
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += '¥' + formatNumber(context.parsed.y.toFixed(0));
+                                    return label;
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                freeLine: {
+                                    type: 'line',
+                                    yMin: yearlyCost,
+                                    yMax: yearlyCost,
+                                    borderColor: '#EF4444',
+                                    borderWidth: 1,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        display: true,
+                                        content: '财务自由线',
+                                        position: 'end'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '¥' + (value / 10000) + '万';
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 数字格式化工具函数
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+    </script>
 </body>
 </html>
