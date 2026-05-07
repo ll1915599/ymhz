@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高血压药物全信息对比管理系统</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body{background:#f5f7fa;font-family:Microsoft YaHei,sans-serif}
+  .drug-card{transition:.3s;border:1px solid #e2e8f0}
+  .drug-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.08)}
+  /* 分类标签 */
+  .tag-ccb{background:#dbeafe;color:#1e40af}
+  .tag-acei{background:#fef3c7;color:#92400e}
+  .tag-arb{background:#d1fae5;color:#065f46}
+  .tag-diuretic{background:#fee2e2;color:#991b1b}
+  .tag-beta{background:#f3e8ff;color:#6b21a8}
+  .tag-other{background:#e5e7eb;color:#374151}
+  /* 标记标签 */
+  .tag-use{background:#10b981;color:#fff}
+  .tag-caution{background:#f59e0b;color:#fff}
+  .tag-avoid{background:#ef4444;color:#fff}
+  .badge{font-size:12px;padding:2px 6px;border-radius:4px;margin-right:4px;display:inline-block;margin-bottom:4px}
+  .text-small{font-size:13px;line-height:1.5}
+  .filter-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+  .comp-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+  .mark-btn.active{opacity:1;font-weight:700}
+  .side-tag{background:#f9fafb;border:1px solid #e5e7eb;padding:1px 4px;border-radius:3px;font-size:12px;margin:0 2px 2px 0;display:inline-block}
+</style>
+</head>
+<body class="min-h-screen pb-20">
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+  <!-- 头部 -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">高血压药物全信息对比管理系统</h1>
+    <p class="text-gray-600 text-sm">依据《中国高血压防治指南2024》| 全药物收录 | 筛选/标记/导出</p>
+    <p class="text-red-500 text-xs mt-2">【重要声明】本工具仅为用药参考，不替代医嘱，严禁自行调药、停药！</p>
+  </div>
+
+  <!-- 筛选区 -->
+  <div class="bg-white rounded-xl p-5 mb-6 shadow-sm">
+    <div class="mb-3">
+      <p class="text-sm text-gray-600 mb-2">药物分类筛选：</p>
+      <div class="flex flex-wrap gap-2">
+        <button class="filter-btn px-3 py-1 border rounded text-sm active" data-type="all">全部</button>
+        <button class="filter-btn px-3 py-1 border rounded text-sm" data-type="CCB">CCB地平类</button>
+        <button class="filter-btn px-3 py-1 border rounded text-sm" data-type="ACEI">ACEI普利类</button>
+        <button class="filter-btn px-3 py-1 border rounded text-sm" data-type="ARB">ARB沙坦类</button>
+        <button class="filter-btn px-3 py-1 border rounded text-sm" data-type="利尿剂">利尿剂</button>
+        <button class="filter-btn px-3 py-1 border rounded text-sm" data-type="β受体阻滞剂">β受体阻滞剂</button>
+        <button class="filter-btn px-3 py-1 border rounded text-sm" data-type="其他">其他特殊药</button>
+      </div>
+    </div>
+    <div class="mb-3">
+      <p class="text-sm text-gray-600 mb-2">并发症适配筛选：</p>
+      <div class="flex flex-wrap gap-2">
+        <button class="comp-btn px-3 py-1 border rounded text-sm active" data-comp="all">全部并发症</button>
+        <button class="comp-btn px-3 py-1 border rounded text-sm" data-comp="冠心病">冠心病</button>
+        <button class="comp-btn px-3 py-1 border rounded text-sm" data-comp="心衰">心力衰竭</button>
+        <button class="comp-btn px-3 py-1 border rounded text-sm" data-comp="糖尿病肾病">糖尿病肾病</button>
+        <button class="comp-btn px-3 py-1 border rounded text-sm" data-comp="慢性肾病">慢性肾病</button>
+        <button class="comp-btn px-3 py-1 border rounded text-sm" data-comp="脑卒中">脑卒中后</button>
+        <button class="comp-btn px-3 py-1 border rounded text-sm" data-comp="痛风">痛风</button>
+        <button class="comp-btn px-3 py-1 border rounded text-sm" data-comp="房颤">房颤</button>
+      </div>
+    </div>
+    <input id="searchInput" placeholder="搜索药名/原研/禁忌/副作用" class="w-full px-3 py-2 border rounded mt-2">
+  </div>
+
+  <!-- 操作区 -->
+  <div class="flex flex-wrap gap-3 mb-6">
+    <button id="exportBtn" class="px-4 py-2 bg-blue-600 text-white rounded text-sm">导出用药方案</button>
+    <button id="clearMark" class="px-4 py-2 bg-gray-500 text-white rounded text-sm">清空所有标记</button>
+  </div>
+
+  <!-- 药物卡片 -->
+  <div id="drugContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+  <!-- 导出弹窗 -->
+  <div id="exportModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl w-full max-w-3xl max-h-[80vh] overflow-auto p-6 mx-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-xl">高血压药物全信息方案</h3>
+        <button id="closeModal" class="text-gray-500 text-2xl">×</button>
+      </div>
+      <textarea id="exportContent" class="w-full h-72 p-3 border rounded text-sm" readonly></textarea>
+      <div class="flex gap-3 mt-4 justify-end">
+        <button id="copyBtn" class="px-4 py-2 bg-blue-600 text-white rounded text-sm">复制方案</button>
+        <button id="downloadBtn" class="px-4 py-2 bg-gray-700 text-white rounded text-sm">下载TXT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 全量药物数据（含原研+副作用+禁忌+适配并发症+用药建议）
+const drugData = [
+  // 一、CCB地平类
+  {name:"硝苯地平控释片",brand:"拜新同",company:"拜耳（德国）",type:"CCB",side:"踝部水肿、头痛、面部潮红、心悸、牙龈增生、便秘",taboo:"严重低血压、主动脉瓣狭窄、急性冠脉综合征、妊娠",complication:"老年高血压、单纯收缩期高血压、冠心病、脑卒中",advice:"30mg每日1次，整片吞服不可掰碎，根据血压调整剂量，晨起服用"},
+  {name:"氨氯地平",brand:"络活喜",company:"辉瑞（美国）",type:"CCB",side:"踝部水肿、头痛、头晕、乏力、牙龈增生（发生率低于硝苯地平）",taboo:"严重主动脉瓣狭窄、药物过敏、低血压",complication:"老年高血压、单纯收缩期高血压、冠心病、脑卒中后、糖尿病肾病",advice:"初始5mg每日1次，最大10mg/日，老年减半起始，长效平稳降压"},
+  {name:"左旋氨氯地平",brand:"玄宁",company:"石药集团（中国）",type:"CCB",side:"同氨氯地平，副作用更轻",taboo:"主动脉瓣狭窄、过敏、低血压",complication:"老年高血压、糖尿病、肾病合并高血压",advice:"初始2.5mg每日1次，副作用更少，耐受性更佳"},
+  {name:"非洛地平",brand:"波依定",company:"阿斯利康（瑞典）",type:"CCB",side:"踝部水肿、面部潮红、头痛、心悸",taboo:"低血压、过敏、急性心肌梗死",complication:"老年高血压、单纯收缩期高血压、冠心病",advice:"初始5mg每日1次，缓释片不可掰碎，晨起服用"},
+  {name:"拉西地平",brand:"乐息平",company:"葛兰素史克（英国）",type:"CCB",side:"头痛、面部潮红、心悸、踝部水肿",taboo:"严重主动脉瓣狭窄、过敏、低血压",complication:"老年高血压、冠心病",advice:"初始4mg每日1次，可增至6mg，晨起服用"},
+  {name:"维拉帕米",brand:"异搏定",company:"雅培（美国）",type:"CCB",side:"心动过缓、房室传导阻滞、便秘、头晕",taboo:"二度以上房室传导阻滞、心衰、低血压、房颤伴预激",complication:"房颤、室上速、冠心病",advice:"根据心率调整剂量，禁与β受体阻滞剂联用"},
+  {name:"地尔硫卓",brand:"合心爽",company:"田边三菱（日本）",type:"CCB",side:"心动过缓、头晕、乏力、便秘",taboo:"严重心动过缓、房室传导阻滞、心衰",complication:"冠心病、房颤、室上速",advice:"缓释制剂每日1-2次，监测心率"},
+
+  // 二、ACEI普利类
+  {name:"卡托普利",brand:"开博通",company:"百时美施贵宝（美国）",type:"ACEI",side:"持续性干咳（最常见）、高血钾、血肌酐升高、血管性水肿（罕见，需急救）、皮疹",taboo:"妊娠、双侧肾动脉狭窄、高钾血症、血管性水肿病史",complication:"糖尿病肾病、冠心病、心衰",advice:"初始12.5mg每日2-3次，餐前1小时服用，监测肌酐血钾"},
+  {name:"依那普利",brand:"悦宁定",company:"默沙东（美国）",type:"ACEI",side:"干咳、高血钾、头晕、乏力、血管性水肿",taboo:"妊娠、肾动脉狭窄、高钾血症、过敏",complication:"糖尿病肾病、心衰、冠心病",advice:"初始5mg每日1-2次，肾功能不全者减量"},
+  {name:"贝那普利",brand:"洛汀新",company:"诺华（瑞士）",type:"ACEI",side:"干咳、高血钾、头晕、乏力、肾功能异常",taboo:"妊娠、双侧肾动脉狭窄、高钾血症、血管性水肿病史",complication:"糖尿病肾病、冠心病、心衰、慢性肾病",advice:"初始10mg每日1次，肾功能不全者5mg起始，用药2周复查肾功能"},
+  {name:"福辛普利",brand:"蒙诺",company:"施贵宝（美国）",type:"ACEI",side:"干咳、高血钾、头晕、头痛",taboo:"妊娠、肾动脉狭窄、高钾血症",complication:"糖尿病肾病、慢性肾病、心衰",advice:"初始10mg每日1次，肝肾双代谢，肾功能不全无需减量"},
+  {name:"雷米普利",brand:"瑞泰",company:"赛诺菲（法国）",type:"ACEI",side:"干咳、高血钾、头晕、乏力",taboo:"妊娠、肾动脉狭窄、高钾血症、血管性水肿",complication:"心衰、冠心病、脑卒中二级预防",advice:"初始2.5mg每日1次，根据血压调整至5-10mg"},
+  {name:"培哚普利",brand:"雅施达",company:"施维雅（法国）",type:"ACEI",side:"干咳、高血钾、头晕、乏力、体位性低血压",taboo:"妊娠、肾动脉狭窄、高钾血症、过敏",complication:"心衰、冠心病、糖尿病肾病、脑卒中二级预防",advice:"初始4mg每日1次，晨起空腹服，老年2mg起始"},
+
+  // 三、ARB沙坦类
+  {name:"氯沙坦",brand:"科素亚",company:"默沙东（美国）",type:"ARB",side:"头晕、乏力、高血钾、血肌酐升高（无干咳，血管性水肿极罕见）",taboo:"妊娠、双侧肾动脉狭窄、高钾血症",complication:"糖尿病肾病、心衰、ACEI干咳不耐受",advice:"初始50mg每日1次，可增至100mg，餐前餐后均可"},
+  {name:"缬沙坦",brand:"代文",company:"诺华（瑞士）",type:"ARB",side:"头晕、乏力、高血钾、肾功能异常（耐受性好）",taboo:"妊娠、双侧肾动脉狭窄、高钾血症、严重肾衰",complication:"糖尿病肾病、心衰、ACEI不耐受、冠心病、房颤",advice:"初始80mg每日1次，可增至160mg，降压平稳"},
+  {name:"厄贝沙坦",brand:"安博维",company:"赛诺菲（法国）",type:"ARB",side:"头晕、乏力、高血钾、体位性低血压",taboo:"妊娠、肾动脉狭窄、高钾血症",complication:"糖尿病肾病、高血压合并房颤、慢性肾病",advice:"初始150mg每日1次，肾病患者可增至300mg"},
+  {name:"替米沙坦",brand:"美卡素",company:"勃林格殷格翰（德国）",type:"ARB",side:"头晕、乏力、高血钾、背痛、腹泻",taboo:"妊娠、胆道梗阻性疾病、严重肝病",complication:"脑卒中后、心血管高危、糖尿病、心衰",advice:"初始40mg每日1次，最大80mg，半衰期长降压持久"},
+  {name:"奥美沙坦",brand:"傲坦",company:"第一三共（日本）",type:"ARB",side:"头晕、乏力、高血钾、血肌酐升高",taboo:"妊娠、肾动脉狭窄、高钾血症",complication:"糖尿病肾病、慢性肾病、高血压",advice:"初始20mg每日1次，可增至40mg，强效平稳"},
+  {name:"阿利沙坦",brand:"信立坦",company:"信立泰（中国）",type:"ARB",side:"头晕、乏力、高血钾、轻微胃肠道不适",taboo:"妊娠、肾动脉狭窄、高钾血症",complication:"糖尿病肾病、高血压",advice:"初始240mg每日1次，国产原研，耐受性好"},
+
+  // 四、利尿剂
+  {name:"氢氯噻嗪",brand:"双氢克尿塞",company:"雅培（美国）",type:"利尿剂",side:"低钾血症、高尿酸（诱发痛风）、血糖/血脂升高、乏力、多尿",taboo:"痛风、严重肾功能衰竭、低钾血症、过敏",complication:"心衰、单纯收缩期高血压、水肿型高血压",advice:"12.5-25mg每日1次，小剂量起始，严禁大剂量，定期补钾"},
+  {name:"吲达帕胺",brand:"纳催离",company:"施维雅（法国）",type:"利尿剂",side:"低钾、乏力、头晕、血糖轻度升高、尿酸升高",taboo:"痛风、严重肾功能不全、低钾血症、过敏",complication:"老年高血压、心衰、单纯收缩期高血压",advice:"1.5mg每日1次，晨起服，监测血钾尿酸"},
+  {name:"呋塞米",brand:"速尿",company:"赛诺菲（法国）",type:"利尿剂",side:"严重低钾、低钠、脱水、耳毒性（大剂量）、尿酸升高",taboo:"低钾血症、严重脱水、过敏、无尿型肾衰",complication:"心衰水肿、肾性水肿、高血压急症",advice:"急性心衰20-40mg静注，慢性20-40mg每日1次，监测电解质"},
+  {name:"螺内酯",brand:"安体舒通",company:"辉瑞（美国）",type:"利尿剂",side:"高钾血症（禁用肾衰/高钾）、乳房胀痛/增生、月经紊乱、乏力",taboo:"高钾血症、严重肾功能不全、妊娠、男性乳房增生",complication:"心衰、难治性高血压、醛固酮增多症",advice:"初始20mg每日1次，严格监测血钾，＞5.5mmol/L立即停药"},
+  {name:"依普利酮",brand:"Inspra",company:"辉瑞（美国）",type:"利尿剂",side:"高钾血症、头晕、乏力（乳房副作用少于螺内酯）",taboo:"高钾血症、严重肾病、妊娠",complication:"心衰、急性心梗后、难治性高血压",advice:"初始25mg每日1次，监测血钾，性激素副作用更少"},
+
+  // 五、β受体阻滞剂
+  {name:"美托洛尔（缓释）",brand:"倍他乐克",company:"阿斯利康（瑞典）",type:"β受体阻滞剂",side:"心动过缓、乏力、四肢冰凉、头晕、掩盖低血糖、支气管痉挛（哮喘禁用）",taboo:"哮喘、二度以上房室传导阻滞、心率＜55次/分、严重心衰",complication:"冠心病、心衰、高血压合并快速心律失常、房颤",advice:"初始47.5mg每日1次，晨起吞服，不可突然停药，监测心率≥55次/分"},
+  {name:"比索洛尔",brand:"康忻",company:"默克（德国）",type:"β受体阻滞剂",side:"心动过缓、乏力、头晕、四肢冰凉、性功能下降",taboo:"哮喘、严重心动过缓、房室传导阻滞、外周血管病",complication:"冠心病、心衰、高血压合并心率快",advice:"初始2.5mg每日1次，最大10mg，高选择性β1阻滞剂，副作用更少"},
+  {name:"阿替洛尔",brand:"天诺敏",company:"阿斯利康（瑞典）",type:"β受体阻滞剂",side:"心动过缓、乏力、头晕、支气管痉挛",taboo:"哮喘、心动过缓、房室传导阻滞",complication:"冠心病、高血压合并快速心律失常",advice:"初始25mg每日1次，根据心率调整"},
+  {name:"卡维地洛",brand:"达利全",company:"罗氏（瑞士）",type:"β受体阻滞剂",side:"头晕、乏力、体位性低血压、心动过缓、支气管痉挛",taboo:"哮喘、严重心动过缓、心衰失代偿期",complication:"心衰、冠心病、高血压",advice:"初始3.125mg每日2次，逐步加量，监测血压心率"},
+
+  // 六、其他特殊降压药
+  {name:"多沙唑嗪",brand:"可多华",company:"辉瑞（美国）",type:"其他",side:"体位性低血压、头晕、乏力、鼻塞",taboo:"低血压、过敏、近期心梗",complication:"高血压合并前列腺增生",advice:"初始1mg每日1次，睡前服，避免突然站立"},
+  {name:"可乐定",brand:"可乐定贴片",company:"勃林格殷格翰",type:"其他",side:"口干、嗜睡、头晕、停药反跳性高血压",taboo:"严重冠心病、脑血管病、过敏",complication:"难治性高血压、高血压急症",advice:"贴片每周1-2次，严禁突然停药，逐步减量"},
+  {name:"硝普钠",brand:"硝普钠注射液",company:"雅培",type:"其他",side:"低血压、氰化物中毒（长期/大剂量）、恶心、呕吐",taboo:"严重低血压、颅内高压、氰化物中毒",complication:"高血压急症、急性左心衰",advice:"静脉泵入，避光输注，连续使用不超过72小时，监测氰化物浓度"}
+];
+
+// 全局状态
+let currentFilter = {type:"all",comp:"all",keyword:""};
+let userMarks = JSON.parse(localStorage.getItem("drugFullMarks")) || {};
+
+// 渲染卡片
+function renderDrugs(){
+  const container = document.getElementById("drugContainer");
+  let filtered = drugData.filter(d=>{
+    if(currentFilter.type!=="all"&&d.type!==currentFilter.type)return false;
+    if(currentFilter.comp!=="all"&&!d.complication.includes(currentFilter.comp))return false;
+    if(currentFilter.keyword&&!d.name.includes(currentFilter.keyword)&&!d.brand.includes(currentFilter.keyword)&&!d.taboo.includes(currentFilter.keyword)&&!d.side.includes(currentFilter.keyword))return false;
+    return true;
+  });
+  container.innerHTML = "";
+  filtered.forEach(d=>{
+    const mark = userMarks[d.name]||"";
+    const sideTags = d.side.split(/、|，/).map(s=>`<span class="side-tag">${s}</span>`).join('');
+    container.innerHTML += `
+      <div class="drug-card bg-white rounded-xl p-5 shadow-sm">
+        <div class="mb-3">
+          <span class="badge tag-${d.type.toLowerCase()}">${d.type}</span>
+          <span class="text-sm text-gray-500 float-right">${d.brand} | ${d.company}</span>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-gray-800">${d.name}</h3>
+        <div class="text-small mb-2">
+          <p class="text-gray-700 mb-1"><strong>适配并发症：</strong>${d.complication}</p>
+          <p class="text-red-600 mb-1"><strong>禁忌人群：</strong>${d.taboo}</p>
+          <p class="text-gray-700 mb-1"><strong>用药建议：</strong>${d.advice}</p>
+          <div class="text-gray-600"><strong>副作用：</strong>${sideTags}</div>
+        </div>
+        <div class="flex gap-2 mt-3 border-t pt-3">
+          <button class="mark-btn px-2 py-1 rounded text-xs ${mark==="use"?"tag-use active":"bg-gray-100 text-gray-700"}" data-name="${d.name}" data-status="use">在用</button>
+          <button class="mark-btn px-2 py-1 rounded text-xs ${mark==="caution"?"tag-caution active":"bg-gray-100 text-gray-700"}" data-name="${d.name}" data-status="caution">慎用</button>
+          <button class="mark-btn px-2 py-1 rounded text-xs ${mark==="avoid"?"tag-avoid active":"bg-gray-100 text-gray-700"}" data-name="${d.name}" data-status="avoid">禁用</button>
+        </div>
+      </div>`;
+  });
+  bindMark();
+}
+
+// 绑定标记事件
+function bindMark(){
+  document.querySelectorAll(".mark-btn").forEach(b=>{
+    b.onclick=()=>{
+      const name = b.dataset.name;
+      const s = b.dataset.status;
+      userMarks[name] = userMarks[name]===s?"":s;
+      localStorage.setItem("drugFullMarks",JSON.stringify(userMarks));
+      renderDrugs();
+    }
+  });
+}
+
+// 绑定筛选事件
+function bindFilter(){
+  document.querySelectorAll(".filter-btn").forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll(".filter-btn").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      currentFilter.type = b.dataset.type;
+      renderDrugs();
+    }
+  });
+  document.querySelectorAll(".comp-btn").forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll(".comp-btn").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      currentFilter.comp = b.dataset.comp;
+      renderDrugs();
+    }
+  });
+  document.getElementById("searchInput").oninput=e=>{
+    currentFilter.keyword = e.target.value.trim();
+    renderDrugs();
+  }
+}
+
+// 绑定导出功能
+function bindExport(){
+  const m = document.getElementById("exportModal");
+  document.getElementById("exportBtn").onclick=()=>{
+    let t = "高血压药物全信息对比方案\n生成时间："+new Date().toLocaleString()+"\n\n===== 个人用药标记 =====\n";
+    Object.keys(userMarks).forEach(name=>{
+      const d = drugData.find(x=>x.name===name);
+      if(d){
+        const st = {use:"【在用】",caution:"【慎用】",avoid:"【禁用】"}[userMarks[name]]||"";
+        t+=`${st}${d.name}（${d.type}）\n原研：${d.brand} ${d.company}\n适配：${d.complication}\n建议：${d.advice}\n\n`;
+      }
+    });
+    t+="===== 全药物信息 =====\n";
+    drugData.forEach(d=>{
+      t+=`【${d.type}】${d.name}\n原研：${d.brand} | ${d.company}\n禁忌：${d.taboo}\n建议：${d.advice}\n副作用：${d.side}\n------------------------\n`;
+    });
+    t+="\n【重要提示】本方案仅为参考，所有用药需遵心内科医生指导！";
+    document.getElementById("exportContent").value = t;
+    m.classList.remove("hidden");
+  };
+  document.getElementById("closeModal").onclick=()=>m.classList.add("hidden");
+  document.getElementById("copyBtn").onclick=()=>{
+    document.getElementById("exportContent").select();
+    document.execCommand("copy");
+    alert("已复制到剪贴板");
+  };
+  document.getElementById("downloadBtn").onclick=()=>{
+    const blob = new Blob([document.getElementById("exportContent").value],{type:"text/plain"});
+    const a = document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="高血压药物全信息方案.txt";
+    a.click();
+  };
+  document.getElementById("clearMark").onclick=()=>{
+    if(confirm("确定清空所有用药标记？")){
+      userMarks={};
+      localStorage.removeItem("drugFullMarks");
+      renderDrugs();
+    }
+  };
+}
+
+// 初始化
+window.onload=()=>{renderDrugs();bindFilter();bindExport();}
+</script>
+</body>
+</html>
