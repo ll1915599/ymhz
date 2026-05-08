@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>港澳双城之旅 · 5天4晚全面规划</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    ::selection { background: #e81d25; color: #fff; }
+    body { background: #050505; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
+    .animate-marquee { animation: marquee 30s linear infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in-up { animation: fadeInUp 0.7s ease-out forwards; opacity: 0; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+    .timeline-line { background: linear-gradient(to bottom, #e81d25, rgba(232,29,37,0.1)); }
+    .glow-dot { box-shadow: 0 0 12px rgba(232,29,37,0.8), 0 0 24px rgba(232,29,37,0.4); }
+    .card-hover { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .card-hover:hover { transform: translateY(-6px); border-color: rgba(232,29,37,0.4); box-shadow: 0 25px 50px -12px rgba(232,29,37,0.15); }
+    .bank-card-gradient-1 { background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #1a0505 100%); }
+    .bank-card-gradient-2 { background: linear-gradient(135deg, #0a0a0a 0%, #0a1a1a 50%, #1a1a1a 100%); }
+    .scroll-hidden { scrollbar-width: none; -ms-overflow-style: none; }
+    .scroll-hidden::-webkit-scrollbar { display: none; }
+    .tab-active { background: #e81d25; color: #fff; }
+    .priority-high { border-left: 3px solid #e81d25; }
+    .priority-mid { border-left: 3px solid #f97316; }
+    .priority-low { border-left: 3px solid #22c55e; }
+    .hero-overlay { background: linear-gradient(to top, #050505 0%, rgba(5,5,5,0.7) 40%, rgba(5,5,5,0.3) 100%); }
+  </style>
+</head>
+<body class="text-white antialiased">
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-[#e81d25] rounded-lg flex items-center justify-center">
+          <i data-lucide="map-pin" class="w-5 h-5 text-white"></i>
+        </div>
+        <span class="text-sm font-semibold tracking-wider uppercase">港澳双城之旅</span>
+      </div>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#overview" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">概览</a>
+        <a href="#itinerary" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">行程</a>
+        <a href="#banking" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">开户</a>
+        <a href="#tips" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">贴士</a>
+      </div>
+      <button id="mobileMenuBtn" class="md:hidden p-2 text-gray-400 hover:text-white transition-colors">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-white/5 bg-black/90 backdrop-blur-md">
+      <div class="px-6 py-4 flex flex-col gap-4">
+        <a href="#overview" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">概览</a>
+        <a href="#itinerary" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">行程</a>
+        <a href="#banking" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">开户</a>
+        <a href="#tips" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">贴士</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-[90vh] flex items-end overflow-hidden">
+    <img src="https://picsum.photos/seed/hongkong-skyline-night/1920/1080.jpg" alt="香港维多利亚港夜景" class="absolute inset-0 w-full h-full object-cover brightness-50 saturate-50">
+    <div class="hero-overlay absolute inset-0"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 pb-20 md:pb-28 w-full">
+      <div class="fade-in-up">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="w-2 h-2 bg-[#e81d25] rounded-full glow-dot"></span>
+          <span class="text-xs font-bold tracking-widest uppercase text-gray-400">5天4晚 · 香港+澳门</span>
+        </div>
+      </div>
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[0.95] mb-8 fade-in-up delay-1">
+        港澳双城<br>
+        <span class="bg-gradient-to-r from-[#e81d25] to-[#f97316] bg-clip-text text-transparent">全面旅行规划</span>
+      </h1>
+      <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-10 fade-in-up delay-2 leading-relaxed">
+        精心串联经典景点与银行开户，顺路高效不绕路。涵盖维港夜色、大三巴古迹、中银香港与工银亚洲开户全攻略。
+      </p>
+      <div class="flex flex-wrap gap-4 fade-in-up delay-3">
+        <a href="#itinerary" class="inline-flex items-center gap-2 bg-[#e81d25] hover:bg-red-700 text-white text-sm font-bold tracking-wider uppercase px-8 py-4 rounded-full transition-colors">
+          <span>查看行程</span>
+          <i data-lucide="arrow-down" class="w-4 h-4"></i>
+        </a>
+        <a href="#banking" class="inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-white text-sm font-bold tracking-wider uppercase px-8 py-4 rounded-full transition-colors">
+          <i data-lucide="landmark" class="w-4 h-4"></i>
+          <span>开户指南</span>
+        </a>
+      </div>
+      <!-- Stats -->
+      <div class="grid grid-cols-3 gap-6 mt-16 max-w-lg fade-in-up delay-4">
+        <div>
+          <div class="text-3xl md:text-4xl font-semibold text-white">5</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">天行程</div>
+        </div>
+        <div>
+          <div class="text-3xl md:text-4xl font-semibold text-white">2</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">家银行开户</div>
+        </div>
+        <div>
+          <div class="text-3xl md:text-4xl font-semibold text-white">18+</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">个景点</div>
+        </div>
+      </div>
+    </div>
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float">
+      <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500"></i>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="bg-[#e81d25] py-3 overflow-hidden rotate-0">
+    <div class="animate-marquee whitespace-nowrap flex">
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">维多利亚港</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">太平山顶</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">大三巴牌坊</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">中银香港</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">工银亚洲</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">威尼斯人</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">星光大道</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">港珠澳大桥</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">维多利亚港</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">太平山顶</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">大三巴牌坊</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">中银香港</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">工银亚洲</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">威尼斯人</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">星光大道</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">港珠澳大桥</span>
+      <span class="mx-4">✦</span>
+    </div>
+  </div>
+
+  <!-- Overview Section -->
+  <section id="overview" class="py-24 md:py-32">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-bold tracking-widest uppercase text-[#e81d25] mb-4 block">Trip Overview</span>
+        <h2 class="text-4xl md:text-6xl font-semibold tracking-tight mb-6">行程概览</h2>
+        <p class="text-lg text-gray-400 leading-relaxed">5天4晚，从香港都市繁华到澳门葡式风情，中途无缝衔接中银香港与工银亚洲开户，一次出行搞定旅行与金融双需求。</p>
+      </div>
+
+      <!-- Overview Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover relative overflow-hidden group">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#e81d25] to-transparent"></div>
+          <div class="text-xs font-bold tracking-widest uppercase text-[#e81d25] mb-3">Day 1</div>
+          <h3 class="text-lg font-semibold mb-2">抵港 & 开户</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">工银亚洲VTM开户 + 太平山顶夜景</p>
+          <div class="flex items-center gap-2 mt-4 text-xs text-gray-600">
+            <i data-lucide="map-pin" class="w-3 h-3"></i>
+            <span>香港</span>
+          </div>
+        </div>
+
+        <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#f97316] to-transparent"></div>
+          <div class="text-xs font-bold tracking-widest uppercase text-[#f97316] mb-3">Day 2</div>
+          <h3 class="text-lg font-semibold mb-2">经典 & 中银</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">黄大仙祠 + 星光大道 + 中银香港预约开户</p>
+          <div class="flex items-center gap-2 mt-4 text-xs text-gray-600">
+            <i data-lucide="map-pin" class="w-3 h-3"></i>
+            <span>香港</span>
+          </div>
+        </div>
+
+        <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#22c55e] to-transparent"></div>
+          <div class="text-xs font-bold tracking-widest uppercase text-[#22c55e] mb-3">Day 3</div>
+          <h3 class="text-lg font-semibold mb-2">深度 & 过境</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">迪士尼/海洋公园/文化游 + 前往澳门</p>
+          <div class="flex items-center gap-2 mt-4 text-xs text-gray-600">
+            <i data-lucide="map-pin" class="w-3 h-3"></i>
+            <span>香港 → 澳门</span>
+          </div>
+        </div>
+
+        <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#3b82f6] to-transparent"></div>
+          <div class="text-xs font-bold tracking-widest uppercase text-[#3b82f6] mb-3">Day 4</div>
+          <h3 class="text-lg font-semibold mb-2">历史 & 奢华</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">大三巴 + 妈阁庙 + 威尼斯人度假村</p>
+          <div class="flex items-center gap-2 mt-4 text-xs text-gray-600">
+            <i data-lucide="map-pin" class="w-3 h-3"></i>
+            <span>澳门</span>
+          </div>
+        </div>
+
+        <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#a855f7] to-transparent"></div>
+          <div class="text-xs font-bold tracking-widest uppercase text-[#a855f7] mb-3">Day 5</div>
+          <h3 class="text-lg font-semibold mb-2">休闲 & 返程</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">路环岛黑沙海滩 + 澳门旅游塔 + 返程</p>
+          <div class="flex items-center gap-2 mt-4 text-xs text-gray-600">
+            <i data-lucide="map-pin" class="w-3 h-3"></i>
+            <span>澳门</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Itinerary Detail Section -->
+  <section id="itinerary" class="py-24 md:py-32 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-bold tracking-widest uppercase text-[#e81d25] mb-4 block">Detailed Itinerary</span>
+        <h2 class="text-4xl md:text-6xl font-semibold tracking-tight mb-6">每日行程</h2>
+        <p class="text-lg text-gray-400 leading-relaxed">按优先级排序的景点与活动，确保不遗漏任何精华体验。</p>
+      </div>
+
+      <!-- Day Tabs -->
+      <div class="flex gap-2 mb-12 overflow-x-auto scroll-hidden pb-2">
+        <button onclick="switchDay(1)" class="day-tab tab-active whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 transition-all" data-day="1">Day 1</button>
+        <button onclick="switchDay(2)" class="day-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-day="2">Day 2</button>
+        <button onclick="switchDay(3)" class="day-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-day="3">Day 3</button>
+        <button onclick="switchDay(4)" class="day-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-day="4">Day 4</button>
+        <button onclick="switchDay(5)" class="day-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-day="5">Day 5</button>
+      </div>
+
+      <!-- Day 1 Content -->
+      <div id="day-1" class="day-content">
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <!-- Activity 1 -->
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden card-hover">
+              <div class="relative h-56 md:h-64 overflow-hidden">
+                <img src="https://picsum.photos/seed/icbc-asia-machine/800/400.jpg" alt="工银亚洲VTM" class="w-full h-full object-cover brightness-50">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                  <div>
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="bg-[#e81d25] text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">核心任务</span>
+                      <span class="bg-white/10 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">银行开户</span>
+                    </div>
+                    <h3 class="text-xl font-semibold">工银亚洲 VTM 自助开户</h3>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-2xl font-semibold text-[#e81d25]">上午</div>
+                    <div class="text-xs text-gray-400">~45分钟</div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-6 priority-high">
+                <p class="text-gray-400 leading-relaxed mb-4">抵达香港后，前往上环/铜锣湾等地的VTM自助开户机。携带身份证、港澳通行证、过关小票即可办理，支持当日领卡。</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="text-xs bg-white/5 text-gray-400 px-3 py-1.5 rounded-full">无需预约</span>
+                  <span class="text-xs bg-white/5 text-gray-400 px-3 py-1.5 rounded-full">当日领卡</span>
+                  <span class="text-xs bg-white/5 text-gray-400 px-3 py-1.5 rounded-full">上环/铜锣湾</span>
+                  <span class="text-xs bg-white/5 text-gray-400 px-3 py-1.5 rounded-full">服务至20:00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity 2 -->
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover priority-high">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-[#e81d25]/10 flex items-center justify-center">
+                    <i data-lucide="mountain" class="w-5 h-5 text-[#e81d25]"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold">太平山顶</h3>
+                    <span class="text-xs text-gray-500">傍晚 · 维港最佳观景点</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-semibold text-gray-300">★★★</div>
+                  <div class="text-[10px] text-gray-600 uppercase tracking-wider">高优先级</div>
+                </div>
+              </div>
+              <p class="text-gray-400 text-sm leading-relaxed mb-4">乘坐第六代绿色山顶缆车登顶，俯瞰香港全景与维多利亚港璀璨夜景。缆车倾斜角度高达25.7°，穿越中环摩天大楼，体验极其独特。</p>
+              <div class="flex items-center gap-4 text-xs text-gray-500">
+                <span class="flex items-center gap-1"><i data-lucide="ticket" class="w-3 h-3"></i> 缆车票约HK$62</span>
+                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 建议1-2小时</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side Info -->
+          <div class="space-y-6">
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 sticky top-24">
+              <h4 class="text-sm font-bold tracking-wider uppercase text-[#e81d25] mb-4">Day 1 小贴士</h4>
+              <ul class="space-y-3">
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>酒店建议选择尖沙咀、旺角或中环，交通便利</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>VTM开户前确保过关小票未丢失</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>山顶缆车建议提前在线购票，避开排队</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>傍晚下山后可到中环苏豪区用餐</span>
+                </li>
+              </ul>
+              <div class="mt-6 pt-6 border-t border-white/5">
+                <div class="text-xs text-gray-500 mb-2">当日重点</div>
+                <div class="text-sm font-semibold text-white">✅ 完成工银亚洲开户</div>
+                <div class="text-sm font-semibold text-white">✅ 太平山顶夜景</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 2 Content -->
+      <div id="day-2" class="day-content hidden">
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover priority-high">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-[#f97316]/10 flex items-center justify-center">
+                    <i data-lucide="landmark" class="w-5 h-5 text-[#f97316]"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold">中银香港 开户</h3>
+                    <span class="text-xs text-gray-500">下午 · 必须提前预约</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-semibold text-gray-300">★★★</div>
+                  <div class="text-[10px] text-gray-600 uppercase tracking-wider">高优先级</div>
+                </div>
+              </div>
+              <div class="bg-[#f97316]/5 border border-[#f97316]/20 rounded-xl p-4 mb-4">
+                <div class="flex items-center gap-2 text-[#f97316] text-xs font-bold mb-2">
+                  <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                  <span>重要提醒</span>
+                </div>
+                <p class="text-sm text-gray-400">必须通过"中银香港微服务"公众号提前预约分行及时间。建议选择工作日早上11点前，避开尖沙咀/旺角等热门分行。线上开户拒批率超90%，务必线下办理。</p>
+              </div>
+              <p class="text-gray-400 text-sm leading-relaxed mb-4">游览星光大道时，顺路前往预约的中银分行。需携带：身份证、通行证、过关小票、地址证明（身份证地址一致可免）、资产证明（银行流水/工资单，建议准备）。</p>
+              <div class="flex flex-wrap gap-2">
+                <span class="text-xs bg-white/5 text-gray-400 px-3 py-1.5 rounded-full">必须预约</span>
+                <span class="text-xs bg-white/5 text-gray-400 px-3 py-1.5 rounded-full">当天领卡</span>
+                <span class="text-xs bg-white/5 text-gray-400 px-3 py-1.5 rounded-full">工作日9:00-17:00</span>
+                <span class="text-xs bg-white/5 text-gray-400 px-3 py-1.5 rounded-full">周六仅9:00-13:00</span>
+              </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover priority-high">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-[#e81d25]/10 flex items-center justify-center">
+                    <i data-lucide="star" class="w-5 h-5 text-[#e81d25]"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold">星光大道</h3>
+                    <span class="text-xs text-gray-500">下午 · 维港海景+电影文化</span>
+                  </div>
+                </div>
+                <div class="text-lg font-semibold text-gray-300">★★★</div>
+              </div>
+              <p class="text-gray-400 text-sm leading-relaxed">漫步尖沙咀海滨，打卡李小龙铜像与明星手印，背靠维港海景，兼具人文气息与绝美风光。可在此期间完成中银开户预约。</p>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover priority-mid">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-[#f97316]/10 flex items-center justify-center">
+                    <i data-lucide="flame" class="w-5 h-5 text-[#f97316]"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold">黄大仙祠</h3>
+                    <span class="text-xs text-gray-500">上午 · 香港民俗文化</span>
+                  </div>
+                </div>
+                <div class="text-lg font-semibold text-gray-300">★★☆</div>
+              </div>
+              <p class="text-gray-400 text-sm leading-relaxed">香港香火最旺的庙宇之一，感受本地祈福文化，建筑色彩鲜艳，值得一看。</p>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover priority-high">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-[#e81d25]/10 flex items-center justify-center">
+                    <i data-lucide="ship" class="w-5 h-5 text-[#e81d25]"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold">天星小轮</h3>
+                    <span class="text-xs text-gray-500">晚上 · 经典维港渡轮</span>
+                  </div>
+                </div>
+                <div class="text-lg font-semibold text-gray-300">★★★</div>
+              </div>
+              <p class="text-gray-400 text-sm leading-relaxed">从尖沙咀码头乘天星小轮前往中环，票价低廉，是体验维港夜色最浪漫、最具性价比的方式。</p>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 sticky top-24">
+              <h4 class="text-sm font-bold tracking-wider uppercase text-[#f97316] mb-4">Day 2 小贴士</h4>
+              <ul class="space-y-3">
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#f97316] mt-0.5 flex-shrink-0"></i>
+                  <span>中银开户务必提前1-2天预约！</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#f97316] mt-0.5 flex-shrink-0"></i>
+                  <span>准备资产证明以防万一（近3个月流水）</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#f97316] mt-0.5 flex-shrink-0"></i>
+                  <span>避开节假日，银行周末仅营业半天</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#f97316] mt-0.5 flex-shrink-0"></i>
+                  <span>天星小轮可用八达通/现金支付</span>
+                </li>
+              </ul>
+              <div class="mt-6 pt-6 border-t border-white/5">
+                <div class="text-xs text-gray-500 mb-2">当日重点</div>
+                <div class="text-sm font-semibold text-white">✅ 完成中银香港开户</div>
+                <div class="text-sm font-semibold text-white">✅ 星光大道 + 天星小轮</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day 3 Content -->
+      <div id="day-3" class="day-content hidden">
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <!-- Choice Cards -->
+            <div class="text-sm text-gray-500 mb-2 font-medium tracking-wider uppercase">选择一项全天体验</div>
+            <div class="grid md:grid-cols-3 gap-4">
+              <div class="bg-[#0a0a0a] border-2 border-[#e81d25]/40 rounded-2xl p-6 card-hover cursor-pointer">
+                <div class="w-12 h-12 rounded-xl bg-[#e81d25]/10 flex items-center justify-center mb-4">
+                  <i data-lucide="sparkles" class="w-6 h-6 text-[#e81d25]"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">迪士尼乐园</h3>
+                <p class="text-xs text-gray-500 leading-relaxed">童话世界全天畅玩，花车巡游与夜间烟花秀不容错过。适合家庭及亲子游。</p>
+                <div class="mt-4 text-xs text-[#e81d25] font-bold">推荐指数 ★★★</div>
+              </div>
+              <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover cursor-pointer hover:border-[#f97316]/40 transition-colors">
+                <div class="w-12 h-12 rounded-xl bg-[#f97316]/10 flex items-center justify-center mb-4">
+                  <i data-lucide="fish" class="w-6 h-6 text-[#f97316]"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">海洋公园</h3>
+                <p class="text-xs text-gray-500 leading-relaxed">海洋生物表演+刺激游乐设施，看大熊猫，山海景观壮丽。</p>
+                <div class="mt-4 text-xs text-gray-500 font-bold">推荐指数 ★★★</div>
+              </div>
+              <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 card-hover cursor-pointer hover:border-[#22c55e]/40 transition-colors">
+                <div class="w-12 h-12 rounded-xl bg-[#22c55e]/10 flex items-center justify-center mb-4">
+                  <i data-lucide="palette" class="w-6 h-6 text-[#22c55e]"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">文化深度游</h3>
+                <p class="text-xs text-gray-500 leading-relaxed">香港故宫、西九文化区、昂坪360缆车天坛大佛，适合文艺爱好者。</p>
+                <div class="mt-4 text-xs text-gray-500 font-bold">推荐指数 ★★☆</div>
+              </div>
+            </div>
+
+            <!-- Transit -->
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden card-hover">
+              <div class="relative h-48 overflow-hidden">
+                <img src="https://picsum.photos/seed/hk-macau-bridge-sea/800/400.jpg" alt="港珠澳大桥" class="w-full h-full object-cover brightness-50">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4">
+                  <h3 class="text-xl font-semibold">前往澳门</h3>
+                  <span class="text-xs text-gray-400">傍晚 · 两种方式可选</span>
+                </div>
+              </div>
+              <div class="p-6">
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div class="bg-white/5 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                      <i data-lucide="ship" class="w-4 h-4 text-[#e81d25]"></i>
+                      <span class="text-sm font-semibold">高速客轮</span>
+                    </div>
+                    <p class="text-x
