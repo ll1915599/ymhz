@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>糖尿病诊疗领域近三年重要进展综述</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    ::selection { background: #e81d25; color: #fff; }
+    body { background: #050505; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
+    .animate-marquee { animation: marquee 40s linear infinite; }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in-up { animation: fadeInUp 0.7s ease-out forwards; opacity: 0; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .card-hover { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .card-hover:hover { transform: translateY(-4px); border-color: rgba(232,29,37,0.4); box-shadow: 0 20px 40px -12px rgba(232,29,37,0.12); }
+    .hero-overlay { background: linear-gradient(to top, #050505 0%, rgba(5,5,5,0.75) 40%, rgba(5,5,5,0.3) 100%); }
+    .tab-active { background: #e81d25; color: #fff; }
+    .evidence-a { background: #dc2626; }
+    .evidence-i { background: #ea580c; }
+    .evidence-ii { background: #d97706; }
+    .evidence-iii { background: #65a30d; }
+    .scroll-hidden { scrollbar-width: none; -ms-overflow-style: none; }
+    .scroll-hidden::-webkit-scrollbar { display: none; }
+    .timeline-line { background: linear-gradient(to bottom, #e81d25, rgba(232,29,37,0.1)); }
+    .glow-dot { box-shadow: 0 0 10px rgba(232,29,37,0.8), 0 0 20px rgba(232,29,37,0.4); }
+    table th { position: sticky; top: 0; z-index: 2; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; color: #000; }
+    }
+  </style>
+</head>
+<body class="text-white antialiased">
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-md border-b border-white/5 no-print">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-[#e81d25] rounded-lg flex items-center justify-center">
+          <i data-lucide="activity" class="w-5 h-5 text-white"></i>
+        </div>
+        <span class="text-sm font-semibold tracking-wider uppercase hidden sm:block">糖尿病诊疗进展</span>
+      </div>
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="#summary" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">摘要</a>
+        <a href="#findings" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">要点</a>
+        <a href="#analysis" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">分析</a>
+        <a href="#timeline" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">时间线</a>
+        <a href="#refs" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">文献</a>
+      </div>
+      <button id="mobileMenuBtn" class="lg:hidden p-2 text-gray-400 hover:text-white transition-colors">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden lg:hidden border-t border-white/5 bg-black/90 backdrop-blur-md">
+      <div class="px-6 py-4 flex flex-col gap-4">
+        <a href="#summary" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">摘要</a>
+        <a href="#findings" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">要点</a>
+        <a href="#analysis" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">分析</a>
+        <a href="#timeline" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">时间线</a>
+        <a href="#refs" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">文献</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-[85vh] flex items-end overflow-hidden">
+    <img src="https://picsum.photos/seed/medical-research-lab-dark/1920/1080.jpg" alt="医学研究" class="absolute inset-0 w-full h-full object-cover brightness-[0.35] saturate-30">
+    <div class="hero-overlay absolute inset-0"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 pb-20 md:pb-28 w-full">
+      <div class="fade-in-up">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="w-2 h-2 bg-[#e81d25] rounded-full glow-dot"></span>
+          <span class="text-xs font-bold tracking-widest uppercase text-gray-400">综述报告 · 2023—2026</span>
+        </div>
+      </div>
+      <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[0.95] mb-8 fade-in-up delay-1">
+        糖尿病诊疗领域<br>
+        <span class="bg-gradient-to-r from-[#e81d25] to-[#f97316] bg-clip-text text-transparent">近三年重要进展</span>
+      </h1>
+      <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-10 fade-in-up delay-2 leading-relaxed">
+        涵盖诊断标准更新、药物突破（替尔泊肽等）、并发症循证管理、数字健康与AI应用、生活方式干预及中国情境分析。
+      </p>
+      <div class="flex flex-wrap gap-4 fade-in-up delay-3">
+        <a href="#analysis" class="inline-flex items-center gap-2 bg-[#e81d25] hover:bg-red-700 text-white text-sm font-bold tracking-wider uppercase px-8 py-4 rounded-full transition-colors">
+          <span>查看详细分析</span>
+          <i data-lucide="arrow-down" class="w-4 h-4"></i>
+        </a>
+        <a href="#findings" class="inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-white text-sm font-bold tracking-wider uppercase px-8 py-4 rounded-full transition-colors">
+          <span>关键发现要点</span>
+        </a>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-16 max-w-2xl fade-in-up delay-4">
+        <div>
+          <div class="text-2xl md:text-3xl font-semibold text-white">6</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">大分析领域</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-semibold text-white">2024</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">最新中国指南</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-semibold text-white">~12%</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">中国患病率</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-semibold text-white">52.9%</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">手术5年缓解率</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="bg-[#e81d25] py-3 overflow-hidden no-print">
+    <div class="animate-marquee whitespace-nowrap flex">
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">替尔泊肽获批</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">SGLT2i心肾保护</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">CGM与闭环系统</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">AI辅助筛查</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">OGTT诊断强化</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">LADA/MODY识别</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">周剂型胰岛素</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">代谢手术进展</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">替尔泊肽获批</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">SGLT2i心肾保护</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">CGM与闭环系统</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">AI辅助筛查</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">OGTT诊断强化</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">LADA/MODY识别</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">周剂型胰岛素</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">代谢手术进展</span>
+      <span class="mx-4">✦</span>
+    </div>
+  </div>
+
+  <!-- Executive Summary -->
+  <section id="summary" class="py-24 md:py-32">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-bold tracking-widest uppercase text-[#e81d25] mb-4 block">Executive Summary</span>
+        <h2 class="text-4xl md:text-6xl font-semibold tracking-tight mb-6">执行摘要</h2>
+      </div>
+
+      <div class="max-w-4xl">
+        <div class="space-y-6 text-gray-300 leading-[1.85] text-[15px]">
+          <p>近三年糖尿病诊疗领域取得重要进展。最新中国指南（2024版）强化了诊断流程：将HbA1c、空腹血糖和OGTT共同作为诊断依据（未典型者需重复检测），强调筛查高危人群并提倡OGTT以免漏诊。分型上新增儿童青少年及1型糖尿病章节，确认隐匿性1型糖尿病（LADA）和单基因MODY应加强识别。</p>
+
+          <p>药物治疗方面，SGLT2抑制剂和GLP-1受体激动剂发挥心肾保护作用，推荐二级预防中优先使用有证据的药物；GIP/GLP-1双激动剂<span class="text-[#e81d25] font-semibold">替尔泊肽（tirzepatide）</span>在中国2024年获批，可显著降A1c（约2.1%）并使超重患者平均减重8.5%~13.1%。新型胰岛素（如周剂型icodec）及口服胰岛素进入研究阶段。</p>
+
+          <p>并发症防治中，循证强烈支持SGLT2i在心、肾病变的保护作用；非增殖性视网膜病变可考虑非诺贝特减缓进展；神经病变和足病需强化筛查、规范护理。急性并发症方面，关注SGLT2i诱发的正常血糖DKA风险并更新分类管理。</p>
+
+          <p>监测与数字健康领域：CGM和闭环系统获得共识推荐（尤其1型患者），AI辅助筛查（视网膜、肾病）和风险预测初见成效；可穿戴设备可改善依从，但成本和医保覆盖仍是障碍。</p>
+
+          <p>生活方式干预方面，结合GLP-1RA或外科减重可显著提高疗效：最新研究显示代谢手术5年随访近53%的患者可获糖尿病完全缓解；基于生活方式干预联合药物的新策略被不断验证。</p>
+
+          <div class="bg-[#e81d25]/5 border border-[#e81d25]/20 rounded-2xl p-6 my-8">
+            <div class="flex items-start gap-3">
+              <i data-lucide="map-pin" class="w-5 h-5 text-[#e81d25] mt-1 flex-shrink-0"></i>
+              <div class="text-gray-300 leading-[1.85] text-[15px]">
+                <strong class="text-white">中国情境下：</strong>国内糖尿病患病率已升至约12%，知晓率和控制率偏低；城乡医疗资源分布不均，先进糖尿病技术和药物（如CGM、胰岛素泵、GLP-1RA/SGLT2i）在农村及基层社区可及性差。医保目录虽已将部分GLP-1RA纳入（仅限糖尿病适应症），但减重适应症仍不报销。基于以上证据，需加强早期筛查、推广新药物并扩大保险覆盖，以及利用数字化管理提高医疗资源效率。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Findings Table -->
+  <section id="findings" class="py-24 md:py-32 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-bold tracking-widest uppercase text-[#e81d25] mb-4 block">Key Findings</span>
+        <h2 class="text-4xl md:text-6xl font-semibold tracking-tight mb-6">关键发现要点</h2>
+        <p class="text-lg text-gray-400 leading-relaxed">六大主题、证据等级与临床意义一览。</p>
+      </div>
+
+      <!-- Evidence Legend -->
+      <div class="flex flex-wrap gap-4 mb-8">
+        <div class="flex items-center gap-2">
+          <span class="evidence-a text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">A</span>
+          <span class="text-xs text-gray-500">指南/大型队列</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">I</span>
+          <span class="text-xs text-gray-500">RCT/Meta分析</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="evidence-ii text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">II</span>
+          <span class="text-xs text-gray-500">队列/共识</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="evidence-iii text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">III</span>
+          <span class="text-xs text-gray-500">横断面/政策</span>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto rounded-2xl border border-white/10">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-[#0a0a0a]">
+              <th class="text-left py-4 px-5 text-xs font-bold tracking-wider uppercase text-gray-400 border-b border-white/10">主题</th>
+              <th class="text-center py-4 px-4 text-xs font-bold tracking-wider uppercase text-gray-400 border-b border-white/10 w-24">证据等级</th>
+              <th class="text-left py-4 px-5 text-xs font-bold tracking-wider uppercase text-gray-400 border-b border-white/10">关键研究/指南</th>
+              <th class="text-left py-4 px-5 text-xs font-bold tracking-wider uppercase text-gray-400 border-b border-white/10">临床意义</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">诊断标准与分型</td>
+              <td class="py-4 px-4 text-center"><span class="evidence-a text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">A</span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">2024年中国指南；中国CDC全国队列（2026）</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">结合FPG、OGTT和HbA1c诊断，无症状高危人群需OGTT；注意LADA/MODY鉴别</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">药物治疗进展</td>
+              <td class="py-4 px-4 text-center"><span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">I</span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">替尔泊肽SURPASS/SURMOUNT系列（NEJM/Lancet）；EMPA-KIDNEY等SGLT2i CVOT</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">伴ASCVD优先选用GLP-1RA或SGLT2i；替尔泊肽显著降糖减重；警惕胃肠道不良事件、DKA</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">并发症防治</td>
+              <td class="py-4 px-4 text-center"><span class="flex items-center justify-center gap-1"><span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full">I</span><span class="evidence-ii text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full">II</span></span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">DAPA-CKD、EMPEROR等SGLT2i心肾试验；DR干预共识；DKA管理（2024版指南）</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">CKD/HF患者使用SGLT2i；DR定期筛查；使用SGLT2i时监测酮体防euDKA</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">监测与数字健康</td>
+              <td class="py-4 px-4 text-center"><span class="evidence-ii text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">II</span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">ADA标准（CGM建议）；AI在DR筛查和CGM分析中的应用</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">CGM推广至T1DM及胰岛素依赖T2DM；AI辅助筛查提高诊断率；但成本高、基层可及性有限</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">生活方式与减重</td>
+              <td class="py-4 px-4 text-center"><span class="flex items-center justify-center gap-1"><span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full">I</span><span class="evidence-ii text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full">II</span></span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">5年随访减重手术52.9%缓解T2DM；2024版指南减重分级管理</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">超重/肥胖T2DM早期介入减重；GLP-1RA联合生活方式显著减重；3月<5%需调整方案</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">中国情境</td>
+              <td class="py-4 px-4 text-center"><span class="evidence-iii text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">III</span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">国家队调查（2018-19）；医保政策通报</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">患病率超12%，知晓率仅36%；城乡资源不均；新药价格高、医保覆盖有限</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detailed Analysis -->
+  <section id="analysis" class="py-24 md:py-32 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-bold tracking-widest uppercase text-[#e81d25] mb-4 block">Detailed Analysis</span>
+        <h2 class="text-4xl md:text-6xl font-semibold tracking-tight mb-6">详细分析</h2>
+        <p class="text-lg text-gray-400 leading-relaxed">六大领域的深度解读，含证据等级、临床意义与行动建议。</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-12 overflow-x-auto scroll-hidden pb-2 no-print">
+        <button onclick="switchTab(1)" class="analysis-tab tab-active whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 transition-all" data-tab="1">诊断分型</button>
+        <button onclick="switchTab(2)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="2">药物治疗</button>
+        <button onclick="switchTab(3)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="3">并发症</button>
+        <button onclick="switchTab(4)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="4">数字健康</button>
+        <button onclick="switchTab(5)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="5">生活方式</button>
+        <button onclick="switchTab(6)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="6">中国情境</button>
+      </div>
+
+      <!-- Tab 1: 诊断标准与分型 -->
+      <div id="tab-1" class="tab-content">
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8">
+              <div class="flex items-center gap-3 mb-6">
+                <span class="evidence-a text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">证据等级 A</span>
+                <span class="text-xs text-gray-500">指南/大型队列</span>
+              </div>
+              <h3 class="text-2xl font-semibold mb-4">最新进展</h3>
+              <div class="space-y-4 text-gray-300 text-[15px] leading-[1.85]">
+                <p>2024版《中国糖尿病防治指南》指出，应综合临床症状、FPG、OGTT 2h以及HbA1c值进行诊断。相比以往仅依赖FPG，本版指南特别强调<span class="text-white font-semibold">无症状高危人群</span>（如代谢性脂肪肝、高血压、家族史等）应开展OGTT筛查，避免漏诊。</p>
+                <p>中国疾控中心最新大型队列研究表明，仅用空腹血糖筛查将<span class="text-[#e81d25] font-semibold">漏诊数千万病例</span>，餐后2h血糖和HbA1c对预测糖尿病及死亡风险更敏感。</p>
+              </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-2xl font-semibold mb-4">分型更新</h3>
+              <div class="space-y-4 text-gray-300 text-[15px] leading-[1.85]">
+                <p>指南将糖尿病按病因分为1型（包括自身免疫及特发性）、2型、妊娠糖尿病及8种特殊类型。其中，<span class="text-white font-semibold">LADA</span>作为成人隐性1型糖尿病，患者数约1000万，占成人T1DM的两倍，应高度重视抗体检测。<span class="text-white font-semibold">MODY</span>等单基因糖尿病应在26岁前发病、家族遗传者考虑基因检测。儿童和青少年糖尿病单独成章，强调鉴别T1DM、T2DM与MODY。</p>
+              </div>
+            </div>
+
+            <div class="bg-[#111111] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-[#e81d25]"></i>
+                行动建议
+              </h3>
+              <div class="space-y-3">
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">所有疑似糖尿病患者应同时测FPG、OGTT和HbA1c，多指标并用</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">对多代家族糖尿病和年轻发病者行MODY筛查</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">对成人发病数月无需胰岛素的疑似T1DM行自身抗体检测，以识别LADA</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">高危人群筛查年龄下调至35岁</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="space-y-6">
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 sticky top-24">
+              <h4 class="text-sm font-bold tracking-wider uppercase text-[#e81d25] mb-4">核心要点</h4>
+              <ul class="space-y-3">
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>多指标并用，不以单一指标诊断</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>无症状高危人群必须做OGTT</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>LADA患者约1000万，需抗体检测</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>MODY考虑基因检测指导用药</span>
+                </li>
+              </ul>
+              <div class="mt-6 pt-6 border-t border-white/5">
+                <div class="text-xs text-gray-500 mb-2">关键来源</div>
+                <div class="text-sm text-gray-400 leading-relaxed">2024中国指南【4†L115-L124】；CDC全国队列【9†L162-L171】；分型章节【6†L187-L219】</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: 药物治疗进展 -->
+      <div id="tab-2" class="tab-content hidden">
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <!-- Tirzepatide Highlight -->
+            <div class="bg-[#0a0a0a] border-2 border-[#e81d25]/30 rounded-2xl overflow-hidden">
+              <div class="relative h-48 overflow-hidden">
+                <img src="https://picsum.photos/seed/pharmacy-medication-dark/800/400.jpg" alt="药物治疗" class="w-full h-full object-cover brightness-[0.3] saturate-30">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-[#e81d25] text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">2024年5月中国获批</span>
+                    <span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">证据 I</span>
+                  </div>
+                  <h3 class="text-xl font-semibold">替尔泊肽 Tirzepatide</h3>
+                </div>
+              </div>
+              <div class="p-6">
+                <p class="text-gray-300 text-[15px] leading-[1.85] mb-4">GIP/GLP-1双受体激动剂，激活两条肠促胰素通路。在SURPASS和SURMOUNT系列3期试验中，与安慰剂相比<span class="text-[#e81d25] font-semibold">显著降HbA1c达2.1%</span>，超重患者40周减重<span class="text-[#e81d25] font-semibold">8.5%~13.1%</span>。同时改善胰岛素敏感性和脂质分布。</p>
+                <div class="grid grid-cols-3 gap-4 bg-white/5 rounded-xl p-4">
+                  <div class="text-center">
+                    <div class="text-xl font-semibold text-[#e81d25]">~2.1%</div>
+                    <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">HbA1c降幅</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xl font-semibold text-[#f97316]">8.5-13%</div>
+                    <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">体重下降</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xl font-semibold text-[#22c55e]">38%</div>
+                    <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">HFpEF事件降低</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-xl font-semibold mb-4">SGLT2i — 心肾保护基石</h3>
+              <p class="text-gray-300 text-[15px] leading-[1.85]">SGLT2抑制剂（恩格列净、达格列净等）由单纯降糖药物转为心肾保护基石。对伴有CVD、HF或CKD的T2DM患者具有一线适应证。DAPA-CKD、EMPA-KIDNEY等试验持续强化证据。中国指南将使用下限eGFR从45提高到<span class="text-white font-semibold">20 mL/min/1.73m²</span>。</p>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-xl font-semibold mb-4">胰岛素新进展</h3>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-white/5 rounded-xl p-4">
+                  <div class="text-sm font-semibold mb-1">依柯胰岛素</div>
+                  <p class="text-xs text-gray-500">每周制剂，与每日长效胰岛素同效，减少注射次数</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-4">
+                  <div class="text-sm font-semibold mb-1">复方制剂</div>
+                  <p class="text-xs text-gray-500">德谷/利拉鲁肽联合，加强降糖并减轻体重增加</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-4">
+                  <div class="text-sm font-semibold mb-1">口服司美格鲁肽</div>
+                  <p class="text-xs text-gray-500">7/14mg已上市，效果与注射GLP-1RA相仿</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-4">
+                  <div class="text-sm font-semibold mb-1">口服胰岛素</div>
+                  <p class="text-xs text-gray-500">研究阶段，有望简化给药方案</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-[#111111] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-[#e81d25]"></i>
+                临床建议
+              </h3>
+              <div class="space-y-3">
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">T2DM合并心血管/肾脏疾病者考虑GLP-1RA或SGLT2i</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">肥胖患者优先考虑GLP-1RA（替尔泊肽、司美格鲁肽）</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">采用新型周剂型胰岛素可提高依从性</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 r<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>糖尿病诊疗领域近三年重要进展综述</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    ::selection { background: #e81d25; color: #fff; }
+    body { background: #050505; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
+    .animate-marquee { animation: marquee 40s linear infinite; }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in-up { animation: fadeInUp 0.7s ease-out forwards; opacity: 0; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .card-hover { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .card-hover:hover { transform: translateY(-4px); border-color: rgba(232,29,37,0.4); box-shadow: 0 20px 40px -12px rgba(232,29,37,0.12); }
+    .hero-overlay { background: linear-gradient(to top, #050505 0%, rgba(5,5,5,0.75) 40%, rgba(5,5,5,0.3) 100%); }
+    .tab-active { background: #e81d25; color: #fff; }
+    .evidence-a { background: #dc2626; }
+    .evidence-i { background: #ea580c; }
+    .evidence-ii { background: #d97706; }
+    .evidence-iii { background: #65a30d; }
+    .scroll-hidden { scrollbar-width: none; -ms-overflow-style: none; }
+    .scroll-hidden::-webkit-scrollbar { display: none; }
+    .timeline-line { background: linear-gradient(to bottom, #e81d25, rgba(232,29,37,0.1)); }
+    .glow-dot { box-shadow: 0 0 10px rgba(232,29,37,0.8), 0 0 20px rgba(232,29,37,0.4); }
+    table th { position: sticky; top: 0; z-index: 2; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; color: #000; }
+    }
+  </style>
+</head>
+<body class="text-white antialiased">
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-md border-b border-white/5 no-print">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-[#e81d25] rounded-lg flex items-center justify-center">
+          <i data-lucide="activity" class="w-5 h-5 text-white"></i>
+        </div>
+        <span class="text-sm font-semibold tracking-wider uppercase hidden sm:block">糖尿病诊疗进展</span>
+      </div>
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="#summary" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">摘要</a>
+        <a href="#findings" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">要点</a>
+        <a href="#analysis" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">分析</a>
+        <a href="#timeline" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">时间线</a>
+        <a href="#refs" class="text-xs font-medium tracking-widest uppercase text-gray-400 hover:text-[#e81d25] transition-colors">文献</a>
+      </div>
+      <button id="mobileMenuBtn" class="lg:hidden p-2 text-gray-400 hover:text-white transition-colors">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden lg:hidden border-t border-white/5 bg-black/90 backdrop-blur-md">
+      <div class="px-6 py-4 flex flex-col gap-4">
+        <a href="#summary" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">摘要</a>
+        <a href="#findings" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">要点</a>
+        <a href="#analysis" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">分析</a>
+        <a href="#timeline" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">时间线</a>
+        <a href="#refs" class="text-sm text-gray-400 hover:text-[#e81d25] transition-colors">文献</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-[85vh] flex items-end overflow-hidden">
+    <img src="https://picsum.photos/seed/medical-research-lab-dark/1920/1080.jpg" alt="医学研究" class="absolute inset-0 w-full h-full object-cover brightness-[0.35] saturate-30">
+    <div class="hero-overlay absolute inset-0"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 pb-20 md:pb-28 w-full">
+      <div class="fade-in-up">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="w-2 h-2 bg-[#e81d25] rounded-full glow-dot"></span>
+          <span class="text-xs font-bold tracking-widest uppercase text-gray-400">综述报告 · 2023—2026</span>
+        </div>
+      </div>
+      <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[0.95] mb-8 fade-in-up delay-1">
+        糖尿病诊疗领域<br>
+        <span class="bg-gradient-to-r from-[#e81d25] to-[#f97316] bg-clip-text text-transparent">近三年重要进展</span>
+      </h1>
+      <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-10 fade-in-up delay-2 leading-relaxed">
+        涵盖诊断标准更新、药物突破（替尔泊肽等）、并发症循证管理、数字健康与AI应用、生活方式干预及中国情境分析。
+      </p>
+      <div class="flex flex-wrap gap-4 fade-in-up delay-3">
+        <a href="#analysis" class="inline-flex items-center gap-2 bg-[#e81d25] hover:bg-red-700 text-white text-sm font-bold tracking-wider uppercase px-8 py-4 rounded-full transition-colors">
+          <span>查看详细分析</span>
+          <i data-lucide="arrow-down" class="w-4 h-4"></i>
+        </a>
+        <a href="#findings" class="inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-white text-sm font-bold tracking-wider uppercase px-8 py-4 rounded-full transition-colors">
+          <span>关键发现要点</span>
+        </a>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-16 max-w-2xl fade-in-up delay-4">
+        <div>
+          <div class="text-2xl md:text-3xl font-semibold text-white">6</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">大分析领域</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-semibold text-white">2024</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">最新中国指南</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-semibold text-white">~12%</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">中国患病率</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-semibold text-white">52.9%</div>
+          <div class="text-xs text-gray-500 tracking-wider uppercase mt-1">手术5年缓解率</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="bg-[#e81d25] py-3 overflow-hidden no-print">
+    <div class="animate-marquee whitespace-nowrap flex">
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">替尔泊肽获批</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">SGLT2i心肾保护</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">CGM与闭环系统</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">AI辅助筛查</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">OGTT诊断强化</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">LADA/MODY识别</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">周剂型胰岛素</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">代谢手术进展</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">替尔泊肽获批</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">SGLT2i心肾保护</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">CGM与闭环系统</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">AI辅助筛查</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">OGTT诊断强化</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">LADA/MODY识别</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">周剂型胰岛素</span>
+      <span class="mx-4">✦</span>
+      <span class="text-xs font-bold tracking-widest uppercase mx-8">代谢手术进展</span>
+      <span class="mx-4">✦</span>
+    </div>
+  </div>
+
+  <!-- Executive Summary -->
+  <section id="summary" class="py-24 md:py-32">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-bold tracking-widest uppercase text-[#e81d25] mb-4 block">Executive Summary</span>
+        <h2 class="text-4xl md:text-6xl font-semibold tracking-tight mb-6">执行摘要</h2>
+      </div>
+
+      <div class="max-w-4xl">
+        <div class="space-y-6 text-gray-300 leading-[1.85] text-[15px]">
+          <p>近三年糖尿病诊疗领域取得重要进展。最新中国指南（2024版）强化了诊断流程：将HbA1c、空腹血糖和OGTT共同作为诊断依据（未典型者需重复检测），强调筛查高危人群并提倡OGTT以免漏诊。分型上新增儿童青少年及1型糖尿病章节，确认隐匿性1型糖尿病（LADA）和单基因MODY应加强识别。</p>
+
+          <p>药物治疗方面，SGLT2抑制剂和GLP-1受体激动剂发挥心肾保护作用，推荐二级预防中优先使用有证据的药物；GIP/GLP-1双激动剂<span class="text-[#e81d25] font-semibold">替尔泊肽（tirzepatide）</span>在中国2024年获批，可显著降A1c（约2.1%）并使超重患者平均减重8.5%~13.1%。新型胰岛素（如周剂型icodec）及口服胰岛素进入研究阶段。</p>
+
+          <p>并发症防治中，循证强烈支持SGLT2i在心、肾病变的保护作用；非增殖性视网膜病变可考虑非诺贝特减缓进展；神经病变和足病需强化筛查、规范护理。急性并发症方面，关注SGLT2i诱发的正常血糖DKA风险并更新分类管理。</p>
+
+          <p>监测与数字健康领域：CGM和闭环系统获得共识推荐（尤其1型患者），AI辅助筛查（视网膜、肾病）和风险预测初见成效；可穿戴设备可改善依从，但成本和医保覆盖仍是障碍。</p>
+
+          <p>生活方式干预方面，结合GLP-1RA或外科减重可显著提高疗效：最新研究显示代谢手术5年随访近53%的患者可获糖尿病完全缓解；基于生活方式干预联合药物的新策略被不断验证。</p>
+
+          <div class="bg-[#e81d25]/5 border border-[#e81d25]/20 rounded-2xl p-6 my-8">
+            <div class="flex items-start gap-3">
+              <i data-lucide="map-pin" class="w-5 h-5 text-[#e81d25] mt-1 flex-shrink-0"></i>
+              <div class="text-gray-300 leading-[1.85] text-[15px]">
+                <strong class="text-white">中国情境下：</strong>国内糖尿病患病率已升至约12%，知晓率和控制率偏低；城乡医疗资源分布不均，先进糖尿病技术和药物（如CGM、胰岛素泵、GLP-1RA/SGLT2i）在农村及基层社区可及性差。医保目录虽已将部分GLP-1RA纳入（仅限糖尿病适应症），但减重适应症仍不报销。基于以上证据，需加强早期筛查、推广新药物并扩大保险覆盖，以及利用数字化管理提高医疗资源效率。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Findings Table -->
+  <section id="findings" class="py-24 md:py-32 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-bold tracking-widest uppercase text-[#e81d25] mb-4 block">Key Findings</span>
+        <h2 class="text-4xl md:text-6xl font-semibold tracking-tight mb-6">关键发现要点</h2>
+        <p class="text-lg text-gray-400 leading-relaxed">六大主题、证据等级与临床意义一览。</p>
+      </div>
+
+      <!-- Evidence Legend -->
+      <div class="flex flex-wrap gap-4 mb-8">
+        <div class="flex items-center gap-2">
+          <span class="evidence-a text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">A</span>
+          <span class="text-xs text-gray-500">指南/大型队列</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">I</span>
+          <span class="text-xs text-gray-500">RCT/Meta分析</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="evidence-ii text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">II</span>
+          <span class="text-xs text-gray-500">队列/共识</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="evidence-iii text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">III</span>
+          <span class="text-xs text-gray-500">横断面/政策</span>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto rounded-2xl border border-white/10">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-[#0a0a0a]">
+              <th class="text-left py-4 px-5 text-xs font-bold tracking-wider uppercase text-gray-400 border-b border-white/10">主题</th>
+              <th class="text-center py-4 px-4 text-xs font-bold tracking-wider uppercase text-gray-400 border-b border-white/10 w-24">证据等级</th>
+              <th class="text-left py-4 px-5 text-xs font-bold tracking-wider uppercase text-gray-400 border-b border-white/10">关键研究/指南</th>
+              <th class="text-left py-4 px-5 text-xs font-bold tracking-wider uppercase text-gray-400 border-b border-white/10">临床意义</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">诊断标准与分型</td>
+              <td class="py-4 px-4 text-center"><span class="evidence-a text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">A</span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">2024年中国指南；中国CDC全国队列（2026）</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">结合FPG、OGTT和HbA1c诊断，无症状高危人群需OGTT；注意LADA/MODY鉴别</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">药物治疗进展</td>
+              <td class="py-4 px-4 text-center"><span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">I</span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">替尔泊肽SURPASS/SURMOUNT系列（NEJM/Lancet）；EMPA-KIDNEY等SGLT2i CVOT</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">伴ASCVD优先选用GLP-1RA或SGLT2i；替尔泊肽显著降糖减重；警惕胃肠道不良事件、DKA</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">并发症防治</td>
+              <td class="py-4 px-4 text-center"><span class="flex items-center justify-center gap-1"><span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full">I</span><span class="evidence-ii text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full">II</span></span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">DAPA-CKD、EMPEROR等SGLT2i心肾试验；DR干预共识；DKA管理（2024版指南）</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">CKD/HF患者使用SGLT2i；DR定期筛查；使用SGLT2i时监测酮体防euDKA</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">监测与数字健康</td>
+              <td class="py-4 px-4 text-center"><span class="evidence-ii text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">II</span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">ADA标准（CGM建议）；AI在DR筛查和CGM分析中的应用</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">CGM推广至T1DM及胰岛素依赖T2DM；AI辅助筛查提高诊断率；但成本高、基层可及性有限</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">生活方式与减重</td>
+              <td class="py-4 px-4 text-center"><span class="flex items-center justify-center gap-1"><span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full">I</span><span class="evidence-ii text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full">II</span></span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">5年随访减重手术52.9%缓解T2DM；2024版指南减重分级管理</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">超重/肥胖T2DM早期介入减重；GLP-1RA联合生活方式显著减重；3月<5%需调整方案</td>
+            </tr>
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="py-4 px-5 font-semibold text-white whitespace-nowrap">中国情境</td>
+              <td class="py-4 px-4 text-center"><span class="evidence-iii text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">III</span></td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">国家队调查（2018-19）；医保政策通报</td>
+              <td class="py-4 px-5 text-gray-400 text-xs leading-relaxed">患病率超12%，知晓率仅36%；城乡资源不均；新药价格高、医保覆盖有限</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detailed Analysis -->
+  <section id="analysis" class="py-24 md:py-32 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="max-w-3xl mb-16">
+        <span class="text-xs font-bold tracking-widest uppercase text-[#e81d25] mb-4 block">Detailed Analysis</span>
+        <h2 class="text-4xl md:text-6xl font-semibold tracking-tight mb-6">详细分析</h2>
+        <p class="text-lg text-gray-400 leading-relaxed">六大领域的深度解读，含证据等级、临床意义与行动建议。</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-12 overflow-x-auto scroll-hidden pb-2 no-print">
+        <button onclick="switchTab(1)" class="analysis-tab tab-active whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 transition-all" data-tab="1">诊断分型</button>
+        <button onclick="switchTab(2)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="2">药物治疗</button>
+        <button onclick="switchTab(3)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="3">并发症</button>
+        <button onclick="switchTab(4)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="4">数字健康</button>
+        <button onclick="switchTab(5)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="5">生活方式</button>
+        <button onclick="switchTab(6)" class="analysis-tab whitespace-nowrap text-xs font-bold tracking-wider uppercase px-5 py-2.5 rounded-full border border-white/10 text-gray-400 hover:text-white transition-all" data-tab="6">中国情境</button>
+      </div>
+
+      <!-- Tab 1: 诊断标准与分型 -->
+      <div id="tab-1" class="tab-content">
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8">
+              <div class="flex items-center gap-3 mb-6">
+                <span class="evidence-a text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">证据等级 A</span>
+                <span class="text-xs text-gray-500">指南/大型队列</span>
+              </div>
+              <h3 class="text-2xl font-semibold mb-4">最新进展</h3>
+              <div class="space-y-4 text-gray-300 text-[15px] leading-[1.85]">
+                <p>2024版《中国糖尿病防治指南》指出，应综合临床症状、FPG、OGTT 2h以及HbA1c值进行诊断。相比以往仅依赖FPG，本版指南特别强调<span class="text-white font-semibold">无症状高危人群</span>（如代谢性脂肪肝、高血压、家族史等）应开展OGTT筛查，避免漏诊。</p>
+                <p>中国疾控中心最新大型队列研究表明，仅用空腹血糖筛查将<span class="text-[#e81d25] font-semibold">漏诊数千万病例</span>，餐后2h血糖和HbA1c对预测糖尿病及死亡风险更敏感。</p>
+              </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-2xl font-semibold mb-4">分型更新</h3>
+              <div class="space-y-4 text-gray-300 text-[15px] leading-[1.85]">
+                <p>指南将糖尿病按病因分为1型（包括自身免疫及特发性）、2型、妊娠糖尿病及8种特殊类型。其中，<span class="text-white font-semibold">LADA</span>作为成人隐性1型糖尿病，患者数约1000万，占成人T1DM的两倍，应高度重视抗体检测。<span class="text-white font-semibold">MODY</span>等单基因糖尿病应在26岁前发病、家族遗传者考虑基因检测。儿童和青少年糖尿病单独成章，强调鉴别T1DM、T2DM与MODY。</p>
+              </div>
+            </div>
+
+            <div class="bg-[#111111] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-[#e81d25]"></i>
+                行动建议
+              </h3>
+              <div class="space-y-3">
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">所有疑似糖尿病患者应同时测FPG、OGTT和HbA1c，多指标并用</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">对多代家族糖尿病和年轻发病者行MODY筛查</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">对成人发病数月无需胰岛素的疑似T1DM行自身抗体检测，以识别LADA</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">高危人群筛查年龄下调至35岁</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="space-y-6">
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 sticky top-24">
+              <h4 class="text-sm font-bold tracking-wider uppercase text-[#e81d25] mb-4">核心要点</h4>
+              <ul class="space-y-3">
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>多指标并用，不以单一指标诊断</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>无症状高危人群必须做OGTT</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>LADA患者约1000万，需抗体检测</span>
+                </li>
+                <li class="flex items-start gap-3 text-sm text-gray-400">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-[#e81d25] mt-0.5 flex-shrink-0"></i>
+                  <span>MODY考虑基因检测指导用药</span>
+                </li>
+              </ul>
+              <div class="mt-6 pt-6 border-t border-white/5">
+                <div class="text-xs text-gray-500 mb-2">关键来源</div>
+                <div class="text-sm text-gray-400 leading-relaxed">2024中国指南【4†L115-L124】；CDC全国队列【9†L162-L171】；分型章节【6†L187-L219】</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: 药物治疗进展 -->
+      <div id="tab-2" class="tab-content hidden">
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <!-- Tirzepatide Highlight -->
+            <div class="bg-[#0a0a0a] border-2 border-[#e81d25]/30 rounded-2xl overflow-hidden">
+              <div class="relative h-48 overflow-hidden">
+                <img src="https://picsum.photos/seed/pharmacy-medication-dark/800/400.jpg" alt="药物治疗" class="w-full h-full object-cover brightness-[0.3] saturate-30">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-[#e81d25] text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">2024年5月中国获批</span>
+                    <span class="evidence-i text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full">证据 I</span>
+                  </div>
+                  <h3 class="text-xl font-semibold">替尔泊肽 Tirzepatide</h3>
+                </div>
+              </div>
+              <div class="p-6">
+                <p class="text-gray-300 text-[15px] leading-[1.85] mb-4">GIP/GLP-1双受体激动剂，激活两条肠促胰素通路。在SURPASS和SURMOUNT系列3期试验中，与安慰剂相比<span class="text-[#e81d25] font-semibold">显著降HbA1c达2.1%</span>，超重患者40周减重<span class="text-[#e81d25] font-semibold">8.5%~13.1%</span>。同时改善胰岛素敏感性和脂质分布。</p>
+                <div class="grid grid-cols-3 gap-4 bg-white/5 rounded-xl p-4">
+                  <div class="text-center">
+                    <div class="text-xl font-semibold text-[#e81d25]">~2.1%</div>
+                    <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">HbA1c降幅</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xl font-semibold text-[#f97316]">8.5-13%</div>
+                    <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">体重下降</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xl font-semibold text-[#22c55e]">38%</div>
+                    <div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">HFpEF事件降低</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-xl font-semibold mb-4">SGLT2i — 心肾保护基石</h3>
+              <p class="text-gray-300 text-[15px] leading-[1.85]">SGLT2抑制剂（恩格列净、达格列净等）由单纯降糖药物转为心肾保护基石。对伴有CVD、HF或CKD的T2DM患者具有一线适应证。DAPA-CKD、EMPA-KIDNEY等试验持续强化证据。中国指南将使用下限eGFR从45提高到<span class="text-white font-semibold">20 mL/min/1.73m²</span>。</p>
+            </div>
+
+            <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-xl font-semibold mb-4">胰岛素新进展</h3>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-white/5 rounded-xl p-4">
+                  <div class="text-sm font-semibold mb-1">依柯胰岛素</div>
+                  <p class="text-xs text-gray-500">每周制剂，与每日长效胰岛素同效，减少注射次数</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-4">
+                  <div class="text-sm font-semibold mb-1">复方制剂</div>
+                  <p class="text-xs text-gray-500">德谷/利拉鲁肽联合，加强降糖并减轻体重增加</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-4">
+                  <div class="text-sm font-semibold mb-1">口服司美格鲁肽</div>
+                  <p class="text-xs text-gray-500">7/14mg已上市，效果与注射GLP-1RA相仿</p>
+                </div>
+                <div class="bg-white/5 rounded-xl p-4">
+                  <div class="text-sm font-semibold mb-1">口服胰岛素</div>
+                  <p class="text-xs text-gray-500">研究阶段，有望简化给药方案</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-[#111111] border border-white/10 rounded-2xl p-6 md:p-8">
+              <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-[#e81d25]"></i>
+                临床建议
+              </h3>
+              <div class="space-y-3">
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">T2DM合并心血管/肾脏疾病者考虑GLP-1RA或SGLT2i</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">肥胖患者优先考虑GLP-1RA（替尔泊肽、司美格鲁肽）</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 rounded border-white/20 bg-transparent accent-[#e81d25]">
+                  <span class="text-sm text-gray-400 group-hover:text-white transition-colors">采用新型周剂型胰岛素可提高依从性</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" class="w-4 h-4 mt-1 r
