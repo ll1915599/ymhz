@@ -679,3 +679,898 @@
                     </div>
                 </div>
             </div>
+        </section>
+
+        <!-- 运动计划 -->
+        <section id="exercise" class="py-20 reveal">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-1 h-8 rounded-full" style="background: var(--danger);"></div>
+                <h2 class="text-3xl font-bold">运动计划</h2>
+            </div>
+
+            <!-- 本周运动进度 -->
+            <div class="card p-8 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="font-bold text-lg">本周运动进度</h3>
+                    <span class="text-sm" style="color: var(--fg-muted);">目标：150 分钟</span>
+                </div>
+                <div class="progress-bar mb-3">
+                    <div class="progress-fill" id="exerciseProgress" style="width: 0%; background: linear-gradient(90deg, var(--mint), var(--accent));"></div>
+                </div>
+                <div class="flex justify-between text-xs" style="color: var(--fg-muted);">
+                    <span id="exerciseCurrent">已完成 0 分钟</span>
+                    <span id="exercisePercent">0%</span>
+                </div>
+                <div class="grid grid-cols-7 gap-2 mt-6">
+                    <div class="text-center" id="day-0"><div class="text-xs mb-2" style="color:var(--fg-muted)">周一</div><div class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-xs" style="background:#222">0</div></div>
+                    <div class="text-center" id="day-1"><div class="text-xs mb-2" style="color:var(--fg-muted)">周二</div><div class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-xs" style="background:#222">0</div></div>
+                    <div class="text-center" id="day-2"><div class="text-xs mb-2" style="color:var(--fg-muted)">周三</div><div class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-xs" style="background:#222">0</div></div>
+                    <div class="text-center" id="day-3"><div class="text-xs mb-2" style="color:var(--fg-muted)">周四</div><div class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-xs" style="background:#222">0</div></div>
+                    <div class="text-center" id="day-4"><div class="text-xs mb-2" style="color:var(--fg-muted)">周五</div><div class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-xs" style="background:#222">0</div></div>
+                    <div class="text-center" id="day-5"><div class="text-xs mb-2" style="color:var(--fg-muted)">周六</div><div class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-xs" style="background:#222">0</div></div>
+                    <div class="text-center" id="day-6"><div class="text-xs mb-2" style="color:var(--fg-muted)">周日</div><div class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-xs" style="background:#222">0</div></div>
+                </div>
+            </div>
+
+            <!-- 运动类型 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card p-6 text-center cursor-pointer" onclick="addExercise(30, '快走')">
+                    <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-4" style="background: rgba(16,185,129,0.1);">
+                        <i class="fas fa-walking text-xl" style="color: var(--mint);"></i>
+                    </div>
+                    <h4 class="font-bold text-sm mb-1">快走</h4>
+                    <p class="text-xs mb-3" style="color: var(--fg-muted);">中等强度有氧</p>
+                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(16,185,129,0.1); color: var(--mint);">~150千卡/30min</span>
+                    <div class="mt-3 text-xs" style="color:var(--fg-muted)">点击 +30分钟</div>
+                </div>
+                <div class="card p-6 text-center cursor-pointer" onclick="addExercise(30, '慢跑')">
+                    <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-4" style="background: rgba(232,99,10,0.1);">
+                        <i class="fas fa-running text-xl" style="color: var(--accent);"></i>
+                    </div>
+                    <h4 class="font-bold text-sm mb-1">慢跑</h4>
+                    <p class="text-xs mb-3" style="color: var(--fg-muted);">中高强度有氧</p>
+                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(232,99,10,0.1); color: var(--accent);">~250千卡/30min</span>
+                    <div class="mt-3 text-xs" style="color:var(--fg-muted)">点击 +30分钟</div>
+                </div>
+                <div class="card p-6 text-center cursor-pointer" onclick="addExercise(30, '游泳')">
+                    <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-4" style="background: rgba(59,130,246,0.1);">
+                        <i class="fas fa-swimmer text-xl" style="color: #3B82F6;"></i>
+                    </div>
+                    <h4 class="font-bold text-sm mb-1">游泳</h4>
+                    <p class="text-xs mb-3" style="color: var(--fg-muted);">全身有氧运动</p>
+                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(59,130,246,0.1); color: #3B82F6;">~300千卡/30min</span>
+                    <div class="mt-3 text-xs" style="color:var(--fg-muted)">点击 +30分钟</div>
+                </div>
+                <div class="card p-6 text-center cursor-pointer" onclick="addExercise(20, '太极')">
+                    <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-4" style="background: rgba(168,85,247,0.1);">
+                        <i class="fas fa-spa text-xl" style="color: #A855F7;"></i>
+                    </div>
+                    <h4 class="font-bold text-sm mb-1">太极</h4>
+                    <p class="text-xs mb-3" style="color: var(--fg-muted);">低强度柔韧性</p>
+                    <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(168,85,247,0.1); color: #A855F7;">~100千卡/20min</span>
+                    <div class="mt-3 text-xs" style="color:var(--fg-muted)">点击 +20分钟</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 健康科普 -->
+        <section id="education" class="py-20 reveal">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-1 h-8 rounded-full" style="background: #A855F7;"></div>
+                <h2 class="text-3xl font-bold">健康科普</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <article class="card p-8">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(232,99,10,0.1); color: var(--accent);">基础知识</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-3">什么是血糖生成指数(GI)?</h3>
+                    <p class="text-sm leading-relaxed mb-4" style="color: var(--fg-muted);">
+                        血糖生成指数(Glycemic Index)是衡量食物引起人体血糖升高程度的指标。GI值越高，食物进入胃肠道后消化快、吸收率高，血糖波动越大。糖尿病患者应优先选择低GI食物，有助于平稳控制血糖。
+                    </p>
+                    <div class="flex gap-4 text-xs" style="color: var(--fg-muted);">
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background: var(--mint);"></span>低GI: &lt;55</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background: var(--accent);"></span>中GI: 55-70</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded" style="background: var(--danger);"></span>高GI: &gt;70</div>
+                    </div>
+                </article>
+                <article class="card p-8">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(16,185,129,0.1); color: var(--mint);">自我管理</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-3">如何正确监测血糖?</h3>
+                    <p class="text-sm leading-relaxed mb-4" style="color: var(--fg-muted);">
+                        建议每日至少监测2-4次血糖，包括空腹和餐后2小时。测量前洗净双手，避免残留糖分影响结果。采血时选择指尖两侧，避免直接按压指尖正中。记录每次测量值、时间和饮食情况，便于医生调整治疗方案。
+                    </p>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="text-xs px-3 py-1 rounded-full" style="background:#1A1A1A; border: 1px solid #2A2A2A;">空腹测量</span>
+                        <span class="text-xs px-3 py-1 rounded-full" style="background:#1A1A1A; border: 1px solid #2A2A2A;">餐后2h</span>
+                        <span class="text-xs px-3 py-1 rounded-full" style="background:#1A1A1A; border: 1px solid #2A2A2A;">规律记录</span>
+                    </div>
+                </article>
+                <article class="card p-8">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(239,68,68,0.1); color: var(--danger);">并发症预防</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-3">糖尿病并发症有哪些?</h3>
+                    <p class="text-sm leading-relaxed mb-4" style="color: var(--fg-muted);">
+                        长期血糖控制不佳可能导致多种并发症：糖尿病视网膜病变（视力下降甚至失明）、糖尿病肾病（肾功能减退）、周围神经病变（手脚麻木）、心血管疾病（冠心病、脑卒中）、糖尿病足（伤口难愈合）。定期体检、严格控制血糖是预防关键。
+                    </p>
+                </article>
+                <article class="card p-8">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(168,85,247,0.1); color: #A855F7;">心理健康</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-3">正视糖尿病心理负担</h3>
+                    <p class="text-sm leading-relaxed mb-4" style="color: var(--fg-muted);">
+                        确诊糖尿病后，许多患者会产生焦虑、抑郁等情绪。这是正常的心理反应，但不应长期忽视。建议加入病友互助小组，学习正念减压技巧，保持积极的生活态度。必要时可寻求专业心理咨询帮助，心理健康同样重要。
+                    </p>
+                </article>
+            </div>
+
+            <!-- 血糖标准参考卡 -->
+            <div class="card p-8 mt-6">
+                <h3 class="font-bold text-lg mb-6">血糖标准参考值</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr style="color: var(--fg-muted); border-bottom: 1px solid var(--border);">
+                                <th class="text-left py-3 font-medium">指标</th>
+                                <th class="text-center py-3 font-medium">正常</th>
+                                <th class="text-center py-3 font-medium">糖尿病前期</th>
+                                <th class="text-center py-3 font-medium">糖尿病</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td class="py-3">空腹血糖</td>
+                                <td class="text-center py-3" style="color: var(--mint);">&lt; 6.1</td>
+                                <td class="text-center py-3" style="color: var(--accent);">6.1 ~ 7.0</td>
+                                <td class="text-center py-3" style="color: var(--danger);">&ge; 7.0</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td class="py-3">餐后2h血糖</td>
+                                <td class="text-center py-3" style="color: var(--mint);">&lt; 7.8</td>
+                                <td class="text-center py-3" style="color: var(--accent);">7.8 ~ 11.1</td>
+                                <td class="text-center py-3" style="color: var(--danger);">&ge; 11.1</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3">糖化血红蛋白</td>
+                                <td class="text-center py-3" style="color: var(--mint);">&lt; 5.7%</td>
+                                <td class="text-center py-3" style="color: var(--accent);">5.7% ~ 6.5%</td>
+                                <td class="text-center py-3" style="color: var(--danger);">&ge; 6.5%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs mt-4" style="color: var(--fg-muted);">* 单位：mmol/L | 数据仅供参考，具体诊断请遵医嘱</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="border-t mt-20 py-12 px-6" style="border-color: var(--border);">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--accent), var(--accent-light));">
+                    <i class="fas fa-heartbeat text-white text-xs"></i>
+                </div>
+                <span class="font-bold">糖控助手</span>
+            </div>
+            <p class="text-xs" style="color: var(--fg-muted);">本工具仅供健康管理参考，不能替代专业医疗建议。如有健康问题，请及时就医。</p>
+            <p class="text-xs" style="color: var(--fg-muted);">&copy; 2024 糖控助手</p>
+        </div>
+    </footer>
+
+    <!-- 记录血糖模态框 -->
+    <div class="modal-overlay" id="recordModal">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-lg">快速记录血糖</h3>
+                <button onclick="closeRecordModal()" class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: #222;" aria-label="关闭">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+            <form onsubmit="return submitModalRecord(event)">
+                <div class="mb-4">
+                    <label class="block text-xs mb-2" style="color: var(--fg-muted);">血糖值 (mmol/L)</label>
+                    <input type="number" step="0.1" min="1" max="35" class="input-field" id="modalValue" placeholder="输入血糖值" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs mb-2" style="color: var(--fg-muted);">测量类型</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 p-3 rounded-lg cursor-pointer" style="background: #111; border: 1px solid var(--border);" id="typeLabel1">
+                            <input type="radio" name="modalType" value="fasting" checked class="hidden" onchange="updateTypeLabel()">
+                            <span class="text-sm">空腹</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 rounded-lg cursor-pointer" style="background: #111; border: 1px solid var(--border);" id="typeLabel2">
+                            <input type="radio" name="modalType" value="postmeal" class="hidden" onchange="updateTypeLabel()">
+                            <span class="text-sm">餐后2h</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-xs mb-2" style="color: var(--fg-muted);">备注（选填）</label>
+                    <input type="text" class="input-field" id="modalNote" placeholder="饮食、运动等">
+                </div>
+                <button type="submit" class="btn-primary w-full">保存记录</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 数据 ====================
+
+        // 食物数据库
+        const foodData = [
+            { name: '燕麦片', gi: 49, category: '谷物', cal: 367, tip: '选择原味燕麦，避免速溶加糖款', level: 'low' },
+            { name: '糙米', gi: 56, category: '谷物', cal: 348, tip: '比白米GI低，适合替代主食', level: 'medium' },
+            { name: '全麦面包', gi: 53, category: '谷物', cal: 246, tip: '注意查看成分表，确保全麦含量', level: 'low' },
+            { name: '白米饭', gi: 83, category: '谷物', cal: 116, tip: '高GI食物，建议控制份量', level: 'high' },
+            { name: '红薯', gi: 54, category: '根茎类', cal: 86, tip: '蒸煮优于烤制，GI相对较低', level: 'low' },
+            { name: '土豆(烤)', gi: 85, category: '根茎类', cal: 93, tip: '烤土豆GI高，煮土豆GI较低(56)', level: 'high' },
+            { name: '苹果', gi: 38, category: '水果', cal: 52, tip: '带皮食用，膳食纤维更丰富', level: 'low' },
+            { name: '香蕉', gi: 62, category: '水果', cal: 89, tip: '未熟透的香蕉GI更低', level: 'medium' },
+            { name: '西瓜', gi: 72, category: '水果', cal: 31, tip: 'GI高但GL低，少量食用可接受', level: 'high' },
+            { name: '葡萄柚', gi: 25, category: '水果', cal: 33, tip: '低GI水果首选，富含维生素C', level: 'low' },
+            { name: '豆腐', gi: 15, category: '豆类', cal: 73, tip: '优质植物蛋白，GI极低', level: 'low' },
+            { name: '绿豆', gi: 31, category: '豆类', cal: 316, tip: '绿豆汤不要加糖，消暑又控糖', level: 'low' },
+            { name: '鸡胸肉', gi: 0, category: '肉蛋', cal: 133, tip: '零碳水高蛋白，控糖优选', level: 'low' },
+            { name: '三文鱼', gi: 0, category: '肉蛋', cal: 139, tip: '富含Omega-3，有助心血管健康', level: 'low' },
+            { name: '牛奶', gi: 28, category: '乳制品', cal: 42, tip: '选择低脂或脱脂款', level: 'low' },
+            { name: '酸奶(原味)', gi: 36, category: '乳制品', cal: 61, tip: '选择无糖原味酸奶', level: 'low' },
+            { name: '西兰花', gi: 10, category: '蔬菜', cal: 34, tip: '极低GI，膳食纤维丰富', level: 'low' },
+            { name: '胡萝卜(生)', gi: 16, category: '蔬菜', cal: 41, tip: '生吃GI低，煮熟后GI升至49', level: 'low' },
+        ];
+
+        // 模拟历史血糖数据
+        let bloodRecords = [
+            { time: '2024-12-20 07:15', value: 5.2, type: 'fasting', note: '晨起空腹' },
+            { time: '2024-12-20 09:30', value: 7.8, type: 'postmeal', note: '早餐后2h' },
+            { time: '2024-12-19 07:00', value: 5.6, type: 'fasting', note: '' },
+            { time: '2024-12-19 09:20', value: 8.2, type: 'postmeal', note: '吃了白米粥' },
+            { time: '2024-12-18 07:30', value: 5.0, type: 'fasting', note: '' },
+            { time: '2024-12-18 09:45', value: 7.1, type: 'postmeal', note: '燕麦+鸡蛋' },
+            { time: '2024-12-17 06:50', value: 5.8, type: 'fasting', note: '睡眠不好' },
+            { time: '2024-12-17 09:10', value: 6.9, type: 'postmeal', note: '' },
+            { time: '2024-12-16 07:20', value: 5.4, type: 'fasting', note: '' },
+            { time: '2024-12-16 09:30', value: 7.5, type: 'postmeal', note: '糙米饭+鱼' },
+            { time: '2024-12-15 07:00', value: 6.1, type: 'fasting', note: '昨晚吃了宵夜' },
+            { time: '2024-12-15 09:40', value: 9.1, type: 'postmeal', note: '白米饭+红烧肉' },
+            { time: '2024-12-14 07:10', value: 5.3, type: 'fasting', note: '' },
+            { time: '2024-12-14 09:20', value: 7.3, type: 'postmeal', note: '' },
+        ];
+
+        // 运动数据
+        let exerciseData = [30, 0, 45, 20, 0, 60, 0]; // 周一到周日
+        const exerciseCalories = [150, 0, 225, 100, 0, 300, 0];
+
+        // ==================== 初始化 ====================
+
+        let trendChart = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            initTrendChart();
+            renderRecords();
+            renderFoodGrid('all');
+            updateExerciseUI();
+            updateGauge(getLatestValue());
+            updateStats();
+            initScrollReveal();
+            setDefaultTime();
+
+            // 导航栏滚动效果
+            window.addEventListener('scroll', () => {
+                const nav = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    nav.style.borderBottomColor = 'var(--border)';
+                    nav.style.background = 'rgba(15,15,15,0.95)';
+                } else {
+                    nav.style.borderBottomColor = 'transparent';
+                    nav.style.background = 'rgba(15,15,15,0.8)';
+                }
+            });
+        });
+
+        // ==================== 粒子动画 ====================
+
+        function initParticles() {
+            const canvas = document.getElementById('particleCanvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let mouse = { x: 0, y: 0 };
+
+            function resize() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            canvas.parentElement.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            });
+
+            // 创建粒子
+            for (let i = 0; i < 60; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 2 + 1,
+                    color: Math.random() > 0.5 ? 'rgba(232,99,10,' : 'rgba(16,185,129,',
+                    alpha: Math.random() * 0.3 + 0.1,
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // 鼠标吸引
+                    const dx = mouse.x - p.x;
+                    const dy = mouse.y - p.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 200) {
+                        p.vx += dx * 0.00005;
+                        p.vy += dy * 0.00005;
+                    }
+
+                    // 边界反弹
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                    // 限速
+                    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                    if (speed > 1) {
+                        p.vx *= 0.99;
+                        p.vy *= 0.99;
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, Math.max(0.5, p.r), 0, Math.PI * 2);
+                    ctx.fillStyle = p.color + p.alpha + ')';
+                    ctx.fill();
+
+                    // 连线
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const p2 = particles[j];
+                        const d = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2);
+                        if (d < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.strokeStyle = `rgba(232,99,10,${0.06 * (1 - d / 120)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // ==================== 图表 ====================
+
+        function initTrendChart() {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            const data = getLastNDaysData(7);
+
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: '空腹血糖',
+                            data: data.fasting,
+                            borderColor: '#E8630A',
+                            backgroundColor: 'rgba(232,99,10,0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#E8630A',
+                            pointBorderColor: '#1A1A1A',
+                            pointBorderWidth: 2,
+                            borderWidth: 2,
+                        },
+                        {
+                            label: '餐后2h',
+                            data: data.postmeal,
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16,185,129,0.05)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#10B981',
+                            pointBorderColor: '#1A1A1A',
+                            pointBorderWidth: 2,
+                            borderWidth: 2,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#9CA3AF', font: { size: 11 }, usePointStyle: true, padding: 16 }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1A1A1A',
+                            borderColor: '#333',
+                            borderWidth: 1,
+                            titleColor: '#F5F5F5',
+                            bodyColor: '#9CA3AF',
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} mmol/L`
+                            }
+                        },
+                        annotation: undefined,
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#666', font: { size: 10 } },
+                            grid: { color: 'rgba(255,255,255,0.03)' },
+                        },
+                        y: {
+                            min: 3,
+                            max: 12,
+                            ticks: { color: '#666', font: { size: 10 }, callback: (v) => v + '' },
+                            grid: { color: 'rgba(255,255,255,0.03)' },
+                        }
+                    }
+                },
+                plugins: [{
+                    // 正常范围区域
+                    id: 'normalRange',
+                    beforeDraw: (chart) => {
+                        const { ctx, chartArea, scales } = chart;
+                        if (!chartArea) return;
+                        const yMin = scales.y.getPixelForValue(3.9);
+                        const yMax = scales.y.getPixelForValue(6.1);
+                        ctx.save();
+                        ctx.fillStyle = 'rgba(16,185,129,0.04)';
+                        ctx.fillRect(chartArea.left, yMax, chartArea.width, yMin - yMax);
+                        ctx.restore();
+                    }
+                }]
+            });
+        }
+
+        function getLastNDaysData(n) {
+            const labels = [];
+            const fasting = [];
+            const postmeal = [];
+
+            // 从记录中提取
+            for (let i = 0; i < Math.min(n, bloodRecords.length); i++) {
+                const r = bloodRecords[i];
+                const dateLabel = r.time.split(' ')[0].slice(5); // MM-DD
+                if (r.type === 'fasting') {
+                    if (!labels.includes(dateLabel)) {
+                        labels.unshift(dateLabel);
+                    }
+                    fasting.unshift(r.value);
+                } else if (r.type === 'postmeal') {
+                    postmeal.unshift(r.value);
+                }
+            }
+
+            // 补齐天数
+            const today = new Date();
+            const finalLabels = [];
+            const finalFasting = [];
+            const finalPostmeal = [];
+
+            for (let i = n - 1; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const key = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                finalLabels.push(key);
+
+                const idx = labels.indexOf(key);
+                if (idx >= 0) {
+                    finalFasting.push(fasting[idx] || null);
+                    finalPostmeal.push(postmeal[idx] || null);
+                } else {
+                    // 用模拟数据填充
+                    finalFasting.push(null);
+                    finalPostmeal.push(null);
+                }
+            }
+
+            // 填充null为模拟数据
+            for (let i = 0; i < finalLabels.length; i++) {
+                if (finalFasting[i] === null) finalFasting[i] = parseFloat((4.8 + Math.random() * 1.5).toFixed(1));
+                if (finalPostmeal[i] === null) finalPostmeal[i] = parseFloat((6.2 + Math.random() * 2.5).toFixed(1));
+            }
+
+            return { labels: finalLabels, fasting: finalFasting, postmeal: finalPostmeal };
+        }
+
+        function switchTrendTab(btn, days) {
+            btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const data = getLastNDaysData(days);
+            trendChart.data.labels = data.labels;
+            trendChart.data.datasets[0].data = data.fasting;
+            trendChart.data.datasets[1].data = data.postmeal;
+            trendChart.update('active');
+        }
+
+        // ==================== 血糖仪表盘 ====================
+
+        function updateGauge(value) {
+            const ring = document.getElementById('gaugeRing');
+            const valEl = document.getElementById('gaugeValue');
+            const statusEl = document.getElementById('gaugeStatus');
+
+            // 映射：0-20 mmol/L -> 0-440 offset
+            const ratio = Math.min(value / 20, 1);
+            const offset = 440 - (440 * ratio);
+            ring.style.strokeDashoffset = offset;
+
+            valEl.textContent = value.toFixed(1);
+
+            if (value < 3.9) {
+                statusEl.textContent = '血糖偏低';
+                statusEl.style.color = '#F59E0B';
+            } else if (value <= 6.1) {
+                statusEl.textContent = '血糖正常';
+                statusEl.style.color = 'var(--mint)';
+            } else if (value <= 7.0) {
+                statusEl.textContent = '血糖偏高';
+                statusEl.style.color = 'var(--accent)';
+            } else if (value <= 11.1) {
+                statusEl.textContent = '血糖过高';
+                statusEl.style.color = 'var(--danger)';
+            } else {
+                statusEl.textContent = '危险水平';
+                statusEl.style.color = 'var(--danger)';
+            }
+        }
+
+        function getLatestValue() {
+            return bloodRecords.length > 0 ? bloodRecords[0].value : 5.4;
+        }
+
+        // ==================== 统计数据 ====================
+
+        function updateStats() {
+            const fastingRecords = bloodRecords.filter(r => r.type === 'fasting');
+            const postmealRecords = bloodRecords.filter(r => r.type === 'postmeal');
+
+            const latestFasting = fastingRecords.length > 0 ? fastingRecords[0].value : '--';
+            const latestPostmeal = postmealRecords.length > 0 ? postmealRecords[0].value : '--';
+
+            document.getElementById('statFasting').textContent = typeof latestFasting === 'number' ? latestFasting.toFixed(1) : latestFasting;
+            document.getElementById('statPostmeal').textContent = typeof latestPostmeal === 'number' ? latestPostmeal.toFixed(1) : latestPostmeal;
+
+            // 7日均值
+            const last7 = bloodRecords.slice(0, Math.min(7, bloodRecords.length));
+            if (last7.length > 0) {
+                const avg = last7.reduce((s, r) => s + r.value, 0) / last7.length;
+                document.getElementById('statAvg').textContent = avg.toFixed(1);
+            }
+
+            // 运动消耗
+            const totalCal = exerciseCalories.reduce((s, c) => s + c, 0);
+            document.getElementById('statCalories').textContent = totalCal;
+        }
+
+        // ==================== 血糖记录 ====================
+
+        function setDefaultTime() {
+            const now = new Date();
+            const offset = now.getTimezoneOffset();
+            const local = new Date(now.getTime() - offset * 60000);
+            document.getElementById('recordTime').value = local.toISOString().slice(0, 16);
+        }
+
+        function submitRecord(e) {
+            e.preventDefault();
+            const time = document.getElementById('recordTime').value;
+            const value = parseFloat(document.getElementById('recordValue').value);
+            const type = document.getElementById('recordType').value;
+            const note = document.getElementById('recordNote').value;
+
+            if (isNaN(value) || value < 1 || value > 35) {
+                showToast('请输入有效的血糖值 (1-35 mmol/L)', 'warning');
+                return false;
+            }
+
+            const formattedTime = time.replace('T', ' ');
+            addRecord(formattedTime, value, type, note);
+            document.getElementById('recordValue').value = '';
+            document.getElementById('recordNote').value = '';
+            return false;
+        }
+
+        function submitModalRecord(e) {
+            e.preventDefault();
+            const value = parseFloat(document.getElementById('modalValue').value);
+            const type = document.querySelector('input[name="modalType"]:checked').value;
+            const note = document.getElementById('modalNote').value;
+
+            if (isNaN(value) || value < 1 || value > 35) {
+                showToast('请输入有效的血糖值 (1-35 mmol/L)', 'warning');
+                return false;
+            }
+
+            const now = new Date();
+            const formattedTime = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+            addRecord(formattedTime, value, type, note);
+            closeRecordModal();
+            document.getElementById('modalValue').value = '';
+            document.getElementById('modalNote').value = '';
+            return false;
+        }
+
+        function addRecord(time, value, type, note) {
+            bloodRecords.unshift({ time, value, type, note });
+            renderRecords();
+            updateGauge(value);
+            updateStats();
+
+            // 刷新图表
+            const activeTab = document.querySelector('#dashboard .tab-btn.active');
+            const days = activeTab ? parseInt(activeTab.textContent) : 7;
+            const data = getLastNDaysData(days);
+            trendChart.data.labels = data.labels;
+            trendChart.data.datasets[0].data = data.fasting;
+            trendChart.data.datasets[1].data = data.postmeal;
+            trendChart.update('active');
+
+            // 血糖值反馈
+            if (value < 3.9) {
+                showToast(`血糖 ${value} mmol/L 偏低，建议适当补充糖分`, 'warning');
+            } else if (value <= 6.1) {
+                showToast(`血糖 ${value} mmol/L 正常，继续保持`, 'success');
+            } else if (value <= 7.0) {
+                showToast(`血糖 ${value} mmol/L 偏高，注意饮食控制`, 'warning');
+            } else {
+                showToast(`血糖 ${value} mmol/L 过高，请及时关注`, 'danger');
+            }
+        }
+
+        function renderRecords() {
+            const list = document.getElementById('recordList');
+            if (bloodRecords.length === 0) {
+                list.innerHTML = `<div class="text-center py-12" style="color: var(--fg-muted);"><i class="fas fa-clipboard-list text-3xl mb-3" style="opacity:0.3"></i><p class="text-sm">暂无记录，开始记录您的血糖数据</p></div>`;
+                return;
+            }
+
+            const typeMap = { fasting: '空腹', postmeal: '餐后2h', random: '随机', before_sleep: '睡前' };
+
+            list.innerHTML = bloodRecords.slice(0, 20).map((r, i) => {
+                let statusColor = 'var(--mint)';
+                let statusText = '正常';
+                if (r.value < 3.9) { statusColor = '#F59E0B'; statusText = '偏低'; }
+                else if (r.value > 7.0) { statusColor = 'var(--danger)'; statusText = '过高'; }
+                else if (r.value > 6.1) { statusColor = 'var(--accent)'; statusText = '偏高'; }
+
+                return `
+                    <div class="flex items-center justify-between p-4 rounded-xl transition-all hover:bg-white/5" style="background: #111; border: 1px solid var(--border);">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: ${statusColor}15;">
+                                <i class="fas fa-tint text-sm" style="color: ${statusColor};"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold">${r.value}</span>
+                                    <span class="text-xs" style="color: var(--fg-muted);">mmol/L</span>
+                                    <span class="text-xs px-2 py-0.5 rounded-full" style="background: ${statusColor}15; color: ${statusColor};">${statusText}</span>
+                                </div>
+                                <div class="text-xs mt-1" style="color: var(--fg-muted);">
+                                    ${r.time} · ${typeMap[r.type] || r.type}${r.note ? ' · ' + r.note : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="deleteRecord(${i})" class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-red-500/10" style="color: var(--fg-muted);" aria-label="删除">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteRecord(index) {
+            bloodRecords.splice(index, 1);
+            renderRecords();
+            updateStats();
+            showToast('记录已删除', 'success');
+        }
+
+        function clearRecords() {
+            if (bloodRecords.length === 0) return;
+            bloodRecords = [];
+            renderRecords();
+            updateStats();
+            updateGauge(5.0);
+            showToast('所有记录已清空', 'success');
+        }
+
+        // ==================== 模态框 ====================
+
+        function openRecordModal() {
+            document.getElementById('recordModal').classList.add('show');
+        }
+        function closeRecordModal() {
+            document.getElementById('recordModal').classList.remove('show');
+        }
+        // 点击遮罩关闭
+        document.getElementById('recordModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeRecordModal();
+        });
+
+        function updateTypeLabel() {
+            const labels = document.querySelectorAll('#recordModal label[id^="typeLabel"]');
+            labels.forEach(l => {
+                const radio = l.querySelector('input[type="radio"]');
+                if (radio.checked) {
+                    l.style.borderColor = 'var(--accent)';
+                    l.style.background = 'rgba(232,99,10,0.05)';
+                } else {
+                    l.style.borderColor = 'var(--border)';
+                    l.style.background = '#111';
+                }
+            });
+        }
+        updateTypeLabel();
+
+        // ==================== 饮食指南 ====================
+
+        function renderFoodGrid(filter) {
+            const grid = document.getElementById('foodGrid');
+            const filtered = filter === 'all' ? foodData : foodData.filter(f => f.level === filter);
+
+            grid.innerHTML = filtered.map(f => {
+                const giColor = f.level === 'low' ? 'var(--mint)' : f.level === 'medium' ? 'var(--accent)' : 'var(--danger)';
+                const giLabel = f.level === 'low' ? '低GI' : f.level === 'medium' ? '中GI' : '高GI';
+
+                return `
+                    <div class="food-card ${f.level}">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-bold text-sm">${f.name}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full" style="background: ${giColor}15; color: ${giColor};">${giLabel}</span>
+                        </div>
+                        <div class="flex items-center gap-4 mb-3">
+                            <div>
+                                <div class="text-xl font-bold" style="color: ${giColor};">${f.gi}</div>
+                                <div class="text-xs" style="color: var(--fg-muted);">GI值</div>
+                            </div>
+                            <div style="width:1px; height:30px; background: var(--border);"></div>
+                            <div>
+                                <div class="text-sm font-medium">${f.cal}</div>
+                                <div class="text-xs" style="color: var(--fg-muted);">千卡/100g</div>
+                            </div>
+                            <div style="width:1px; height:30px; background: var(--border);"></div>
+                            <div>
+                                <div class="text-sm font-medium">${f.category}</div>
+                                <div class="text-xs" style="color: var(--fg-muted);">分类</div>
+                            </div>
+                        </div>
+                        <p class="text-xs" style="color: var(--fg-muted);"><i class="fas fa-info-circle mr-1" style="color:${giColor}"></i>${f.tip}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterFood(btn, level) {
+            btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderFoodGrid(level);
+        }
+
+        // ==================== 运动计划 ====================
+
+        function updateExerciseUI() {
+            const totalMin = exerciseData.reduce((s, m) => s + m, 0);
+            const goal = 150;
+            const percent = Math.min(Math.round((totalMin / goal) * 100), 100);
+
+            document.getElementById('exerciseProgress').style.width = percent + '%';
+            document.getElementById('exerciseCurrent').textContent = `已完成 ${totalMin} 分钟`;
+            document.getElementById('exercisePercent').textContent = percent + '%';
+
+            // 更新每日格子
+            exerciseData.forEach((min, i) => {
+                const dayEl = document.getElementById('day-' + i);
+                const box = dayEl.querySelector('div:last-child');
+                box.textContent = min;
+                if (min >= 30) {
+                    box.style.background = 'rgba(16,185,129,0.2)';
+                    box.style.color = 'var(--mint)';
+                } else if (min > 0) {
+                    box.style.background = 'rgba(232,99,10,0.15)';
+                    box.style.color = 'var(--accent)';
+                } else {
+                    box.style.background = '#222';
+                    box.style.color = 'var(--fg-muted)';
+                }
+            });
+        }
+
+        function addExercise(minutes, type) {
+            // 找到今天星期几 (0=周日)
+            const today = new Date().getDay();
+            const dayIndex = today === 0 ? 6 : today - 1; // 转成0=周一
+
+            exerciseData[dayIndex] += minutes;
+            exerciseCalories[dayIndex] += Math.round(minutes * (5 + Math.random() * 3));
+
+            updateExerciseUI();
+            updateStats();
+            showToast(`已记录 ${type} ${minutes}分钟`, 'success');
+        }
+
+        // ==================== Toast 通知 ====================
+
+        function showToast(msg, type) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle'} mr-2"></i>${msg}`;
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // ==================== 滚动显示 ====================
+
+        function initScrollReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        // ==================== 导航 ====================
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // 弹跳动画
+        const bounceStyle = document.createElement('style');
+        bounceStyle.textContent = `@keyframes bounce{0%,20%,50%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}60%{transform:translateY(-4px)}}`;
+        document.head.appendChild(bounceStyle);
+    </script>
+</body>
+</html>
