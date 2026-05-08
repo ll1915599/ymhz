@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>糖控助手 — 糖尿病健康管理平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#FFF7ED',
+                            100: '#FFEDD5',
+                            200: '#FED7AA',
+                            300: '#FDBA74',
+                            400: '#FB923C',
+                            500: '#E8630A',
+                            600: '#C2410C',
+                            700: '#9A3412',
+                            800: '#7C2D12',
+                            900: '#431407',
+                        },
+                        mint: {
+                            400: '#34D399',
+                            500: '#10B981',
+                            600: '#059669',
+                        },
+                        danger: '#EF4444',
+                        warning: '#F59E0B',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #0F0F0F;
+            --bg-card: #1A1A1A;
+            --bg-card-hover: #222222;
+            --fg: #F5F5F5;
+            --fg-muted: #9CA3AF;
+            --accent: #E8630A;
+            --accent-light: #FB923C;
+            --mint: #10B981;
+            --danger: #EF4444;
+            --border: #2A2A2A;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'Noto Sans SC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Hero 背景动画 */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(232,99,10,0.15) 0%, transparent 70%);
+            top: -200px;
+            right: -100px;
+            animation: float1 8s ease-in-out infinite;
+        }
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
+            bottom: -150px;
+            left: -100px;
+            animation: float2 10s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-40px, 30px) scale(1.1); }
+        }
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -40px) scale(1.15); }
+        }
+
+        /* 粒子 Canvas */
+        #particleCanvas {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:hover {
+            background: var(--bg-card-hover);
+            border-color: #3A3A3A;
+            transform: translateY(-2px);
+        }
+
+        /* 血糖仪表盘 */
+        .gauge-ring {
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            stroke-linecap: round;
+        }
+
+        /* 输入框 */
+        .input-field {
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--fg);
+            font-size: 14px;
+            transition: all 0.2s;
+            outline: none;
+            width: 100%;
+        }
+        .input-field:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(232,99,10,0.15);
+        }
+
+        /* 按钮 */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-size: 14px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(232,99,10,0.3);
+        }
+        .btn-primary:active { transform: scale(0.97); }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            padding: 10px 24px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-size: 14px;
+        }
+        .btn-outline:hover {
+            background: rgba(232,99,10,0.1);
+        }
+
+        /* Toast 通知 */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 360px;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast-success {
+            background: rgba(16,185,129,0.15);
+            border: 1px solid rgba(16,185,129,0.3);
+            color: #34D399;
+        }
+        .toast-warning {
+            background: rgba(245,158,11,0.15);
+            border: 1px solid rgba(245,158,11,0.3);
+            color: #FBBF24;
+        }
+        .toast-danger {
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #F87171;
+        }
+
+        /* 食物卡片 */
+        .food-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .food-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+            transition: width 0.3s;
+        }
+        .food-card.low::before { background: var(--mint); }
+        .food-card.medium::before { background: var(--accent); }
+        .food-card.high::before { background: var(--danger); }
+        .food-card:hover { transform: translateY(-3px); border-color: #3A3A3A; }
+
+        /* 标签页 */
+        .tab-btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--fg-muted);
+            background: transparent;
+            border: none;
+        }
+        .tab-btn.active {
+            background: rgba(232,99,10,0.15);
+            color: var(--accent-light);
+        }
+        .tab-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* 进度条动画 */
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: #222;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 导航栏 */
+        .nav-link {
+            color: var(--fg-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-link:hover { color: var(--fg); }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 480px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        /* 滚动显示动画 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 脉动指示器 */
+        .pulse-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(232,99,10,0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(232,99,10,0); }
+            100% { box-shadow: 0 0 0 0 rgba(232,99,10,0); }
+        }
+
+        /* 统计数字动画 */
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 血糖趋势标签 */
+        .trend-up { color: var(--danger); }
+        .trend-down { color: var(--mint); }
+        .trend-stable { color: var(--accent); }
+
+        /* 健康提示轮播 */
+        .tip-slide {
+            animation: tipFade 12s infinite;
+            opacity: 0;
+        }
+        .tip-slide:nth-child(1) { animation-delay: 0s; }
+        .tip-slide:nth-child(2) { animation-delay: 4s; }
+        .tip-slide:nth-child(3) { animation-delay: 8s; }
+        @keyframes tipFade {
+            0%, 5% { opacity: 0; transform: translateY(10px); }
+            10%, 30% { opacity: 1; transform: translateY(0); }
+            35%, 100% { opacity: 0; transform: translateY(-10px); }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem !important; }
+            .grid-dashboard { grid-template-columns: 1fr !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast 容器 -->
+    <div id="toastContainer"></div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="navbar" style="background: rgba(15,15,15,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid transparent;">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--accent), var(--accent-light));">
+                    <i class="fas fa-heartbeat text-white text-sm"></i>
+                </div>
+                <span class="font-bold text-lg tracking-tight">糖控助手</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a class="nav-link" onclick="scrollToSection('dashboard')">数据面板</a>
+                <a class="nav-link" onclick="scrollToSection('tracker')">血糖记录</a>
+                <a class="nav-link" onclick="scrollToSection('food')">饮食指南</a>
+                <a class="nav-link" onclick="scrollToSection('exercise')">运动计划</a>
+                <a class="nav-link" onclick="scrollToSection('education')">健康科普</a>
+            </div>
+            <button class="btn-primary text-sm hidden md:block" onclick="openRecordModal()">
+                <i class="fas fa-plus mr-1"></i> 记录血糖
+            </button>
+            <button class="md:hidden text-xl" onclick="toggleMobileMenu()" aria-label="菜单">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden px-6 pb-4 space-y-3">
+            <a class="block py-2 text-sm" style="color:var(--fg-muted)" onclick="scrollToSection('dashboard');toggleMobileMenu()">数据面板</a>
+            <a class="block py-2 text-sm" style="color:var(--fg-muted)" onclick="scrollToSection('tracker');toggleMobileMenu()">血糖记录</a>
+            <a class="block py-2 text-sm" style="color:var(--fg-muted)" onclick="scrollToSection('food');toggleMobileMenu()">饮食指南</a>
+            <a class="block py-2 text-sm" style="color:var(--fg-muted)" onclick="scrollToSection('exercise');toggleMobileMenu()">运动计划</a>
+            <a class="block py-2 text-sm" style="color:var(--fg-muted)" onclick="scrollToSection('education');toggleMobileMenu()">健康科普</a>
+            <button class="btn-primary text-sm w-full mt-2" onclick="openRecordModal();toggleMobileMenu()">
+                <i class="fas fa-plus mr-1"></i> 记录血糖
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero 区域 -->
+    <header class="relative min-h-screen flex items-center justify-center px-6 overflow-hidden" id="hero">
+        <div class="hero-bg"></div>
+        <canvas id="particleCanvas"></canvas>
+        <div class="relative z-10 text-center max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-8" style="background: rgba(232,99,10,0.1); border: 1px solid rgba(232,99,10,0.2); color: var(--accent-light);">
+                <span class="pulse-dot" style="background: var(--accent);"></span>
+                智能血糖管理 · 科学控糖生活
+            </div>
+            <h1 class="hero-title font-display text-6xl md:text-7xl font-black mb-6 leading-tight" style="letter-spacing: -0.02em;">
+                掌控血糖<br>
+                <span style="background: linear-gradient(135deg, var(--accent), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">从此刻开始</span>
+            </h1>
+            <p class="text-lg md:text-xl mb-10 leading-relaxed" style="color: var(--fg-muted); max-width: 540px; margin-left: auto; margin-right: auto;">
+                记录、分析、管理您的血糖数据，获取个性化饮食与运动建议，让每一天的健康都在掌控之中
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="btn-primary text-base px-8 py-3" onclick="openRecordModal()">
+                    <i class="fas fa-chart-line mr-2"></i>开始记录
+                </button>
+                <button class="btn-outline text-base px-8 py-3" onclick="scrollToSection('dashboard')">
+                    查看面板 <i class="fas fa-arrow-down ml-2"></i>
+                </button>
+            </div>
+            <!-- 实时健康提示 -->
+            <div class="mt-16 relative h-8" style="color: var(--fg-muted); font-size: 13px;">
+                <div class="tip-slide absolute inset-0 flex items-center justify-center gap-2">
+                    <i class="fas fa-lightbulb" style="color: var(--accent);"></i>
+                    空腹血糖正常范围：3.9 ~ 6.1 mmol/L
+                </div>
+                <div class="tip-slide absolute inset-0 flex items-center justify-center gap-2">
+                    <i class="fas fa-lightbulb" style="color: var(--mint);"></i>
+                    餐后2小时血糖应低于 7.8 mmol/L
+                </div>
+                <div class="tip-slide absolute inset-0 flex items-center justify-center gap-2">
+                    <i class="fas fa-lightbulb" style="color: var(--accent-light);"></i>
+                    每周至少150分钟中等强度有氧运动
+                </div>
+            </div>
+        </div>
+        <!-- 向下滚动提示 -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10" style="animation: bounce 2s infinite;">
+            <i class="fas fa-chevron-down text-lg" style="color: var(--fg-muted);"></i>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6">
+
+        <!-- 数据面板 -->
+        <section id="dashboard" class="py-20 reveal">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-1 h-8 rounded-full" style="background: var(--accent);"></div>
+                <h2 class="text-3xl font-bold">数据面板</h2>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="card p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-tint text-xs" style="color: var(--accent);"></i>
+                        <span class="text-xs" style="color: var(--fg-muted);">今日空腹</span>
+                    </div>
+                    <div class="stat-number text-2xl font-bold" id="statFasting">5.4</div>
+                    <span class="text-xs" style="color: var(--mint);">mmol/L · 正常</span>
+                </div>
+                <div class="card p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-utensils text-xs" style="color: var(--accent);"></i>
+                        <span class="text-xs" style="color: var(--fg-muted);">餐后2h</span>
+                    </div>
+                    <div class="stat-number text-2xl font-bold" id="statPostmeal">7.2</div>
+                    <span class="text-xs" style="color: var(--mint);">mmol/L · 正常</span>
+                </div>
+                <div class="card p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-calculator text-xs" style="color: var(--accent);"></i>
+                        <span class="text-xs" style="color: var(--fg-muted);">7日均值</span>
+                    </div>
+                    <div class="stat-number text-2xl font-bold" id="statAvg">6.1</div>
+                    <span class="text-xs" style="color: var(--accent);">mmol/L · 偏高</span>
+                </div>
+                <div class="card p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-fire text-xs" style="color: var(--mint);"></i>
+                        <span class="text-xs" style="color: var(--fg-muted);">运动消耗</span>
+                    </div>
+                    <div class="stat-number text-2xl font-bold" id="statCalories">320</div>
+                    <span class="text-xs" style="color: var(--mint);">千卡 · 今日</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 血糖仪表盘 -->
+                <div class="card p-8 flex flex-col items-center justify-center">
+                    <div class="relative" style="width: 200px; height: 200px;">
+                        <svg viewBox="0 0 160 160" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                            <circle cx="80" cy="80" r="70" fill="none" stroke="#222" stroke-width="10"/>
+                            <circle cx="80" cy="80" r="70" fill="none" stroke="url(#gaugeGrad)" stroke-width="10"
+                                class="gauge-ring" id="gaugeRing"/>
+                            <defs>
+                                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color: #10B981"/>
+                                    <stop offset="50%" style="stop-color: #E8630A"/>
+                                    <stop offset="100%" style="stop-color: #EF4444"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <div class="text-4xl font-bold stat-number" id="gaugeValue">5.4</div>
+                            <div class="text-xs mt-1" style="color: var(--fg-muted);">mmol/L</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm font-medium" id="gaugeStatus" style="color: var(--mint);">血糖正常</div>
+                    <div class="flex gap-6 mt-4 text-xs" style="color: var(--fg-muted);">
+                        <span><i class="fas fa-circle text-xs mr-1" style="color: var(--mint);"></i>正常</span>
+                        <span><i class="fas fa-circle text-xs mr-1" style="color: var(--accent);"></i>偏高</span>
+                        <span><i class="fas fa-circle text-xs mr-1" style="color: var(--danger);"></i>过高</span>
+                    </div>
+                </div>
+
+                <!-- 趋势图 -->
+                <div class="card p-6 md:col-span-2">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-base">血糖趋势</h3>
+                        <div class="flex gap-1">
+                            <button class="tab-btn active" onclick="switchTrendTab(this, 7)">7天</button>
+                            <button class="tab-btn" onclick="switchTrendTab(this, 14)">14天</button>
+                            <button class="tab-btn" onclick="switchTrendTab(this, 30)">30天</button>
+                        </div>
+                    </div>
+                    <canvas id="trendChart" height="220"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 血糖记录 -->
+        <section id="tracker" class="py-20 reveal">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-1 h-8 rounded-full" style="background: var(--mint);"></div>
+                <h2 class="text-3xl font-bold">血糖记录</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 记录表单 -->
+                <div class="card p-8">
+                    <h3 class="font-bold text-lg mb-6">新增记录</h3>
+                    <form id="recordForm" onsubmit="return submitRecord(event)">
+                        <div class="mb-4">
+                            <label class="block text-xs mb-2" style="color: var(--fg-muted);">测量时间</label>
+                            <input type="datetime-local" class="input-field" id="recordTime" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs mb-2" style="color: var(--fg-muted);">血糖值 (mmol/L)</label>
+                            <input type="number" step="0.1" min="1" max="35" class="input-field" id="recordValue" placeholder="例如：5.6" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs mb-2" style="color: var(--fg-muted);">测量类型</label>
+                            <select class="input-field" id="recordType">
+                                <option value="fasting">空腹血糖</option>
+                                <option value="postmeal">餐后2小时</option>
+                                <option value="random">随机血糖</option>
+                                <option value="before_sleep">睡前血糖</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-xs mb-2" style="color: var(--fg-muted);">备注</label>
+                            <input type="text" class="input-field" id="recordNote" placeholder="饮食、运动、情绪等">
+                        </div>
+                        <button type="submit" class="btn-primary w-full">
+                            <i class="fas fa-save mr-2"></i>保存记录
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 记录列表 -->
+                <div class="card p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-bold text-lg">历史记录</h3>
+                        <button class="text-xs px-3 py-1 rounded-lg" style="background: rgba(239,68,68,0.1); color: var(--danger);" onclick="clearRecords()">清空</button>
+                    </div>
+                    <div id="recordList" class="space-y-3 max-h-96 overflow-y-auto pr-2" style="scrollbar-width: thin;">
+                        <!-- 动态填充 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 饮食指南 -->
+        <section id="food" class="py-20 reveal">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-1 h-8 rounded-full" style="background: var(--accent-light);"></div>
+                <h2 class="text-3xl font-bold">饮食指南</h2>
+            </div>
+
+            <!-- GI 筛选标签 -->
+            <div class="flex gap-2 mb-8 flex-wrap">
+                <button class="tab-btn active" onclick="filterFood(this, 'all')">全部</button>
+                <button class="tab-btn" onclick="filterFood(this, 'low')">低 GI (< 55)</button>
+                <button class="tab-btn" onclick="filterFood(this, 'medium')">中 GI (55-70)</button>
+                <button class="tab-btn" onclick="filterFood(this, 'high')">高 GI (> 70)</button>
+            </div>
+
+            <div id="foodGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- 动态填充 -->
+            </div>
+
+            <!-- 每日饮食建议 -->
+            <div class="card p-8 mt-8">
+                <h3 class="font-bold text-lg mb-6">每日饮食建议</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-xl" style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-sun" style="color: var(--mint);"></i>
+                            <span class="font-medium text-sm">早餐</span>
+                        </div>
+                        <ul class="text-xs space-y-2" style="color: var(--fg-muted);">
+                            <li>· 燕麦粥 1碗 (低GI主食)</li>
+                            <li>· 水煮蛋 1个 (优质蛋白)</li>
+                            <li>· 凉拌黄瓜 (膳食纤维)</li>
+                            <li>· 无糖豆浆 1杯</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-xl" style="background: rgba(232,99,10,0.08); border: 1px solid rgba(232,99,10,0.15);">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-cloud-sun" style="color: var(--accent);"></i>
+                            <span class="font-medium text-sm">午餐</span>
+                        </div>
+                        <ul class="text-xs space-y-2" style="color: var(--fg-muted);">
+                            <li>· 糙米饭 半碗 (中GI主食)</li>
+                            <li>· 清蒸鱼 100g (优质蛋白)</li>
+                            <li>· 蒜蓉西兰花 (膳食纤维)</li>
+                            <li>· 番茄蛋汤</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-xl" style="background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.15);">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-moon" style="color: #A855F7;"></i>
+                            <span class="font-medium text-sm">晚餐</span>
+                        </div>
+                        <ul class="text-xs space-y-2" style="color: var(--fg-muted);">
+                            <li>· 全麦面包 2片 (低GI主食)</li>
+                            <li>· 鸡胸肉沙拉 (优质蛋白)</li>
+                            <li>· 蒸南瓜 (膳食纤维)</li>
+                            <li>· 低脂牛奶 1杯</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
