@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>港澳7天深度行程 · 2026年6月</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C87A;
+    --red: #C0392B;
+    --ink: #1A1A2E;
+    --ink-light: #2D2D4A;
+    --cream: #FAF7F0;
+    --muted: #7A7A8C;
+    --border: rgba(201,168,76,0.3);
+    --shadow: 0 4px 24px rgba(26,26,46,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Sans SC', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── PASSWORD GATE ── */
+  #pw-gate {
+    position: fixed;
+    inset: 0;
+    background: var(--ink);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0;
+  }
+  #pw-gate::before {
+    content: '香港';
+    position: absolute;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 260px;
+    font-weight: 700;
+    color: rgba(201,168,76,0.04);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+  .pw-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 16px;
+    padding: 48px 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 340px;
+    position: relative;
+  }
+  .pw-icon {
+    font-size: 36px;
+    margin-bottom: 4px;
+  }
+  .pw-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cream);
+    text-align: center;
+    line-height: 1.4;
+  }
+  .pw-sub {
+    font-size: 12px;
+    color: rgba(250,247,240,0.4);
+    text-align: center;
+    margin-top: -8px;
+  }
+  .pw-input-wrap {
+    width: 100%;
+    position: relative;
+  }
+  #pw-input {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 8px;
+    padding: 13px 44px 13px 16px;
+    font-size: 15px;
+    color: var(--cream);
+    font-family: 'Noto Sans SC', sans-serif;
+    outline: none;
+    letter-spacing: 3px;
+    transition: border-color 0.2s;
+    text-align: center;
+  }
+  #pw-input::placeholder { letter-spacing: 1px; color: rgba(250,247,240,0.25); }
+  #pw-input:focus { border-color: var(--gold); }
+  #pw-input.shake {
+    animation: shake 0.4s ease;
+    border-color: #C0392B;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+  #pw-btn {
+    width: 100%;
+    background: var(--gold);
+    color: var(--ink);
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  #pw-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+  #pw-btn:active { transform: translateY(0); }
+  .pw-error {
+    font-size: 12px;
+    color: #E74C3C;
+    min-height: 16px;
+    text-align: center;
+  }
+  #pw-gate.hidden {
+    animation: fadeOut 0.4s ease forwards;
+  }
+  @keyframes fadeOut {
+    to { opacity: 0; pointer-events: none; }
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 48px 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
+  }
+  .header::after {
+    content: '香港';
+    position: absolute;
+    right: 40px; bottom: -20px;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 120px;
+    font-weight: 700;
+    color: rgba(201,168,76,0.06);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .header-tag {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .header-sub {
+    color: rgba(250,247,240,0.55);
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+  .flight-bar {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .flight-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+  .flight-card .fn { color: var(--gold); font-weight: 600; margin-bottom: 4px; }
+  .flight-card .ft { color: rgba(250,247,240,0.75); }
+
+  /* ── BANK HIGHLIGHT ── */
+  .bank-banner {
+    background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+    border-left: 4px solid var(--gold);
+    margin: 0;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .bank-banner .label { color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; }
+  .bank-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .bank-chip {
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold-light);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .bank-chip.online::after { content: ' 📱线上'; }
+  .bank-chip.offline::after { content: ' 🏦线下'; }
+
+  /* ── LAYOUT ── */
+  .main {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    min-height: calc(100vh - 200px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: #fff;
+    border-right: 1px solid rgba(0,0,0,0.08);
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+    position: sticky;
+    top: 0;
+  }
+
+  .day-tab {
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .day-tab:hover { background: rgba(201,168,76,0.05); }
+  .day-tab.active { background: rgba(201,168,76,0.08); border-left: 3px solid var(--gold); }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px 12px;
+  }
+  .day-num {
+    width: 36px; height: 36px;
+    background: var(--ink);
+    color: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .day-tab.active .day-num { background: var(--gold); color: var(--ink); }
+  .day-info { flex: 1; min-width: 0; }
+  .day-date { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .day-title { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+
+  .day-spots {
+    padding: 0 20px 12px 70px;
+    display: none;
+  }
+  .day-tab.active .day-spots { display: block; }
+  .spot-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .spot-item:hover { color: var(--ink); }
+  .spot-item.active { color: var(--gold); font-weight: 600; }
+  .spot-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  /* ── MAP AREA ── */
+  .map-area {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  #map {
+    flex: 1;
+    min-height: 500px;
+    background: #e8e4dc;
+  }
+
+  /* ── DETAIL PANEL ── */
+  .detail-panel {
+    background: #fff;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding: 24px 32px;
+    max-height: 340px;
+    overflow-y: auto;
+  }
+  .detail-day-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .detail-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .detail-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .timeline {
+    position: relative;
+    padding-left: 24px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--gold), rgba(201,168,76,0.1));
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -18px;
+    top: 6px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid #fff;
+    outline: 1px solid var(--gold);
+  }
+  .tl-item.highlight::before { background: var(--red); outline-color: var(--red); }
+  .tl-item.bank::before { background: #2563EB; outline-color: #2563EB; }
+  .tl-time {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 90px;
+    padding-top: 1px;
+  }
+  .tl-content { flex: 1; }
+  .tl-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .tl-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .tl-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .tag-bank { background: rgba(37,99,235,0.1); color: #2563EB; }
+  .tag-food { background: rgba(234,88,12,0.1); color: #EA580C; }
+  .tag-culture { background: rgba(139,92,246,0.1); color: #7C3AED; }
+  .tag-highlight { background: rgba(192,57,43,0.12); color: var(--red); }
+
+  /* ── KEY INFO CARDS ── */
+  .info-cards {
+    display: flex;
+    gap: 12px;
+    padding: 0 40px 20px;
+    background: #fff;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    flex-wrap: wrap;
+  }
+  .info-card {
+    flex: 1;
+    min-width: 180px;
+    background: var(--cream);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 16px;
+  }
+  .info-card .ic-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .info-card .ic-val { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .info-card .ic-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ── LEGEND ── */
+  .legend {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 12px 16px;
+    z-index: 1000;
+    font-size: 11px;
+    box-shadow: var(--shadow);
+  }
+  .legend-title { font-weight: 700; color: var(--ink); margin-bottom: 8px; font-size: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── MACAU NOTICE ── */
+  .macau-notice {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.03));
+    border: 1px dashed var(--gold);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 12px 0 6px;
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .macau-notice strong { color: var(--gold); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.35); border-radius: 2px; }
+
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { max-height: none; position: static; }
+    .header { padding: 32px 20px 28px; }
+    .header::after { display: none; }
+    .info-cards { padding: 0 20px 16px; }
+    .detail-panel { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="pw-gate">
+  <div class="pw-box">
+    <div class="pw-icon">🔐</div>
+    <div class="pw-title">港澳7天行程<br>专属访问</div>
+    <div class="pw-sub">请输入访问密码</div>
+    <div class="pw-input-wrap">
+      <input id="pw-input" type="password" placeholder="输入密码" autocomplete="off" onkeydown="if(event.key==='Enter')checkPw()">
+    </div>
+    <button id="pw-btn" onclick="checkPw()">进 入</button>
+    <div class="pw-error" id="pw-error"></div>
+  </div>
+</div>
+
+<div class="header">
+  <div class="header-tag">深度行程规划</div>
+  <h1>港澳7天精华行程<br>四家银行开户全攻略</h1>
+  <div class="header-sub">2026年6月20日 — 6月27日 · 青岛出发</div>
+  <div class="flight-bar">
+    <div class="flight-card">
+      <div class="fn">QW915 去程</div>
+      <div class="ft">6/20 周六 · 青岛09:25 → 香港12:45</div>
+    </div>
+    <div class="flight-card">
+      <div class="fn">QW916 返程</div>
+      <div class="ft">6/27 周六 · 香港13:45 → 青岛17:05</div>
+    </div>
+  </div>
+</div>
+
+<div class="bank-banner">
+  <div class="label">🏦 四大银行开户</div>
+  <div class="bank-chips">
+    <div class="bank-chip online">众安银行</div>
+    <div class="bank-chip online">汇丰香港</div>
+    <div class="bank-chip offline">中银香港</div>
+    <div class="bank-chip offline">工银亚洲</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+
+    <div class="day-tab active" data-day="1" onclick="selectDay(1)">
+      <div class="day-header">
+        <div class="day-num">1</div>
+        <div class="day-info">
+          <div class="day-date">6月20日（周六）抵达日</div>
+          <div class="day-title">尖沙咀·落日飞车·双银行线上开户</div>
+        </div>
+      </div>
+      <div class="day-spots">
+        <div class="spot-item active" onclick="focusSpot(event,22.2930,114.1742,'星光大道')">
+          <span class="spot-dot"></span>星光大道 / 维港海滨
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.2837,114.1588,'中环码头')">
+          <span class="spot-dot"></span>中环码头→天星小轮
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.2936,114.1721,'香港艺术馆')">
+          <span class="spot-dot"></span>汇丰+众安线上开户（酒店内）
+        </div>
+      </div>
+    </div>
+
+    <div class="day-tab" data-day="2" onclick="selectDay(2)">
+      <div class="day-header">
+        <div class="day-num">2</div>
+        <div class="day-info">
+          <div class="day-date">6月21日（周日）</div>
+          <div class="day-title">黄大仙祈福·沙田马场黄昏赛</div>
+        </div>
+      </div>
+      <div class="day-spots">
+        <div class="spot-item" onclick="focusSpot(event,22.3427,114.1932,'黄大仙祠')">
+          <span class="spot-dot"></span>黄大仙祠（09:00）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.3998,114.2040,'沙田马场')">
+          <span class="spot-dot"></span>沙田马场（16:00开赛）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.2800,114.1840,'铜锣湾')">
+          <span class="spot-dot"></span>铜锣湾时代广场
+        </div>
+      </div>
+    </div>
+
+    <div class="day-tab" data-day="3" onclick="selectDay(3)">
+      <div class="day-header">
+        <div class="day-num">3</div>
+        <div class="day-info">
+          <div class="day-date">6月22日（周一）</div>
+          <div class="day-title">西九文化区·香港故宫·M+博物馆</div>
+        </div>
+      </div>
+      <div class="day-spots">
+        <div class="spot-item" onclick="focusSpot(event,22.3018,114.1560,'香港故宫')">
+          <span class="spot-dot"></span>香港故宫博物馆（10:00）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.3005,114.1595,'M+博物馆')">
+          <span class="spot-dot"></span>M+博物馆（14:00）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.3010,114.1575,'西九海滨')">
+          <span class="spot-dot"></span>西九海滨长廊看维港日落
+        </div>
+      </div>
+    </div>
+
+    <div class="day-tab" data-day="4" onclick="selectDay(4)">
+      <div class="day-header">
+        <div class="day-num">4</div>
+        <div class="day-info">
+          <div class="day-date">6月23日（周二）</div>
+          <div class="day-title">中银+工银线下开户·旺角·油麻地</div>
+        </div>
+      </div>
+      <div class="day-spots">
+        <div class="spot-item" onclick="focusSpot(event,22.2997,114.1733,'中银香港')">
+          <span class="spot-dot"></span>中银香港弥敦道131号（09:00）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.3005,114.1722,'工银亚洲')">
+          <span class="spot-dot"></span>工银亚洲汉口道28号（10:40）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.3211,114.1702,'女人街')">
+          <span class="spot-dot"></span>旺角女人街（14:00）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.3130,114.1680,'油麻地庙街')">
+          <span class="spot-dot"></span>油麻地庙街夜市
+        </div>
+      </div>
+    </div>
+
+    <div class="day-tab" data-day="5" onclick="selectDay(5)">
+      <div class="day-header">
+        <div class="day-num">5</div>
+        <div class="day-info">
+          <div class="day-date">6月24日（周三）</div>
+          <div class="day-title">澳门1日游·跑马地夜赛</div>
+        </div>
+      </div>
+      <div class="day-spots">
+        <div class="spot-item" onclick="focusSpot(event,22.3003,114.1674,'中港城')">
+          <span class="spot-dot"></span>中港城码头出发→澳门（08:30）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.1470,113.5598,'威尼斯人')">
+          <span class="spot-dot"></span>澳门威尼斯人（氹仔）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.1975,113.5409,'大三巴')">
+          <span class="spot-dot"></span>大三巴·恋爱巷（澳门半岛）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.2718,114.1806,'跑马地')">
+          <span class="spot-dot"></span>跑马地夜赛（19:05开赛）
+        </div>
+      </div>
+    </div>
+
+    <div class="day-tab" data-day="6" onclick="selectDay(6)">
+      <div class="day-header">
+        <div class="day-num">6</div>
+        <div class="day-info">
+          <div class="day-date">6月25日（周四）</div>
+          <div class="day-title">莫奈真迹展·终极购物补货</div>
+        </div>
+      </div>
+      <div class="day-spots">
+        <div class="spot-item" onclick="focusSpot(event,22.2936,114.1721,'香港艺术馆')">
+          <span class="spot-dot"></span>香港艺术馆·莫奈真迹（09:00）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.2973,114.1724,'海港城')">
+          <span class="spot-dot"></span>尖沙咀海港城·DFS免税店
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.3211,114.1702,'旺角药店')">
+          <span class="spot-dot"></span>旺角购药补货（依折麦布等）
+        </div>
+      </div>
+    </div>
+
+    <div class="day-tab" data-day="7" onclick="selectDay(7)">
+      <div class="day-header">
+        <div class="day-num">7</div>
+        <div class="day-info">
+          <div class="day-date">6月26日（周五）</div>
+          <div class="day-title">金紫荆·鹅颈桥打小人·迪士尼</div>
+        </div>
+      </div>
+      <div class="day-spots">
+        <div class="spot-item" onclick="focusSpot(event,22.2793,114.1740,'金紫荆广场')">
+          <span class="spot-dot"></span>金紫荆广场（08:30）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.2791,114.1812,'鹅颈桥')">
+          <span class="spot-dot"></span>鹅颈桥打小人（10:00）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.3130,114.0413,'迪士尼')">
+          <span class="spot-dot"></span>香港迪士尼乐园（12:00）
+        </div>
+      </div>
+    </div>
+
+    <div class="day-tab" data-day="8" onclick="selectDay(8)">
+      <div class="day-header">
+        <div class="day-num">8</div>
+        <div class="day-info">
+          <div class="day-date">6月27日（周六）返程</div>
+          <div class="day-title">机场快线·QW916返青岛</div>
+        </div>
+      </div>
+      <div class="day-spots">
+        <div class="spot-item" onclick="focusSpot(event,22.3090,114.1675,'九龙站')">
+          <span class="spot-dot"></span>九龙站机场快线（10:00）
+        </div>
+        <div class="spot-item" onclick="focusSpot(event,22.3088,113.9149,'香港机场')">
+          <span class="spot-dot"></span>香港国际机场T1起飞13:45
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sidebar -->
+
+  <!-- MAP + DETAIL -->
+  <div class="map-area">
+    <div id="map"></div>
+
+    <div class="legend">
+      <div class="legend-title">图例</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#C9A84C"></div>景点 / 活动</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2563EB"></div>银行开户</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#C0392B"></div>重点亮点</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#059669"></div>码头 / 交通</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7C3AED"></div>澳门景点</div>
+    </div>
+
+    <div class="detail-panel" id="detailPanel">
+      <div class="detail-day-label">Day 1 · 6月20日（周六）抵达日</div>
+      <div class="detail-title">尖沙咀 · 落日飞车 · 双银行线上开户</div>
+      <div class="detail-subtitle">✈ 12:45 落地香港国际机场T1 · 住宿：尖沙咀酒店</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-time">12:45–13:30</div>
+          <div class="tl-content">
+            <div class="tl-name">入境 · 提取行李</div>
+            <div class="tl-desc">⚠️ 妥善保管入境小白条，所有银行开户必备</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">13:30–14:30</div>
+          <div class="tl-content">
+            <div class="tl-name">A21机场巴士 → 尖沙咀弥敦道站</div>
+            <div class="tl-desc">直达尖沙咀，办理酒店入住，寄存行李</div>
+          </div>
+        </div>
+        <div class="tl-item highlight">
+          <div class="tl-time">15:30–17:00</div>
+          <div class="tl-content">
+            <div class="tl-name">🌟 星光大道 · 维港海滨长廊</div>
+            <div class="tl-desc">打卡明星手印、百年钟楼，漫步维多利亚港</div>
+            <div class="tl-tag tag-highlight">必去打卡</div>
+          </div>
+        </div>
+        <div class="tl-item highlight">
+          <div class="tl-time">17:30–19:00</div>
+          <div class="tl-content">
+            <div class="tl-name">🚌 H2线落日飞车（观光巴士）</div>
+            <div class="tl-desc">追维港橘子海日落，半岛酒店观光巴士站上车</div>
+            <div class="tl-tag tag-highlight">必体验</div>
+          </div>
+        </div>
+        <div class="tl-item highlight">
+          <div class="tl-time">19:50–20:30</div>
+          <div class="tl-content">
+            <div class="tl-name">⛴ 天星小轮 · 幻彩咏香江灯光秀</div>
+            <div class="tl-desc">中环→尖沙咀，20:00海上观赏维港灯光秀</div>
+            <div class="tl-tag tag-highlight">绝对不可错过</div>
+          </div>
+        </div>
+        <div class="tl-item bank">
+          <div class="tl-time">22:00–22:30</div>
+          <div class="tl-content">
+            <div class="tl-name">📱 汇丰香港 + 众安银行 双线上开户</div>
+            <div class="tl-desc">酒店内完成，连接香港本地WiFi，汇丰约15分钟，众安约5分钟</div>
+            <div class="tl-tag tag-bank">线上开户 · 共约20分钟</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /detail-panel -->
+
+  </div><!-- /map-area -->
+</div><!-- /main -->
+
+<div class="info-cards">
+  <div class="info-card">
+    <div class="ic-label">🏦 众安银行（线上）</div>
+    <div class="ic-val">Day1晚 酒店完成</div>
+    <div class="ic-sub">下载ZA Bank App，内地手机号收验证码，约5分钟</div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">🏦 汇丰香港（线上）</div>
+    <div class="ic-val">Day1晚 酒店完成</div>
+    <div class="ic-sub">连香港WiFi，NFC扫描通行证芯片，约15分钟，2026年新政策</div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">🏦 中银香港（线下）</div>
+    <div class="ic-val">Day4 · 6/23 09:00</div>
+    <div class="ic-sub">弥敦道131号，6/16抢预约号，开通FPS转数快</div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">🏦 工银亚洲（线下）</div>
+    <div class="ic-val">Day4 · 6/23 10:40</div>
+    <div class="ic-sub">汉口道28号亚太中心，距中银步行5分钟</div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">🎨 莫奈真迹展</div>
+    <div class="ic-val">6/29前闭展</div>
+    <div class="ic-sub">香港艺术馆《睡莲》《睡莲池》，免费入场，建议09:00入场</div>
+  </div>
+  <div class="info-card">
+    <div class="ic-label">⚠️ 重要提醒</div>
+    <div class="ic-val">入境小白条勿丢失</div>
+    <div class="ic-sub">所有银行开户必备，船票6/17购买，迪士尼提前购票</div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const dayData = {
+  1: {
+    label: 'Day 1 · 6月20日（周六）抵达日',
+    title: '尖沙咀 · 落日飞车 · 双银行线上开户',
+    subtitle: '✈ 12:45 落地香港国际机场T1 · 住宿：尖沙咀酒店',
+    center: [22.295, 114.168],
+    zoom: 13,
+    markers: [
+      { lat: 22.2930, lng: 114.1742, color: '#C0392B', label: '星光大道', desc: '17:30出发落日飞车' },
+      { lat: 22.2837, lng: 114.1588, color: '#059669', label: '中环7号码头', desc: '天星小轮出发' },
+      { lat: 22.2940, lng: 114.1680, color: '#059669', label: '尖沙咀天星码头', desc: '幻彩咏香江' },
+      { lat: 22.2980, lng: 114.1720, color: '#C9A84C', label: '尖沙咀酒店区', desc: '银行线上开户' },
+      { lat: 22.3088, lng: 113.9149, color: '#059669', label: '香港机场T1', desc: '12:45抵达' },
+    ],
+    timeline: [
+      { time: '12:45–13:30', name: '入境 · 提取行李', desc: '⚠️ 妥善保管入境小白条，所有银行开户必备', type: '' },
+      { time: '13:30–14:30', name: 'A21机场巴士 → 尖沙咀', desc: '直达弥敦道站，办理酒店入住，寄存行李', type: '' },
+      { time: '15:30–17:00', name: '🌟 星光大道 · 维港海滨长廊', desc: '打卡明星手印、百年钟楼', type: 'highlight' },
+      { time: '17:30–19:00', name: '🚌 H2线落日飞车', desc: '追维港橘子海日落，半岛酒店上车→中环码头下车', type: 'highlight' },
+      { time: '19:50–20:30', name: '⛴ 天星小轮 · 幻彩咏香江', desc: '中环→尖沙咀，20:00海上观赏灯光秀', type: 'highlight' },
+      { time: '20:30–22:00', name: '广东道夜景打卡', desc: '返回尖沙咀漫步', type: '' },
+      { time: '22:00–22:30', name: '📱 汇丰+众安 双线上开户', desc: '酒店内完成，连香港WiFi。汇丰约15分钟，众安约5分钟', type: 'bank' },
+    ]
+  },
+  2: {
+    label: 'Day 2 · 6月21日（周日）',
+    title: '黄大仙祈福 · 沙田马场黄昏赛',
+    subtitle: '路线：尖沙咀→黄大仙→沙田→铜锣湾，东铁线零折返',
+    center: [22.330, 114.193],
+    zoom: 12,
+    markers: [
+      { lat: 22.3427, lng: 114.1932, color: '#C0392B', label: '黄大仙祠', desc: '09:00–11:30 祈福求签' },
+      { lat: 22.3998, lng: 114.2040, color: '#C0392B', label: '沙田马场', desc: '16:00开赛黄昏赛' },
+      { lat: 22.2800, lng: 114.1840, color: '#C9A84C', label: '铜锣湾 时代广场', desc: '18:30逛吃' },
+    ],
+    timeline: [
+      { time: '08:30–09:00', name: '港铁 → 黄大仙站B2出口', desc: '观塘线', type: '' },
+      { time: '09:00–11:30', name: '🛕 黄大仙祠祈福', desc: '周日上午人最少，免费领香，求签30港币解签', type: 'highlight' },
+      { time: '12:00–12:15', name: '港铁 → 沙田马场站（赛马日专属站）', desc: '东铁线直达赛场入口', type: '' },
+      { time: '12:15–15:30', name: '沙田马场 提前入场', desc: '参观马场博物馆，逛亮相圈看马匹，10港币最低投注', type: '' },
+      { time: '15:30–18:30', name: '🏇 沙田黄昏赛 共8场', desc: '16:00开场，赛马日专属气氛', type: 'highlight' },
+      { time: '18:30–21:30', name: '铜锣湾 · 崇光百货 · 叮叮车', desc: '逛吃，乘叮叮车回中环，天星小轮回尖沙咀', type: '' },
+    ]
+  },
+  3: {
+    label: 'Day 3 · 6月22日（周一）',
+    title: '西九文化区 · 香港故宫 · M+博物馆',
+    subtitle: '香港故宫周一正常开放，周二闭馆；M+博物馆免费坂本龙一展',
+    center: [22.301, 114.158],
+    zoom: 14,
+    markers: [
+      { lat: 22.3018, lng: 114.1560, color: '#C0392B', label: '香港故宫博物馆', desc: '10:00–12:30 古埃及展+紫禁城看世界' },
+      { lat: 22.3005, lng: 114.1595, color: '#7C3AED', label: 'M+博物馆', desc: '14:00–16:30 坂本龙一展（全球最后一站）' },
+      { lat: 22.3010, lng: 114.1575, color: '#059669', label: '西九海滨长廊', desc: '维港日落' },
+    ],
+    timeline: [
+      { time: '09:00–09:30', name: '港铁 → 西九龙站', desc: '直达', type: '' },
+      { time: '09:30–12:30', name: '🏛 香港故宫文化博物馆', desc: '重点：古埃及文明大展（250件文物）+新展"紫禁城看世界"', type: 'highlight' },
+      { time: '12:30–14:00', name: '西九文化区用餐', desc: '园区内餐厅或海滨食物车', type: 'food' },
+      { time: '14:00–16:30', name: '🎨 M+博物馆', desc: '坂本龙一"观音·听时"全球最后一站，免费展出', type: 'highlight' },
+      { time: '16:30–19:00', name: '🌅 西九海滨长廊看维港日落', desc: '博物馆屋顶露台视野绝佳', type: 'highlight' },
+      { time: '19:00–21:00', name: '返回尖沙咀 逛吃 + 采购药品', desc: '提前购买部分旅行常备药', type: '' },
+    ]
+  },
+  4: {
+    label: 'Day 4 · 6月23日（周二）',
+    title: '中银+工银线下开户 · 旺角 · 油麻地',
+    subtitle: '两家银行步行仅5分钟，比原方案节省1小时',
+    center: [22.310, 114.170],
+    zoom: 13,
+    markers: [
+      { lat: 22.2997, lng: 114.1733, color: '#2563EB', label: '中银香港（弥敦道131号）', desc: '09:00开户，预约6/16抢' },
+      { lat: 22.3005, lng: 114.1722, color: '#2563EB', label: '工银亚洲（汉口道28号）', desc: '10:40开户，步行5分钟' },
+      { lat: 22.3211, lng: 114.1702, color: '#C9A84C', label: '旺角 女人街/波鞋街', desc: '14:00–17:30' },
+      { lat: 22.3130, lng: 114.1680, color: '#C9A84C', label: '油麻地庙街夜市', desc: '17:30–19:30 老香港烟火气' },
+    ],
+    timeline: [
+      { time: '08:45', name: '⏰ 提前到达中银香港尖沙咀分行', desc: '弥敦道131号，排队等9:00开门', type: 'bank' },
+      { time: '09:00–10:30', name: '🏦 中银香港开户', desc: '领取实体卡，开通手机银行、FPS转数快', type: 'bank' },
+      { time: '10:30–10:40', name: '步行5分钟 → 工银亚洲', desc: '汉口道28号亚太中心', type: '' },
+      { time: '10:40–12:00', name: '🏦 工银亚洲开户', desc: '领取实体卡，开通全部功能', type: 'bank' },
+      { time: '12:00–13:30', name: '尖沙咀弥敦道用餐', desc: '两家银行全部搞定，轻松用餐', type: 'food' },
+      { time: '13:30–17:30', name: '🛍 旺角 女人街 · 波鞋街 · 朗豪坊', desc: '港铁1站直达', type: '' },
+      { time: '17:30–19:30', name: '🏮 油麻地庙街夜市', desc: '体验老香港烟火气，炒蛳螺·煎蚝饼', type: 'highlight' },
+      { time: '19:30–21:00', name: '返回尖沙咀 顺路采购常备药', desc: '', type: '' },
+    ]
+  },
+  5: {
+    label: 'Day 5 · 6月24日（周三）',
+    title: '澳门1日游 · 跑马地夜赛',
+    subtitle: '购买08:30中港城→氹仔、18:00外港→中港城船票（6/17购买）',
+    center: [22.22, 114.00],
+    zoom: 11,
+    markers: [
+      { lat: 22.3003, lng: 114.1674, color: '#059669', label: '中港城码头（尖沙咀）', desc: '08:30出发澳门氹仔' },
+      { lat: 22.1470, lng: 113.5598, color: '#7C3AED', label: '威尼斯人·伦敦人·巴黎人', desc: '澳门氹仔 度假区观光' },
+      { lat: 22.1975, lng: 113.5409, color: '#C0392B', label: '大三巴牌坊·恋爱巷', desc: '澳门半岛 世界遗产' },
+      { lat: 22.1971, lng: 113.5591, color: '#7C3AED', label: '澳门外港码头', desc: '18:00返港' },
+      { lat: 22.2718, lng: 114.1806, color: '#C0392B', label: '跑马地马场', desc: '19:05夜赛 啤酒园氛围最佳' },
+    ],
+    timeline: [
+      { time: '08:00–08:30', name: '步行→中港城码头', desc: '尖沙咀步行约10分钟', type: '' },
+      { time: '08:30–09:30', name: '⛴ 喷射飞航 → 澳门氹仔码头', desc: '海上约1小时', type: '' },
+      { time: '09:30–14:20', name: '🎰 氹仔度假区观光', desc: '威尼斯人→伦敦人→巴黎人，官也街觅食，龙环葡韵打卡', type: 'highlight' },
+      { time: '14:20–15:25', name: '💦 永利皇宫 免费缆车+音乐喷泉', desc: '澳门最美景点之一', type: 'highlight' },
+      { time: '15:25–16:55', name: '🏛 澳门半岛 大三巴·恋爱巷·新葡京', desc: '打车前往，世界遗产建筑群', type: 'highlight' },
+      { time: '16:55–18:00', name: '打车 → 澳门外港码头登船', desc: '18:00返港', type: '' },
+      { time: '19:25–21:30', name: '🏇 跑马地夜赛', desc: '19:05开场，啤酒园区域氛围最佳，适合外国游客区', type: 'highlight' },
+    ]
+  },
+  6: {
+    label: 'Day 6 · 6月25日（周四）',
+    title: '莫奈真迹展 · 终极购物补货',
+    subtitle: '⚠️ 香港艺术馆莫奈展6月29日闭展，必看！',
+    center: [22.308, 114.172],
+    zoom: 13,
+    markers: [
+      { lat: 22.2936, lng: 114.1721, color: '#C0392B', label: '香港艺术馆（莫奈展）', desc: '09:00开门即入，免费参观《睡莲》真迹' },
+      { lat: 22.2973, lng: 114.1724, color: '#C9A84C', label: '海港城 · DFS免税店', desc: '13:30–17:00终极购物' },
+      { lat: 22.3211, lng: 114.1702, color: '#C9A84C', label: '旺角 药品补货', desc: '依折麦布等处方药' },
+    ],
+    timeline: [
+      { time: '09:00–09:10', name: '步行10分钟 → 香港艺术馆', desc: '梳士巴利道10号，免费入场', type: '' },
+      { time: '09:10–12:30', name: '🎨 莫奈《睡莲》《睡莲池》真迹', desc: '二楼专题展厅，全球仅展3个月，6月29日闭展！拍照效果最佳在09:00-10:00', type: 'highlight' },
+      { time: '12:30–13:30', name: '尖沙咀用餐', desc: '', type: 'food' },
+      { time: '13:30–17:00', name: '🛍 海港城 · DFS终极购物', desc: '化妆品、奢侈品、手表，免税价格', type: '' },
+      { time: '17:00–19:00', name: '💊 旺角购药', desc: '依折麦布、辛伐他汀等处方药+龙角散等香港特产药品', type: '' },
+      { time: '19:00–21:00', name: '旺角夜市 最后一顿港式小吃', desc: '煲仔饭、车仔面、鸡蛋仔', type: 'food' },
+    ]
+  },
+  7: {
+    label: 'Day 7 · 6月26日（周五）',
+    title: '金紫荆广场 · 鹅颈桥打小人 · 迪士尼',
+    subtitle: '路线：尖沙咀→湾仔→铜锣湾→迪士尼，全程零折返',
+    center: [22.29, 114.13],
+    zoom: 12,
+    markers: [
+      { lat: 22.2793, lng: 114.1740, color: '#C9A84C', label: '金紫荆广场', desc: '08:30 打卡回归纪念碑' },
+      { lat: 22.2791, lng: 114.1812, color: '#C9A84C', label: '鹅颈桥 打小人', desc: '10:00 非遗体验，50港币/人' },
+      { lat: 22.3130, lng: 114.0413, color: '#C0392B', label: '香港迪士尼乐园', desc: '12:00–20:30 星战·灰熊山谷·迷离大宅' },
+    ],
+    timeline: [
+      { time: '08:00–08:30', name: '⛴ 天星小轮 → 湾仔码头', desc: '尖沙咀天星码头出发', type: '' },
+      { time: '08:30–09:30', name: '🌺 金紫荆广场', desc: '打卡紫荆花雕塑、香港回归纪念碑', type: 'highlight' },
+      { time: '09:30–10:00', name: '叮叮车 → 鹅颈桥站', desc: '轩尼诗道上车', type: '' },
+      { time: '10:00–11:00', name: '🥿 鹅颈桥打小人', desc: '香港非遗仪式，50港币/人可拍照，体验老香港民俗', type: 'highlight' },
+      { time: '11:00–12:00', name: '港铁 → 迪士尼站', desc: '铜锣湾站换乘，约45分钟', type: '' },
+      { time: '12:00–20:30', name: '🏰 香港迪士尼乐园', desc: '必玩：星战极速穿梭、灰熊山谷极速矿车、迷离大宅', type: 'highlight' },
+      { time: '20:30–20:50', name: '✨ 星梦光影之旅烟花秀', desc: '提前1小时占位，压轴节目', type: 'highlight' },
+    ]
+  },
+  8: {
+    label: 'Day 8 · 6月27日（周六）返程日',
+    title: '机场快线 · QW916返青岛',
+    subtitle: '✈ 13:45 香港T1 → 17:05 青岛胶东国际机场',
+    center: [22.340, 114.050],
+    zoom: 11,
+    markers: [
+      { lat: 22.3090, lng: 114.1675, color: '#059669', label: '九龙站（机场快线）', desc: '10:00出发，约24分钟到机场' },
+      { lat: 22.3088, lng: 113.9149, color: '#C0392B', label: '香港国际机场T1', desc: '13:45 QW916起飞' },
+    ],
+    timeline: [
+      { time: '09:00–09:30', name: '酒店退房', desc: '提取所有行李', type: '' },
+      { time: '09:30–10:00', name: '步行5分钟 → 九龙站', desc: 'Klook提前买电子票约75元，比现场便宜30元', type: '' },
+      { time: '10:00–10:24', name: '🚄 机场快线 九龙→香港机场', desc: '约24分钟直达，方便快捷', type: '' },
+      { time: '10:24–11:45', name: '机场值机·托运·安检', desc: '提前2小时完成值机，留充足时间', type: '' },
+      { time: '11:45–13:45', name: '候机 · 机场购物', desc: '可在机场购买最后的手信和免税商品', type: '' },
+      { time: '13:45', name: '✈ QW916 起飞', desc: '香港T1 → 青岛胶东，经济舱有餐食', type: 'highlight' },
+      { time: '17:05', name: '🏠 抵达青岛胶东国际机场', desc: '圆满结束7天港澳之旅！', type: 'highlight' },
+    ]
+  }
+};
+
+let map, currentDay = 1, markers = [];
+
+function initMap() {
+  map = L.map('map', { zoomControl: true }).setView([22.295, 114.168], 13);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap contributors © CARTO',
+    maxZoom: 19
+  }).addTo(map);
+  renderDayMarkers(1);
+}
+
+function getMarkerColor(color) {
+  const colors = {
+    '#C0392B': 'red',
+    '#2563EB': 'blue',
+    '#C9A84C': 'orange',
+    '#059669': 'green',
+    '#7C3AED': 'violet'
+  };
+  return colors[color] || 'grey';
+}
+
+function renderDayMarkers(day) {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+  const data = dayData[day];
+  if (!data) return;
+  map.setView(data.center, data.zoom);
+
+  const colorMap = {
+    '#C0392B': '#C0392B',
+    '#2563EB': '#2563EB',
+    '#C9A84C': '#C9A84C',
+    '#059669': '#059669',
+    '#7C3AED': '#7C3AED'
+  };
+
+  data.markers.forEach((m, i) => {
+    const svgColor = m.color;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40">
+      <path d="M16 0C7.164 0 0 7.163 0 16c0 9 16 24 16 24S32 25 32 16C32 7.163 24.836 0 16 0z" fill="${svgColor}" stroke="white" stroke-width="2"/>
+      <circle cx="16" cy="16" r="7" fill="white" opacity="0.9"/>
+      <text x="16" y="20" text-anchor="middle" font-size="10" font-weight="bold" fill="${svgColor}">${i+1}</text>
+    </svg>`;
+    const icon = L.divIcon({
+      html: svg,
+      className: '',
+      iconSize: [32, 40],
+      iconAnchor: [16, 40],
+      popupAnchor: [0, -40]
+    });
+    const marker = L.marker([m.lat, m.lng], { icon })
+      .addTo(map)
+      .bindPopup(`<div style="font-family:'Noto Sans SC',sans-serif;min-width:140px"><strong style="font-size:13px">${m.label}</strong><br><span style="color:#666;font-size:11px">${m.desc}</span></div>`, { maxWidth: 200 });
+    markers.push(marker);
+  });
+}
+
+function selectDay(day) {
+  currentDay = day;
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.day-tab[data-day="${day}"]`).classList.add('active');
+  renderDayMarkers(day);
+  renderDetailPanel(day);
+}
+
+function renderDetailPanel(day) {
+  const data = dayData[day];
+  const panel = document.getElementById('detailPanel');
+  const tlHtml = data.timeline.map(item => {
+    const typeClass = item.type === 'highlight' ? 'highlight' : item.type === 'bank' ? 'bank' : item.type === 'food' ? '' : '';
+    let tag = '';
+    if (item.type === 'bank') tag = '<div class="tl-tag tag-bank">银行开户</div>';
+    if (item.type === 'highlight') tag = '<div class="tl-tag tag-highlight">重点亮点</div>';
+    if (item.type === 'food') tag = '<div class="tl-tag tag-food">美食推荐</div>';
+    return `<div class="tl-item ${typeClass}">
+      <div class="tl-time">${item.time}</div>
+      <div class="tl-content">
+        <div class="tl-name">${item.name}</div>
+        ${item.desc ? `<div class="tl-desc">${item.desc}</div>` : ''}
+        ${tag}
+      </div>
+    </div>`;
+  }).join('');
+
+  panel.innerHTML = `
+    <div class="detail-day-label">${data.label}</div>
+    <div class="detail-title">${data.title}</div>
+    <div class="detail-subtitle">${data.subtitle}</div>
+    <div class="timeline">${tlHtml}</div>
+  `;
+}
+
+function focusSpot(e, lat, lng, label) {
+  e.stopPropagation();
+  map.setView([lat, lng], 15);
+  document.querySelectorAll('.spot-item').forEach(s => s.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+}
+
+// ── PASSWORD GATE ──
+function checkPw() {
+  const input = document.getElementById('pw-input');
+  const error = document.getElementById('pw-error');
+  if (input.value === 'admin') {
+    document.getElementById('pw-gate').classList.add('hidden');
+    setTimeout(() => document.getElementById('pw-gate').style.display = 'none', 420);
+  } else {
+    error.textContent = '密码错误，请重试';
+    input.classList.add('shake');
+    input.value = '';
+    setTimeout(() => { input.classList.remove('shake'); error.textContent = ''; }, 1500);
+  }
+}
+
+// Load Leaflet
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+document.head.appendChild(link);
+
+const script = document.createElement('script');
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+script.onload = initMap;
+document.body.appendChild(script);
+</script>
+
+</body>
+</html>
